@@ -1,0 +1,675 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AF5AFC6328E2027A00CE6D12 /* SettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC6228E2027A00CE6D12 /* SettingViewModel.swift */; };
+		AF5AFC6B28E2106B00CE6D12 /* KBEngineWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC6A28E2106B00CE6D12 /* KBEngineWrapper.mm */; };
+		AF5AFC7C28E2125B00CE6D12 /* vnlexi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7528E2125B00CE6D12 /* vnlexi.cpp */; };
+		AF5AFC7D28E2125B00CE6D12 /* kbengine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */; };
+		AF5AFC7E28E2125B00CE6D12 /* platforms in Resources */ = {isa = PBXBuildFile; fileRef = AF5AFC7928E2125B00CE6D12 /* platforms */; };
+		AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7F28E217BC00CE6D12 /* Common.swift */; };
+		AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */; };
+		AFEC3E4C28E1D36100A67F12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */; };
+		AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4D28E1D5E200A67F12 /* Menu.swift */; };
+		AFFB6AC828E1D26100229BDD /* SimpleVNKeyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB6AC728E1D26100229BDD /* SimpleVNKeyApp.swift */; };
+		AFFB6ACA28E1D26100229BDD /* PreferenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB6AC928E1D26100229BDD /* PreferenceView.swift */; };
+		AFFB6ACC28E1D26200229BDD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB6ACB28E1D26200229BDD /* Assets.xcassets */; };
+		AFFB6ACF28E1D26200229BDD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB6ACE28E1D26200229BDD /* Preview Assets.xcassets */; };
+		AFFB6ADA28E1D26200229BDD /* SimpleVNKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB6AD928E1D26200229BDD /* SimpleVNKeyTests.swift */; };
+		AFFB6AE428E1D26200229BDD /* SimpleVNKeyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB6AE328E1D26200229BDD /* SimpleVNKeyUITests.swift */; };
+		AFFB6AE628E1D26200229BDD /* SimpleVNKeyUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB6AE528E1D26200229BDD /* SimpleVNKeyUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AFFB6AD628E1D26200229BDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AFFB6ABC28E1D26100229BDD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AFFB6AC328E1D26100229BDD;
+			remoteInfo = SimpleVNKey;
+		};
+		AFFB6AE028E1D26200229BDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AFFB6ABC28E1D26100229BDD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AFFB6AC328E1D26100229BDD;
+			remoteInfo = SimpleVNKey;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		AF5AFC6228E2027A00CE6D12 /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
+		AF5AFC6828E2106B00CE6D12 /* SimpleVNKey-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimpleVNKey-Bridging-Header.h"; sourceTree = "<group>"; };
+		AF5AFC6928E2106B00CE6D12 /* KBEngineWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KBEngineWrapper.h; sourceTree = "<group>"; };
+		AF5AFC6A28E2106B00CE6D12 /* KBEngineWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KBEngineWrapper.mm; sourceTree = "<group>"; };
+		AF5AFC7528E2125B00CE6D12 /* vnlexi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vnlexi.cpp; path = ../../../../kbengine/src/kbengine/vnlexi.cpp; sourceTree = "<group>"; };
+		AF5AFC7728E2125B00CE6D12 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = ../../../../kbengine/src/kbengine/utils.h; sourceTree = "<group>"; };
+		AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = kbengine.cpp; path = ../../../../kbengine/src/kbengine/kbengine.cpp; sourceTree = "<group>"; };
+		AF5AFC7928E2125B00CE6D12 /* platforms */ = {isa = PBXFileReference; lastKnownFileType = folder; name = platforms; path = ../../../../kbengine/src/kbengine/platforms; sourceTree = "<group>"; };
+		AF5AFC7A28E2125B00CE6D12 /* kbengine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kbengine.h; path = ../../../../kbengine/src/kbengine/kbengine.h; sourceTree = "<group>"; };
+		AF5AFC7B28E2125B00CE6D12 /* vnlexi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vnlexi.h; path = ../../../../kbengine/src/kbengine/vnlexi.h; sourceTree = "<group>"; };
+		AF5AFC7F28E217BC00CE6D12 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		AF9E91FC28E2C9EF00DFC7C8 /* macrologger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = macrologger.h; path = ../../../../kbengine/src/kbengine/macrologger.h; sourceTree = "<group>"; };
+		AF9E91FD28E2CF1B00DFC7C8 /* datatypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = datatypes.h; path = ../../../../kbengine/src/kbengine/datatypes.h; sourceTree = "<group>"; };
+		AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCode.swift; sourceTree = "<group>"; };
+		AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		AFEC3E4D28E1D5E200A67F12 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
+		AFEC3E5128E1D8DE00A67F12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AFFB6AC428E1D26100229BDD /* SimpleVNKey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleVNKey.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFFB6AC728E1D26100229BDD /* SimpleVNKeyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleVNKeyApp.swift; sourceTree = "<group>"; };
+		AFFB6AC928E1D26100229BDD /* PreferenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceView.swift; sourceTree = "<group>"; };
+		AFFB6ACB28E1D26200229BDD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AFFB6ACE28E1D26200229BDD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		AFFB6AD028E1D26200229BDD /* SimpleVNKey.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleVNKey.entitlements; sourceTree = "<group>"; };
+		AFFB6AD528E1D26200229BDD /* SimpleVNKeyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleVNKeyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFFB6AD928E1D26200229BDD /* SimpleVNKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleVNKeyTests.swift; sourceTree = "<group>"; };
+		AFFB6ADF28E1D26200229BDD /* SimpleVNKeyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleVNKeyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFFB6AE328E1D26200229BDD /* SimpleVNKeyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleVNKeyUITests.swift; sourceTree = "<group>"; };
+		AFFB6AE528E1D26200229BDD /* SimpleVNKeyUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleVNKeyUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AFFB6AC128E1D26100229BDD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AFFB6AD228E1D26200229BDD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AFFB6ADC28E1D26200229BDD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AF5AFC6128E2025E00CE6D12 /* View Models */ = {
+			isa = PBXGroup;
+			children = (
+				AF5AFC6228E2027A00CE6D12 /* SettingViewModel.swift */,
+			);
+			path = "View Models";
+			sourceTree = "<group>";
+		};
+		AF5AFC6728E2102D00CE6D12 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				AF9E91FD28E2CF1B00DFC7C8 /* datatypes.h */,
+				AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */,
+				AF5AFC7A28E2125B00CE6D12 /* kbengine.h */,
+				AF5AFC7928E2125B00CE6D12 /* platforms */,
+				AF5AFC7728E2125B00CE6D12 /* utils.h */,
+				AF5AFC7528E2125B00CE6D12 /* vnlexi.cpp */,
+				AF5AFC7B28E2125B00CE6D12 /* vnlexi.h */,
+				AF9E91FC28E2C9EF00DFC7C8 /* macrologger.h */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		AF9E91FB28E2880F00DFC7C8 /* EngineBridge */ = {
+			isa = PBXGroup;
+			children = (
+				AF5AFC6928E2106B00CE6D12 /* KBEngineWrapper.h */,
+				AF5AFC6A28E2106B00CE6D12 /* KBEngineWrapper.mm */,
+				AF5AFC6828E2106B00CE6D12 /* SimpleVNKey-Bridging-Header.h */,
+			);
+			path = EngineBridge;
+			sourceTree = "<group>";
+		};
+		AFFB6ABB28E1D26100229BDD = {
+			isa = PBXGroup;
+			children = (
+				AFFB6AC628E1D26100229BDD /* SimpleVNKey */,
+				AFFB6AD828E1D26200229BDD /* SimpleVNKeyTests */,
+				AFFB6AE228E1D26200229BDD /* SimpleVNKeyUITests */,
+				AFFB6AC528E1D26100229BDD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AFFB6AC528E1D26100229BDD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AFFB6AC428E1D26100229BDD /* SimpleVNKey.app */,
+				AFFB6AD528E1D26200229BDD /* SimpleVNKeyTests.xctest */,
+				AFFB6ADF28E1D26200229BDD /* SimpleVNKeyUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AFFB6AC628E1D26100229BDD /* SimpleVNKey */ = {
+			isa = PBXGroup;
+			children = (
+				AF9E91FB28E2880F00DFC7C8 /* EngineBridge */,
+				AF5AFC6728E2102D00CE6D12 /* Engine */,
+				AFEC3E5128E1D8DE00A67F12 /* Info.plist */,
+				AFFB6ACD28E1D26200229BDD /* Preview Content */,
+				AFFB6ACB28E1D26200229BDD /* Assets.xcassets */,
+				AF5AFC6128E2025E00CE6D12 /* View Models */,
+				AFFB6AD028E1D26200229BDD /* SimpleVNKey.entitlements */,
+				AFFB6AC728E1D26100229BDD /* SimpleVNKeyApp.swift */,
+				AFFB6AC928E1D26100229BDD /* PreferenceView.swift */,
+				AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */,
+				AFEC3E4D28E1D5E200A67F12 /* Menu.swift */,
+				AF5AFC7F28E217BC00CE6D12 /* Common.swift */,
+				AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */,
+			);
+			path = SimpleVNKey;
+			sourceTree = "<group>";
+		};
+		AFFB6ACD28E1D26200229BDD /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				AFFB6ACE28E1D26200229BDD /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		AFFB6AD828E1D26200229BDD /* SimpleVNKeyTests */ = {
+			isa = PBXGroup;
+			children = (
+				AFFB6AD928E1D26200229BDD /* SimpleVNKeyTests.swift */,
+			);
+			path = SimpleVNKeyTests;
+			sourceTree = "<group>";
+		};
+		AFFB6AE228E1D26200229BDD /* SimpleVNKeyUITests */ = {
+			isa = PBXGroup;
+			children = (
+				AFFB6AE328E1D26200229BDD /* SimpleVNKeyUITests.swift */,
+				AFFB6AE528E1D26200229BDD /* SimpleVNKeyUITestsLaunchTests.swift */,
+			);
+			path = SimpleVNKeyUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AFFB6AC328E1D26100229BDD /* SimpleVNKey */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AFFB6AE928E1D26200229BDD /* Build configuration list for PBXNativeTarget "SimpleVNKey" */;
+			buildPhases = (
+				AFFB6AC028E1D26100229BDD /* Sources */,
+				AFFB6AC128E1D26100229BDD /* Frameworks */,
+				AFFB6AC228E1D26100229BDD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SimpleVNKey;
+			productName = SimpleVNKey;
+			productReference = AFFB6AC428E1D26100229BDD /* SimpleVNKey.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AFFB6AD428E1D26200229BDD /* SimpleVNKeyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AFFB6AEC28E1D26200229BDD /* Build configuration list for PBXNativeTarget "SimpleVNKeyTests" */;
+			buildPhases = (
+				AFFB6AD128E1D26200229BDD /* Sources */,
+				AFFB6AD228E1D26200229BDD /* Frameworks */,
+				AFFB6AD328E1D26200229BDD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AFFB6AD728E1D26200229BDD /* PBXTargetDependency */,
+			);
+			name = SimpleVNKeyTests;
+			productName = SimpleVNKeyTests;
+			productReference = AFFB6AD528E1D26200229BDD /* SimpleVNKeyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AFFB6ADE28E1D26200229BDD /* SimpleVNKeyUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AFFB6AEF28E1D26200229BDD /* Build configuration list for PBXNativeTarget "SimpleVNKeyUITests" */;
+			buildPhases = (
+				AFFB6ADB28E1D26200229BDD /* Sources */,
+				AFFB6ADC28E1D26200229BDD /* Frameworks */,
+				AFFB6ADD28E1D26200229BDD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AFFB6AE128E1D26200229BDD /* PBXTargetDependency */,
+			);
+			name = SimpleVNKeyUITests;
+			productName = SimpleVNKeyUITests;
+			productReference = AFFB6ADF28E1D26200229BDD /* SimpleVNKeyUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AFFB6ABC28E1D26100229BDD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1340;
+				LastUpgradeCheck = 1340;
+				TargetAttributes = {
+					AFFB6AC328E1D26100229BDD = {
+						CreatedOnToolsVersion = 13.4.1;
+						LastSwiftMigration = 1340;
+					};
+					AFFB6AD428E1D26200229BDD = {
+						CreatedOnToolsVersion = 13.4.1;
+						TestTargetID = AFFB6AC328E1D26100229BDD;
+					};
+					AFFB6ADE28E1D26200229BDD = {
+						CreatedOnToolsVersion = 13.4.1;
+						TestTargetID = AFFB6AC328E1D26100229BDD;
+					};
+				};
+			};
+			buildConfigurationList = AFFB6ABF28E1D26100229BDD /* Build configuration list for PBXProject "SimpleVNKey" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AFFB6ABB28E1D26100229BDD;
+			productRefGroup = AFFB6AC528E1D26100229BDD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AFFB6AC328E1D26100229BDD /* SimpleVNKey */,
+				AFFB6AD428E1D26200229BDD /* SimpleVNKeyTests */,
+				AFFB6ADE28E1D26200229BDD /* SimpleVNKeyUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AFFB6AC228E1D26100229BDD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AFFB6ACF28E1D26200229BDD /* Preview Assets.xcassets in Resources */,
+				AFFB6ACC28E1D26200229BDD /* Assets.xcassets in Resources */,
+				AF5AFC7E28E2125B00CE6D12 /* platforms in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AFFB6AD328E1D26200229BDD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AFFB6ADD28E1D26200229BDD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AFFB6AC028E1D26100229BDD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */,
+				AF5AFC7D28E2125B00CE6D12 /* kbengine.cpp in Sources */,
+				AFEC3E4C28E1D36100A67F12 /* AppDelegate.swift in Sources */,
+				AF5AFC7C28E2125B00CE6D12 /* vnlexi.cpp in Sources */,
+				AFFB6ACA28E1D26100229BDD /* PreferenceView.swift in Sources */,
+				AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */,
+				AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */,
+				AFFB6AC828E1D26100229BDD /* SimpleVNKeyApp.swift in Sources */,
+				AF5AFC6B28E2106B00CE6D12 /* KBEngineWrapper.mm in Sources */,
+				AF5AFC6328E2027A00CE6D12 /* SettingViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AFFB6AD128E1D26200229BDD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AFFB6ADA28E1D26200229BDD /* SimpleVNKeyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AFFB6ADB28E1D26200229BDD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AFFB6AE628E1D26200229BDD /* SimpleVNKeyUITestsLaunchTests.swift in Sources */,
+				AFFB6AE428E1D26200229BDD /* SimpleVNKeyUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AFFB6AD728E1D26200229BDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AFFB6AC328E1D26100229BDD /* SimpleVNKey */;
+			targetProxy = AFFB6AD628E1D26200229BDD /* PBXContainerItemProxy */;
+		};
+		AFFB6AE128E1D26200229BDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AFFB6AC328E1D26100229BDD /* SimpleVNKey */;
+			targetProxy = AFFB6AE028E1D26200229BDD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AFFB6AE728E1D26200229BDD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AFFB6AE828E1D26200229BDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		AFFB6AEA28E1D26200229BDD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SimpleVNKey/SimpleVNKey.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SimpleVNKey/Preview Content\"";
+				DEVELOPMENT_TEAM = 5SAR377BKF;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SimpleVNKey/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tam.SimpleVNKey;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "SimpleVNKey/EngineBridge/SimpleVNKey-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AFFB6AEB28E1D26200229BDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SimpleVNKey/SimpleVNKey.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SimpleVNKey/Preview Content\"";
+				DEVELOPMENT_TEAM = 5SAR377BKF;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "LOG_LEVEL=NO_LOG";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SimpleVNKey/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tam.SimpleVNKey;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "SimpleVNKey/EngineBridge/SimpleVNKey-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		AFFB6AED28E1D26200229BDD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5SAR377BKF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tam.SimpleVNKeyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SimpleVNKey.app/Contents/MacOS/SimpleVNKey";
+			};
+			name = Debug;
+		};
+		AFFB6AEE28E1D26200229BDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5SAR377BKF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tam.SimpleVNKeyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SimpleVNKey.app/Contents/MacOS/SimpleVNKey";
+			};
+			name = Release;
+		};
+		AFFB6AF028E1D26200229BDD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5SAR377BKF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tam.SimpleVNKeyUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = SimpleVNKey;
+			};
+			name = Debug;
+		};
+		AFFB6AF128E1D26200229BDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5SAR377BKF;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tam.SimpleVNKeyUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = SimpleVNKey;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AFFB6ABF28E1D26100229BDD /* Build configuration list for PBXProject "SimpleVNKey" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AFFB6AE728E1D26200229BDD /* Debug */,
+				AFFB6AE828E1D26200229BDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AFFB6AE928E1D26200229BDD /* Build configuration list for PBXNativeTarget "SimpleVNKey" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AFFB6AEA28E1D26200229BDD /* Debug */,
+				AFFB6AEB28E1D26200229BDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AFFB6AEC28E1D26200229BDD /* Build configuration list for PBXNativeTarget "SimpleVNKeyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AFFB6AED28E1D26200229BDD /* Debug */,
+				AFFB6AEE28E1D26200229BDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AFFB6AEF28E1D26200229BDD /* Build configuration list for PBXNativeTarget "SimpleVNKeyUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AFFB6AF028E1D26200229BDD /* Debug */,
+				AFFB6AF128E1D26200229BDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AFFB6ABC28E1D26100229BDD /* Project object */;
+}
