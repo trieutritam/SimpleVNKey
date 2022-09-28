@@ -13,7 +13,7 @@
 #define KEY_ESC                                 53
 #define KEY_DELETE                              51
 #define KEY_TAB                                 48
-#define KEY_ENTER                               76
+#define KEY_ENTER                               76      // 0x4C        Numeric Keypad Enter
 #define KEY_RETURN                              36
 #define KEY_SPACE                               49
 #define KEY_LEFT                                123

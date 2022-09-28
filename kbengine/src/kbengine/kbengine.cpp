@@ -150,7 +150,7 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
             // this combine first item not match expectedType
             // this combine not match the end part of buffer
             //-> ignore
-            if (!(combine[0] & expectedType) || (endIdx - curIdx) > combine.size() - 1) {
+            if (!(combine[0] & expectedType) || (endIdx - curIdx) != combine.size() - 1) {
                 continue;
             }
             
@@ -206,8 +206,9 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType)
     }
     
     int foundIdx = this->_findSyllable(matchCombine, maskType, expectedKey);
-    
+
     if (matchCombine.size() >= 0) {
+        PRINT_VECTOR(matchCombine);
         
         int endIdx = this->_bufferSize;
         
@@ -444,9 +445,12 @@ void kbengine::_addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap) {
     }
 }
 
-int kbengine::process(const UInt16 &charCode, const UInt8 &keycode, const UInt8 &shiftCap, const bool &otherControl)
+int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8 &shiftCap, const bool &otherControl)
 {
     this->_keyCodeOutput.clear();
+    
+    LOG_DEBUG("KeyCode: %d - charCode: %c", keycode, UInt8(charCode));
+
     
     auto action = InputMethodMapping[this->_currentInputMethod].find(keycode);
     
@@ -495,7 +499,7 @@ int kbengine::process(const UInt16 &charCode, const UInt8 &keycode, const UInt8 
                 break;
         }
     }
-    
+        
     // keyCode already processed
     if (result != Normal && ACTION_PROCESSED(actionResult)
         && this->_keyCodeOutput.size() > 0) {
@@ -522,7 +526,8 @@ int kbengine::process(const UInt16 &charCode, const UInt8 &keycode, const UInt8 
                 this->_processBackSpacePressed();
             }
         }
-        else if (keycode == KEY_ENTER) {
+        else if (std::find(_wordBreakCode.begin(), _wordBreakCode.end(), keycode) == _wordBreakCode.end()) {
+            // if current keycode is not in list allow new word, we reset buffer
             this->resetBuffer();
         }
     }

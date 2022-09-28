@@ -9,7 +9,7 @@
 
 #ifdef DEBUG
 #define PRINT_VECTOR(v) { cout << "List: "; \
-                            for (auto ii=v.begin(); ii != v.end(); ii++) cout << ((*ii) ^ MASK_EXTRA_MARK) << ' '; \
+                            for (auto ii=v.begin(); ii != v.end(); ii++) cout << (unsigned short) ((*ii) ^ MASK_EXTRA_MARK) << ' '; \
                             cout << endl;}
 #else
 #define PRINT_VECTOR(v)

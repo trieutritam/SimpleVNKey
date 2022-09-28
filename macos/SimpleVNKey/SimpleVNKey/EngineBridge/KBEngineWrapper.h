@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface KBEngineWrapper : NSObject
 - (NSArray*)process: (UInt16)charCode
-                keycode: (UInt8)keycode
+                keycode: (UInt16)keycode
                 shiftOrCapPressed: (UInt8)shiftCap
                 otherControlPressed: (bool)otherControl;
 

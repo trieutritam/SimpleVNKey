@@ -10,13 +10,15 @@ import Foundation
 class SettingViewModel: ObservableObject {
     
     @Published var inputMethod = 0;
+    @Published var isVNEnabled = false;
     
     func loadSettings() {
-        inputMethod = Int(AppDelegate.instance.getInputMethod())
-        print("load input method: ", inputMethod)
+        isVNEnabled = UserDefaults.standard.bool(forKey: "SimpleVNKey.Enabled")
+        inputMethod = UserDefaults.standard.integer(forKey: "SimpleVNKey.InputMethod")
     }
     
-    func load() {
-        self.loadSettings()
+    func saveSettings() {
+        UserDefaults.standard.set(isVNEnabled, forKey: "SimpleVNKey.Enabled")
+        UserDefaults.standard.set(inputMethod, forKey: "SimpleVNKey.InputMethod")
     }
 }

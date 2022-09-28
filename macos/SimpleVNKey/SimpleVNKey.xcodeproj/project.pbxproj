@@ -11,7 +11,6 @@
 		AF5AFC6B28E2106B00CE6D12 /* KBEngineWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC6A28E2106B00CE6D12 /* KBEngineWrapper.mm */; };
 		AF5AFC7C28E2125B00CE6D12 /* vnlexi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7528E2125B00CE6D12 /* vnlexi.cpp */; };
 		AF5AFC7D28E2125B00CE6D12 /* kbengine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */; };
-		AF5AFC7E28E2125B00CE6D12 /* platforms in Resources */ = {isa = PBXBuildFile; fileRef = AF5AFC7928E2125B00CE6D12 /* platforms */; };
 		AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7F28E217BC00CE6D12 /* Common.swift */; };
 		AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */; };
 		AFEC3E4C28E1D36100A67F12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */; };
@@ -43,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AF189A1428E4595A001FD10F /* macos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = macos.h; path = ../../../../../kbengine/src/kbengine/platforms/macos.h; sourceTree = "<group>"; };
 		AF5AFC6228E2027A00CE6D12 /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
 		AF5AFC6828E2106B00CE6D12 /* SimpleVNKey-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimpleVNKey-Bridging-Header.h"; sourceTree = "<group>"; };
 		AF5AFC6928E2106B00CE6D12 /* KBEngineWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KBEngineWrapper.h; sourceTree = "<group>"; };
@@ -50,7 +50,6 @@
 		AF5AFC7528E2125B00CE6D12 /* vnlexi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vnlexi.cpp; path = ../../../../kbengine/src/kbengine/vnlexi.cpp; sourceTree = "<group>"; };
 		AF5AFC7728E2125B00CE6D12 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = ../../../../kbengine/src/kbengine/utils.h; sourceTree = "<group>"; };
 		AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = kbengine.cpp; path = ../../../../kbengine/src/kbengine/kbengine.cpp; sourceTree = "<group>"; };
-		AF5AFC7928E2125B00CE6D12 /* platforms */ = {isa = PBXFileReference; lastKnownFileType = folder; name = platforms; path = ../../../../kbengine/src/kbengine/platforms; sourceTree = "<group>"; };
 		AF5AFC7A28E2125B00CE6D12 /* kbengine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kbengine.h; path = ../../../../kbengine/src/kbengine/kbengine.h; sourceTree = "<group>"; };
 		AF5AFC7B28E2125B00CE6D12 /* vnlexi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vnlexi.h; path = ../../../../kbengine/src/kbengine/vnlexi.h; sourceTree = "<group>"; };
 		AF5AFC7F28E217BC00CE6D12 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
@@ -98,6 +97,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AF189A1328E4593E001FD10F /* platforms */ = {
+			isa = PBXGroup;
+			children = (
+				AF189A1428E4595A001FD10F /* macos.h */,
+			);
+			path = platforms;
+			sourceTree = "<group>";
+		};
 		AF5AFC6128E2025E00CE6D12 /* View Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -109,10 +116,10 @@
 		AF5AFC6728E2102D00CE6D12 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				AF189A1328E4593E001FD10F /* platforms */,
 				AF9E91FD28E2CF1B00DFC7C8 /* datatypes.h */,
 				AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */,
 				AF5AFC7A28E2125B00CE6D12 /* kbengine.h */,
-				AF5AFC7928E2125B00CE6D12 /* platforms */,
 				AF5AFC7728E2125B00CE6D12 /* utils.h */,
 				AF5AFC7528E2125B00CE6D12 /* vnlexi.cpp */,
 				AF5AFC7B28E2125B00CE6D12 /* vnlexi.h */,
@@ -154,8 +161,8 @@
 		AFFB6AC628E1D26100229BDD /* SimpleVNKey */ = {
 			isa = PBXGroup;
 			children = (
-				AF9E91FB28E2880F00DFC7C8 /* EngineBridge */,
 				AF5AFC6728E2102D00CE6D12 /* Engine */,
+				AF9E91FB28E2880F00DFC7C8 /* EngineBridge */,
 				AFEC3E5128E1D8DE00A67F12 /* Info.plist */,
 				AFFB6ACD28E1D26200229BDD /* Preview Content */,
 				AFFB6ACB28E1D26200229BDD /* Assets.xcassets */,
@@ -303,7 +310,6 @@
 			files = (
 				AFFB6ACF28E1D26200229BDD /* Preview Assets.xcassets in Resources */,
 				AFFB6ACC28E1D26200229BDD /* Assets.xcassets in Resources */,
-				AF5AFC7E28E2125B00CE6D12 /* platforms in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

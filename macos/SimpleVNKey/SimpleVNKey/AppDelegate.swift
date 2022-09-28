@@ -16,16 +16,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var kbEngine = KBEngineWrapper();
     
     private var eventTap: CFMachPort?;
-    
-    private var isVNEnabled = false;
 
     private var statusBarItem: NSStatusItem!
     private var popover: NSPopover!
-    
 
     // Create an instance of our custom main menu we are building
-    let menu = MainMenu()
+    private let menu = MainMenu()
     
+    var appPreference = SettingViewModel()
+    
+
     func getEngine() -> KBEngineWrapper {
         return kbEngine;
     }
@@ -37,37 +37,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func setInputMethod(inputMethod: UInt8) {
         kbEngine.setInputMethod(inputMethod)
         
-        UserDefaults.standard.set(inputMethod, forKey: "Vietnamese.InputMethod")
+        appPreference.inputMethod = Int(inputMethod)
+        appPreference.saveSettings();
     }
     
     func getVNEnabled() -> Bool{
-        return self.isVNEnabled
+        return appPreference.isVNEnabled
     }
     
     func enableVN() {
-        self.isVNEnabled = true;
         self.kbEngine.resetBuffer()
-        
-        UserDefaults.standard.set(true, forKey: "Vietnamese.Enabled")
         menu.setEnableVNMenuItem(enabled: true)
+        
+        appPreference.isVNEnabled = true;
+        appPreference.saveSettings();
     }
     
     func disableVN() {
-        self.isVNEnabled = false;
         self.kbEngine.resetBuffer()
-        
-        UserDefaults.standard.set(false, forKey: "Vietnamese.Enabled")
+
         menu.setEnableVNMenuItem(enabled: false)
+        
+        appPreference.isVNEnabled = false;
+        appPreference.saveSettings()
     }
     
     func loadPreference() {
-        isVNEnabled = UserDefaults.standard.bool(forKey: "Vietnamese.Enabled")
-        let inputMethod = UserDefaults.standard.integer(forKey: "Vietnamese.InputMethod")
-        print("Vietnamese.Enabled = ", isVNEnabled)
-        print("Vietnamese.InputMethod = ", inputMethod)
+        appPreference.loadSettings()
+        print("Load SimpleVNKey.isVNEnabled: ", appPreference.isVNEnabled)
+        print("Load SimpleVNKey.InputMethod: ", appPreference.inputMethod)
         
-        isVNEnabled ? enableVN() : disableVN()
-        setInputMethod(inputMethod: UInt8(inputMethod))
+        appPreference.isVNEnabled ? enableVN() : disableVN()
+        setInputMethod(inputMethod: UInt8(appPreference.inputMethod))
     }
     
     func setUpMenu() {
@@ -82,12 +83,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //
 //        // Assign our custom menu to the status bar
         statusBarItem.menu = menu.build(statusBarItem: statusBarItem)
+        statusBarItem.menu?.delegate = menu;
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         print("In AppDelegate")
         AppDelegate.instance = self
-    
         
         initCGEvent()
         
@@ -198,7 +199,7 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
             let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
             
             let keystrokes = engine.process(charCode,
-                                        keycode: UInt8(keyCode),
+                                        keycode: UInt16(keyCode),
                                         shiftOrCapPressed: statusShiftCap,
                                         otherControlPressed: otherControl)
         

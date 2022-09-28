@@ -15,6 +15,9 @@ struct SimpleVNKeyApp: App {
     var body: some Scene {
         Settings {
             PreferenceView()
+                .onAppear(perform: {
+                    print("On Appeare")
+                })
         }
     }
     
@@ -35,6 +38,8 @@ struct SimpleVNKeyApp: App {
 
     init() {
         print("Init SimpleVNKeyApp!")
+        
+        //appDelegate.appPreference = appPreference
         
         // check if user granted Accessabilty permission
         let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString: false]

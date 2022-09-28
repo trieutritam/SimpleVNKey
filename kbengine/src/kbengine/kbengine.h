@@ -13,7 +13,7 @@ using namespace std;
 
 #include "datatypes.h"
 
-#define MAX_BUFF 10
+#define MAX_BUFF 32
 
 enum RoofType {
     ORIGIN,
@@ -72,7 +72,7 @@ public:
 	virtual ~kbengine();
 
 	void resetBuffer();
-	int process(const UInt16 &charCode, const UInt8 &keycode, const UInt8 &shiftCap, const bool &otherControl);
+	int process(const UInt16 &charCode, const UInt16 &keycode, const UInt8 &shiftCap, const bool &otherControl);
     vector<UInt32> getOutputBuffer();
     
     void setInputMethod(const UInt8 &inputMethod);

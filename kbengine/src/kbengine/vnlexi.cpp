@@ -123,7 +123,7 @@ map<UInt8, vector<vector<UInt16>>> syllableTable = {
             {MASK_ORIGIN                , KEY_U, KEY_Y, KEY_E, KEY_T },
         
             // uo
-            {MASK_ORIGIN | MASK_BOWLHOOK, KEY_U, KEY_O | MASK_EXTRA_MARK },
+            //{MASK_ORIGIN | MASK_BOWLHOOK, KEY_U, KEY_O | MASK_EXTRA_MARK },   // Fix lỗi huơ, quơ, khuơ
             {MASK_ORIGIN | MASK_BOWLHOOK, KEY_U, KEY_O | MASK_EXTRA_MARK, KEY_C },
             {MASK_ORIGIN | MASK_BOWLHOOK, KEY_U, KEY_O | MASK_EXTRA_MARK, KEY_I },
             {MASK_ORIGIN | MASK_BOWLHOOK, KEY_U, KEY_O | MASK_EXTRA_MARK, KEY_M },
