@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AF373E9328E576650092A0D0 /* GeneralSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF373E9228E576650092A0D0 /* GeneralSettingView.swift */; };
+		AF373E9528E5987F0092A0D0 /* CGKeyCodeInitializers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF373E9428E5987F0092A0D0 /* CGKeyCodeInitializers.swift */; };
+		AF373E9828E5ADA30092A0D0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AF373E9628E5ADA30092A0D0 /* Localizable.strings */; };
 		AF5AFC6328E2027A00CE6D12 /* SettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC6228E2027A00CE6D12 /* SettingViewModel.swift */; };
 		AF5AFC6B28E2106B00CE6D12 /* KBEngineWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC6A28E2106B00CE6D12 /* KBEngineWrapper.mm */; };
 		AF5AFC7C28E2125B00CE6D12 /* vnlexi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7528E2125B00CE6D12 /* vnlexi.cpp */; };
 		AF5AFC7D28E2125B00CE6D12 /* kbengine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */; };
 		AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7F28E217BC00CE6D12 /* Common.swift */; };
 		AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */; };
+		AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA3453428E467B500FAD0BD /* AboutView.swift */; };
 		AFEC3E4C28E1D36100A67F12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */; };
 		AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4D28E1D5E200A67F12 /* Menu.swift */; };
 		AFFB6AC828E1D26100229BDD /* SimpleVNKeyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB6AC728E1D26100229BDD /* SimpleVNKeyApp.swift */; };
@@ -43,6 +47,9 @@
 
 /* Begin PBXFileReference section */
 		AF189A1428E4595A001FD10F /* macos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = macos.h; path = ../../../../../kbengine/src/kbengine/platforms/macos.h; sourceTree = "<group>"; };
+		AF373E9228E576650092A0D0 /* GeneralSettingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralSettingView.swift; sourceTree = "<group>"; };
+		AF373E9428E5987F0092A0D0 /* CGKeyCodeInitializers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGKeyCodeInitializers.swift; sourceTree = "<group>"; };
+		AF373E9728E5ADA30092A0D0 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AF5AFC6228E2027A00CE6D12 /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
 		AF5AFC6828E2106B00CE6D12 /* SimpleVNKey-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimpleVNKey-Bridging-Header.h"; sourceTree = "<group>"; };
 		AF5AFC6928E2106B00CE6D12 /* KBEngineWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KBEngineWrapper.h; sourceTree = "<group>"; };
@@ -56,6 +63,7 @@
 		AF9E91FC28E2C9EF00DFC7C8 /* macrologger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = macrologger.h; path = ../../../../kbengine/src/kbengine/macrologger.h; sourceTree = "<group>"; };
 		AF9E91FD28E2CF1B00DFC7C8 /* datatypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = datatypes.h; path = ../../../../kbengine/src/kbengine/datatypes.h; sourceTree = "<group>"; };
 		AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCode.swift; sourceTree = "<group>"; };
+		AFA3453428E467B500FAD0BD /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AFEC3E4D28E1D5E200A67F12 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		AFEC3E5128E1D8DE00A67F12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -138,6 +146,16 @@
 			path = EngineBridge;
 			sourceTree = "<group>";
 		};
+		AFA3453128E4639300FAD0BD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AF373E9228E576650092A0D0 /* GeneralSettingView.swift */,
+				AFFB6AC928E1D26100229BDD /* PreferenceView.swift */,
+				AFA3453428E467B500FAD0BD /* AboutView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		AFFB6ABB28E1D26100229BDD = {
 			isa = PBXGroup;
 			children = (
@@ -164,16 +182,18 @@
 				AF5AFC6728E2102D00CE6D12 /* Engine */,
 				AF9E91FB28E2880F00DFC7C8 /* EngineBridge */,
 				AFEC3E5128E1D8DE00A67F12 /* Info.plist */,
+				AF373E9628E5ADA30092A0D0 /* Localizable.strings */,
 				AFFB6ACD28E1D26200229BDD /* Preview Content */,
 				AFFB6ACB28E1D26200229BDD /* Assets.xcassets */,
 				AF5AFC6128E2025E00CE6D12 /* View Models */,
+				AFA3453128E4639300FAD0BD /* Views */,
 				AFFB6AD028E1D26200229BDD /* SimpleVNKey.entitlements */,
 				AFFB6AC728E1D26100229BDD /* SimpleVNKeyApp.swift */,
-				AFFB6AC928E1D26100229BDD /* PreferenceView.swift */,
 				AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */,
 				AFEC3E4D28E1D5E200A67F12 /* Menu.swift */,
 				AF5AFC7F28E217BC00CE6D12 /* Common.swift */,
 				AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */,
+				AF373E9428E5987F0092A0D0 /* CGKeyCodeInitializers.swift */,
 			);
 			path = SimpleVNKey;
 			sourceTree = "<group>";
@@ -290,6 +310,7 @@
 			knownRegions = (
 				en,
 				Base,
+				vi,
 			);
 			mainGroup = AFFB6ABB28E1D26100229BDD;
 			productRefGroup = AFFB6AC528E1D26100229BDD /* Products */;
@@ -309,6 +330,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFFB6ACF28E1D26200229BDD /* Preview Assets.xcassets in Resources */,
+				AF373E9828E5ADA30092A0D0 /* Localizable.strings in Resources */,
 				AFFB6ACC28E1D26200229BDD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,12 +359,15 @@
 				AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */,
 				AF5AFC7D28E2125B00CE6D12 /* kbengine.cpp in Sources */,
 				AFEC3E4C28E1D36100A67F12 /* AppDelegate.swift in Sources */,
+				AF373E9528E5987F0092A0D0 /* CGKeyCodeInitializers.swift in Sources */,
 				AF5AFC7C28E2125B00CE6D12 /* vnlexi.cpp in Sources */,
+				AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */,
 				AFFB6ACA28E1D26100229BDD /* PreferenceView.swift in Sources */,
 				AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */,
 				AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */,
 				AFFB6AC828E1D26100229BDD /* SimpleVNKeyApp.swift in Sources */,
 				AF5AFC6B28E2106B00CE6D12 /* KBEngineWrapper.mm in Sources */,
+				AF373E9328E576650092A0D0 /* GeneralSettingView.swift in Sources */,
 				AF5AFC6328E2027A00CE6D12 /* SettingViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -378,6 +403,17 @@
 			targetProxy = AFFB6AE028E1D26200229BDD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		AF373E9628E5ADA30092A0D0 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AF373E9728E5ADA30092A0D0 /* vi */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		AFFB6AE728E1D26200229BDD /* Debug */ = {
@@ -436,6 +472,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -489,6 +526,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;
@@ -514,7 +552,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SimpleVNKey/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -549,7 +587,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "LOG_LEVEL=NO_LOG";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SimpleVNKey/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

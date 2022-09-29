@@ -19,6 +19,8 @@ struct SimpleVNKeyApp: App {
                     print("On Appeare")
                 })
         }
+        
+        
     }
     
     func askPermission() {

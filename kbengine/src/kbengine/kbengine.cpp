@@ -319,6 +319,19 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
             // Nếu là tập hợp hai (2) nguyên âm (nguyên âm đôi) thì đánh dấu ở nguyên âm đầu.
             if (vowelCount == 1 || (vowelCount == 2 && lastIsVowel)) tonePosition = foundIdx;
             
+            // Kiểu cũ dựa trên những từ điển từ trước năm 1950 nên "gi" và "qu" được coi là một mẫu tự riêng.
+            // Vì vậy "già" và "quạ" không phải là nguyên âm đôi "ia" hay "ua" mà là "gi" + "à"; và "qu" + "ạ".
+            // => This case we already count 2 vowels, and we need to adjust
+            if ((vowelCount == 2 && lastIsVowel) && foundIdx > this->_bufferStartWordIdx) {
+                LOG_DEBUG("Special: %d %d", this->_buffer[foundIdx - 1].keyCode, this->_buffer[foundIdx].keyCode);
+                if ( (this->_buffer[foundIdx - 1].keyCode == KEY_Q && this->_buffer[foundIdx].keyCode == KEY_U)
+                    || (this->_buffer[foundIdx - 1].keyCode == KEY_G && this->_buffer[foundIdx].keyCode == KEY_I))
+                {
+                    tonePosition += 1;
+                }
+            }
+            
+            
             // Tập hợp ba (3) nguyên âm (nguyên âm ba) hoặc
             // hai nguyên âm + phụ âm cuối thì vị trí dấu chuyển đến nguyên âm thứ nhì.
             if (vowelCount == 3 || (vowelCount == 2 && !lastIsVowel)) tonePosition = foundIdx + 1;
@@ -449,14 +462,14 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
 {
     this->_keyCodeOutput.clear();
     
-    LOG_DEBUG("KeyCode: %d - charCode: %c", keycode, UInt8(charCode));
+    LOG_DEBUG("KeyCode: %d - charCode: %c, shiftCap: %d, otherControl: %d ", keycode, UInt8(charCode), shiftCap, otherControl);
 
     
     auto action = InputMethodMapping[this->_currentInputMethod].find(keycode);
     
     KeyEvent result = Normal;
     int actionResult = -1;
-    if (shiftCap == 0 && action != InputMethodMapping[_currentInputMethod].end() && this->_bufferSize > 0)
+    if (shiftCap == 0 && !otherControl && action != InputMethodMapping[_currentInputMethod].end() && this->_bufferSize > 0)
     {
         result = (KeyEvent) action->second;
         switch (result) {
@@ -511,7 +524,7 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
     bool printable = charCode >= 32 && charCode <= 127;
     
     LOG_DEBUG("Character Printable: %d", printable);
-    if (printable) {
+    if (printable && !otherControl) {
         _addKeyCode(keycode, shiftCap);
         _correctSpelling(keycode);
     }

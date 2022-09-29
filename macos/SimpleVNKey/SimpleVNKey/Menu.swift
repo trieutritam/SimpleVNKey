@@ -12,7 +12,7 @@ import SwiftUI
 class MainMenu: NSObject, NSMenuDelegate {
     
     // A new menu instance ready to add items to
-    let menu = NSMenu()
+    let menu = NSMenu(title: "Quick")
 //    let menuItems = Bundle.main.object(forInfoDictionaryKey: "SampleLinks") as! [String: String]
     private var inputMethodMenu = NSMenu()
     private var statusBarItem: NSStatusItem?
@@ -20,7 +20,6 @@ class MainMenu: NSObject, NSMenuDelegate {
     private var enableVNItem: NSMenuItem?
     
     func menuWillOpen(_ menu: NSMenu) {
-        AppDelegate.instance.loadPreference()
         
         menu.item(at: 0)?.state = AppDelegate.instance.getVNEnabled() ? NSControl.StateValue.on : NSControl.StateValue.off
         
@@ -46,11 +45,11 @@ class MainMenu: NSObject, NSMenuDelegate {
             statusBarButton.image = NSImage(named: AppDelegate.instance.getVNEnabled() ? "MenuIconV" : "MenuIconE")
             // statusBarButton.action = #selector(togglePopover)
             statusBarButton.imagePosition = .imageLeading
-
+            
         }
         
         enableVNItem = NSMenuItem(
-                title: "Enable Vietnamese",
+                title: String(localized: "Enable Vietnamese"),
                 action: #selector(toggleVNMode),
                 keyEquivalent: "")
         
@@ -64,7 +63,7 @@ class MainMenu: NSObject, NSMenuDelegate {
         
 
         let openPreference = NSMenuItem(
-          title: "Preferences...",
+          title: String(localized: "Preferences..."),
           action: #selector(openPreference),
           keyEquivalent: ""
         )
@@ -73,7 +72,7 @@ class MainMenu: NSObject, NSMenuDelegate {
         
         // This is where we actually add the updates menu item we pass in
         let checkForUpdatesMenuItem = NSMenuItem(
-          title: "Check For Updates...",
+          title: String(localized: "Check For Updates..."),
           action: nil,
           keyEquivalent: ""
         )
@@ -82,7 +81,7 @@ class MainMenu: NSObject, NSMenuDelegate {
         
         // We add an About pane.
         let aboutMenuItem = NSMenuItem(
-            title: "About SimpleVNKey",
+            title: String(localized: "About SimpleVNKey"),
             action: #selector(about),
             keyEquivalent: ""
         )
@@ -112,7 +111,7 @@ class MainMenu: NSObject, NSMenuDelegate {
         
         // Adding a quit menu item
         let quitMenuItem = NSMenuItem(
-            title: "Quit SimpleVNKey",
+            title: String(localized: "Quit SimpleVNKey"),
             action: #selector(quit),
             keyEquivalent: "" //q"
         )
@@ -124,13 +123,13 @@ class MainMenu: NSObject, NSMenuDelegate {
     
     func addInputMethodMenu(menu: NSMenu) {
         // VNI Menu
-        let inputVNI = NSMenuItem(title: "VNI", action: #selector(selectInputSource), keyEquivalent: "")
+        let inputVNI = NSMenuItem(title: String(localized: "VNI"), action: #selector(selectInputSource), keyEquivalent: "")
         inputVNI.representedObject = InputMethod.VNI.rawValue
         inputVNI.target = self
 //        inputVNI.state = curInput == InputMethod.VNI.rawValue ? NSControl.StateValue.on : NSControl.StateValue.off
         
         // Simple Telex
-        let inputTelex = NSMenuItem(title: "Simple Telex", action: #selector(selectInputSource), keyEquivalent: "")
+        let inputTelex = NSMenuItem(title: String(localized: "Simple Telex"), action: #selector(selectInputSource), keyEquivalent: "")
         inputTelex.representedObject = InputMethod.SIMPLE_TELEX.rawValue
         inputTelex.target = self
 //        inputTelex.state = curInput == InputMethod.SIMPLE_TELEX.rawValue ? NSControl.StateValue.on : NSControl.StateValue.off
@@ -138,7 +137,7 @@ class MainMenu: NSObject, NSMenuDelegate {
         inputMethodMenu.addItem(inputVNI)
         inputMethodMenu.addItem(inputTelex)
         
-        let inputMethodItem = NSMenuItem(title: "Input Methods", action: nil, keyEquivalent: "")
+        let inputMethodItem = NSMenuItem(title: String(localized: "Input Methods"), action: nil, keyEquivalent: "")
         inputMethodItem.submenu = inputMethodMenu
         inputMethodItem.target = self
         inputMethodItem.tag = 10
@@ -182,10 +181,10 @@ class MainMenu: NSObject, NSMenuDelegate {
                             NSControl.StateValue.off : NSControl.StateValue.on
         
         if (sender.state == NSControl.StateValue.on) {
-            AppDelegate.instance.enableVN()
+            AppDelegate.instance.setEnableVNState(true)
         }
         else {
-            AppDelegate.instance.disableVN()
+            AppDelegate.instance.setEnableVNState(false)
         }
     }
     
@@ -193,7 +192,7 @@ class MainMenu: NSObject, NSMenuDelegate {
         let selItem = sender.representedObject as! Int
         print("select: ", selItem)
         
-        AppDelegate.instance.setInputMethod(inputMethod: UInt8(selItem))
+        AppDelegate.instance.setInputMethodState(inputMethod: selItem)
         
         self.uncheckAllInputMethodMenuItem();
         sender.state = NSControl.StateValue.on

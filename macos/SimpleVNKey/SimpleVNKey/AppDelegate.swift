@@ -5,6 +5,7 @@
 //  Created by tamtt5 on 26/09/2022.
 //
 import SwiftUI
+import Combine
 
 struct Global {
     static var myEventSource: CGEventSource?;
@@ -24,7 +25,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let menu = MainMenu()
     
     var appPreference = SettingViewModel()
-    
 
     func getEngine() -> KBEngineWrapper {
         return kbEngine;
@@ -36,9 +36,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func setInputMethod(inputMethod: UInt8) {
         kbEngine.setInputMethod(inputMethod)
-        
-        appPreference.inputMethod = Int(inputMethod)
-        appPreference.saveSettings();
     }
     
     func getVNEnabled() -> Bool{
@@ -48,28 +45,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func enableVN() {
         self.kbEngine.resetBuffer()
         menu.setEnableVNMenuItem(enabled: true)
-        
-        appPreference.isVNEnabled = true;
-        appPreference.saveSettings();
     }
     
     func disableVN() {
         self.kbEngine.resetBuffer()
-
         menu.setEnableVNMenuItem(enabled: false)
-        
-        appPreference.isVNEnabled = false;
-        appPreference.saveSettings()
     }
     
-    func loadPreference() {
-        appPreference.loadSettings()
-        print("Load SimpleVNKey.isVNEnabled: ", appPreference.isVNEnabled)
-        print("Load SimpleVNKey.InputMethod: ", appPreference.inputMethod)
-        
-        appPreference.isVNEnabled ? enableVN() : disableVN()
-        setInputMethod(inputMethod: UInt8(appPreference.inputMethod))
+    func setEnableVNState(_ enabled: Bool) {
+        appPreference.isVNEnabled = enabled
     }
+    
+    func setInputMethodState(inputMethod: Int) {
+        appPreference.inputMethod = inputMethod
+    }
+    
     
     func setUpMenu() {
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -85,6 +75,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusBarItem.menu = menu.build(statusBarItem: statusBarItem)
         statusBarItem.menu?.delegate = menu;
     }
+    
+    
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         print("In AppDelegate")
@@ -92,7 +84,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         initCGEvent()
         
-        loadPreference()
         setUpMenu()
         
         startCFRunLoop()
@@ -150,6 +141,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+func checkHotKeyPressed(flag: CGEventFlags, actualKeyCode: Int64, appSetting: SettingViewModel) -> Bool {
+    if (flag.contains(CGEventFlags.maskControl) != appSetting.hotKeyControl) {
+        return false
+    }
+    if (flag.contains(CGEventFlags.maskAlternate) != appSetting.hotKeyOption) {
+        return false
+    }
+    if (flag.contains(CGEventFlags.maskCommand) != appSetting.hotKeyCommand) {
+        return false
+    }
+    if (flag.contains(CGEventFlags.maskShift) != appSetting.hotKeyShift) {
+        return false
+    }
+    
+    let expectedChar = String(Character.init(Unicode.Scalar
+                                .init(UInt8(appSetting.hotKeyCharacter))))
+                                .uppercased() // need convert to uppercase since CGKeyCode.init only search Upper char
+    let expectedKeyCode = CGKeyCode.init(character: expectedChar) ?? UInt16(VKKeyCode.KEY_EMPTY.rawValue)
+    print("expectedChar: ", expectedChar, expectedKeyCode)
+    if (actualKeyCode != expectedKeyCode) {
+        return false
+    }
+    
+    return true;
+}
+
 
 /**
  * CGEvent call back function
@@ -178,60 +195,59 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
                             || flag.contains(CGEventFlags.maskSecondaryFn)
         
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-        // HotKey: Check Control + Shift + Space
-        if (flag.contains(CGEventFlags.maskControl)
-            && flag.contains(CGEventFlags.maskShift)
-            && keyCode == VKKeyCode.KEY_SPACE.rawValue) {
-            
+        
+        if (checkHotKeyPressed(flag: flag, actualKeyCode: keyCode, appSetting: appDelegate.appPreference))
+        {
             if (appDelegate.getVNEnabled()) {
-                appDelegate.disableVN()
+                appDelegate.setEnableVNState(false)
             }
             else {
-                appDelegate.enableVN()
+                appDelegate.setEnableVNState(true)
             }
         }
-        
-        if (appDelegate.getVNEnabled()) {
-            var charCode = UniChar()
-            var length = 0
-            event.keyboardGetUnicodeString(maxStringLength: 1, actualStringLength: &length, unicodeString: &charCode)
-            
-            let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-            
-            let keystrokes = engine.process(charCode,
-                                        keycode: UInt16(keyCode),
-                                        shiftOrCapPressed: statusShiftCap,
-                                        otherControlPressed: otherControl)
-        
-            if (!keystrokes.isEmpty) {
-                // First send empty character to prevent error due to autocomplete of browser
-                sendDummyCharacter(proxy: proxy);
+        else {
+            if (appDelegate.getVNEnabled()) {
+                var charCode = UniChar()
+                var length = 0
+                event.keyboardGetUnicodeString(maxStringLength: 1, actualStringLength: &length, unicodeString: &charCode)
                 
-                for keystroke in keystrokes {
-                    let keyData = keystroke as? UInt32
-                    //print(keyData ?? "null")
-
-                    var eUp: CGEvent?
-                    var eDown: CGEvent?
-                    // Check unicode mask
-                    if ((keyData! & 0x00010000) == 0x00010000) {
-                        eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: 0x0032, keyDown: false)
-                        eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: 0x0032, keyDown: true)
-                        //print("keyData = ", UniChar(keyData! ^ 0x00010000))
-                        let tempChar = [UniChar(keyData! ^ 0x00010000)]
-                        eUp?.keyboardSetUnicodeString(stringLength: tempChar.count, unicodeString: tempChar)
-                        eDown?.keyboardSetUnicodeString(stringLength: tempChar.count, unicodeString: tempChar)
-                    }
-                    else {
-                        eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData!), keyDown: false)
-                        eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData!), keyDown: true)
-                    }
-                    eDown?.tapPostEvent(proxy)
-                    eUp?.tapPostEvent(proxy)
+                let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+                
+                let keystrokes = engine.process(charCode,
+                                            keycode: UInt16(keyCode),
+                                            shiftOrCapPressed: statusShiftCap,
+                                            otherControlPressed: otherControl)
+            
+                if (!keystrokes.isEmpty) {
+                    // First send empty character to prevent error due to autocomplete of browser
+                    sendDummyCharacter(proxy: proxy);
                     
+                    for keystroke in keystrokes {
+                        let keyData = keystroke as? UInt32
+                        //print(keyData ?? "null")
+
+                        var eUp: CGEvent?
+                        var eDown: CGEvent?
+                        // Check unicode mask
+                        if ((keyData! & 0x00010000) == 0x00010000) {
+                            eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: 0x0032, keyDown: false)
+                            eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: 0x0032, keyDown: true)
+                            //print("keyData = ", UniChar(keyData! ^ 0x00010000))
+                            let tempChar = [UniChar(keyData! ^ 0x00010000)]
+                            eUp?.keyboardSetUnicodeString(stringLength: tempChar.count, unicodeString: tempChar)
+                            eDown?.keyboardSetUnicodeString(stringLength: tempChar.count, unicodeString: tempChar)
+                        }
+                        else {
+                            eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData!), keyDown: false)
+                            eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData!), keyDown: true)
+                        }
+                        eDown?.tapPostEvent(proxy)
+                        eUp?.tapPostEvent(proxy)
+                        
+                    }
+                    
+                    return nil;
                 }
-                
-                return nil;
             }
         }
     }
