@@ -16,7 +16,7 @@ using namespace std;
 
 #define MASK_ORIGIN   0x0100    // 00000001 00000000
 #define MASK_ROOF     0x0200    // 00000010 00000000
-#define MASK_BOWLHOOK 0x0400    // 00000100 00000000
+#define MASK_HOOK     0x0400    // 00000100 00000000
 
 #define MASK_EXTRA_MARK   0x0100
 

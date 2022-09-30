@@ -18,12 +18,13 @@ using namespace std;
 enum RoofType {
     ORIGIN,
     ROOF, ROOF_A, ROOF_E, ROOF_O,
-    HOOK        // in the case 'a' this is indicate ă
+    HOOK,
+    BREVE
 };
 
 enum KeyEvent {
   RoofAll, RoofA, RoofE, RoofO,
-  HookAll, Bowl, HookO, HookU,
+  HookAll, Breve, HookO, HookU, // Breve is top of ă
   Dd,
   Tone0, Tone1, Tone2, Tone3, Tone4, Tone5,
   EscChar,
@@ -55,11 +56,12 @@ class kbengine {
     // output after processing
     vector<UInt32> _keyCodeOutput;
 
-    int _processMark(const UInt8 &keycode, const RoofType &roofType);
+    int _processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc);
     int _processD(const UInt8 &keycode);
-    int _processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromSpelling);
+    int _processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc);
     
-    int _correctSpelling(const UInt8 &keycode);
+    int _correctTone(const UInt8 &keycode);
+    int _correctMark(const UInt8 &keycode);
     
     void _processKeyCodeOutput(int numDelete, int startPos, int endPos);
     void _processBackSpacePressed();

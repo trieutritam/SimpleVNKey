@@ -48,7 +48,7 @@ static map<UInt16, int> InputMethodMapping[] = {
         {KEY_5, Tone5},
         {KEY_6, RoofAll},
         {KEY_7, HookAll},
-        {KEY_8, Bowl},
+        {KEY_8, Breve},
         {KEY_9, Dd},
         {KEY_ESC, EscChar},
         {0, Normal}
@@ -99,7 +99,7 @@ UInt32 _getCharacterCode(int codeTableIndex, const BufferEntry& entry ) {
     if (entry.roofType == ROOF)
         keyCode = keyCode | MASK_ROOF;
     else if (entry.roofType == HOOK)
-        keyCode = keyCode | MASK_BOWLHOOK;
+        keyCode = keyCode | MASK_HOOK;
     
     if (codeTable[codeTableIndex].find(keyCode) != codeTable[codeTableIndex].end()) {
         vector<UInt16> charList = codeTable[codeTableIndex][keyCode];
@@ -175,7 +175,7 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
     return curIdx;
 }
 
-int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType)
+int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc = false)
 {
     vector<UInt16> matchCombine;
     auto maskType = MASK_ORIGIN;
@@ -198,11 +198,22 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType)
             targetRoofType = RoofType::ROOF;
             expectedKey = KEY_O;
             break;
+        case BREVE: // only a have breve on top of it
+            maskType = MASK_HOOK;
+            targetRoofType = RoofType::HOOK;
+            expectedKey = KEY_A;
+            break;
         default:
             expectedKey = KEY_EMPTY;
             targetRoofType = roofType;
-            maskType = roofType == ROOF ? MASK_ROOF : (roofType == HOOK ? MASK_BOWLHOOK : MASK_ORIGIN);
+            maskType = roofType == ROOF ? MASK_ROOF : (roofType == HOOK ? MASK_HOOK :  MASK_ORIGIN);
             break;
+    }
+    
+    // in case of HOOK we have two expected case:
+    // if  a( or u+
+    if (roofType == HOOK) {
+        
     }
     
     int foundIdx = this->_findSyllable(matchCombine, maskType, expectedKey);
@@ -218,7 +229,6 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType)
         
         // ignore the first element since it is category of combine
         for (int i = 1; i < matchCombine.size(); i++) {
-            
             if (i == 1 || (matchCombine[i] & MASK_EXTRA_MARK) == MASK_EXTRA_MARK) {
                 int buffIndex = (i-1) + foundIdx;   // (i-1) since we ignore the first value of combine
                 if (this->_buffer[buffIndex].roofType == ORIGIN) {
@@ -229,7 +239,9 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType)
             }
         }
         
-        if (!canSetHook) {  // not set any hook, we reverse hook
+        // not set any hook, we reverse hook if this process is not from correct function
+        // in correct function we don't reverse hook
+        if (!canSetHook && !fromCorrectFunc) {
             for (int i = 1; i < matchCombine.size(); i++) {
                 if (i == 1 || (matchCombine[i] & MASK_EXTRA_MARK) == MASK_EXTRA_MARK) {
                     int buffIndex = (i-1) + foundIdx;   // (i-1) since we ignore the first value of combine
@@ -240,6 +252,13 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType)
             _addKeyCode(keycode, 0);
             endIdx ++;
         }
+        
+        LOG_DEBUG("Process Mark, Can set hook: %d, From Correct Func: %d", canSetHook, fromCorrectFunc);
+        LOG_DEBUG("Process Mark, numBackSpaces: %d, foundIdx: %d", numBackSpaces, foundIdx);
+
+        if (fromCorrectFunc)
+            numBackSpaces --;
+        
         this->_processKeyCodeOutput(numBackSpaces, foundIdx, endIdx);
     }
     else {
@@ -259,7 +278,7 @@ int kbengine::_processD(const UInt8 &keycode) {
         foundIdx = endIdx;
     }
     else {
-        foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_BOWLHOOK);
+        foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
     }
     
     if (foundIdx >= 0) {
@@ -287,10 +306,10 @@ int kbengine::_processD(const UInt8 &keycode) {
 /**
  * In the case of correct spelling tone, we need previousTonePosition to start from there
  */
-int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromSpelling = false)
+int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false)
 {
     vector<UInt16> syllableCombine;
-    int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_BOWLHOOK);
+    int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
     
     if (syllableCombine.size() >= 0) {
         // count vowel, ignore first element
@@ -341,7 +360,7 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
             int endIdx = this->_bufferSize;
             int numBackSpaces = (endIdx - tonePosition);
             // if not call from correctSpelling, we reverse tone
-            if (this->_buffer[tonePosition].tone == tone && !fromSpelling) {
+            if (this->_buffer[tonePosition].tone == tone && !fromCorrectFunc) {
                 this->_buffer[tonePosition].tone = KeyEvent::Tone0;
                 _addKeyCode(keycode, 0);
                 endIdx ++;
@@ -350,9 +369,10 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
                 this->_buffer[tonePosition].tone = tone;
             
 
+            LOG_DEBUG("Found tonePosition: %d", tonePosition);
             int previousTonePos = -1;
             for (int i = this->_bufferStartWordIdx; i < tonePosition; i++) {
-                LOG_DEBUG("Buff tone: %d, tone: %d", i, this->_buffer[i].tone);
+                LOG_DEBUG("Buff idx: %d, tone: %d", i, this->_buffer[i].tone);
                 if (this->_buffer[i].tone != KeyEvent::Tone0) {
                     this->_buffer[i].tone = KeyEvent::Tone0;
                     previousTonePos = i;
@@ -366,10 +386,11 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
                 numBackSpaces = (endIdx - previousTonePos);
             }
             
-            // call from spelling, decrease backspace
-            if (fromSpelling)
+            // call from correct function, decrease backspace
+            if (fromCorrectFunc)
                 numBackSpaces -= 1;
-
+            
+        
             LOG_DEBUG("tone Pos: %d , endIdx: %d", tonePosition, endIdx);
             LOG_DEBUG("Num Backspaces: %d", numBackSpaces);
             this->_processKeyCodeOutput(numBackSpaces, tonePosition, endIdx);
@@ -387,7 +408,7 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
  * - call _processToneTraditional or _processToneNew to reprocess tone
  * Notes: only call this func if new char is Vowel
  */
-int kbengine::_correctSpelling(const UInt8 &keycode)
+int kbengine::_correctTone(const UInt8 &keycode)
 {
 //    bool isVowel = IS_VOWEL(keycode);
 //    if (isVowel) {
@@ -414,9 +435,61 @@ int kbengine::_correctSpelling(const UInt8 &keycode)
     return 0;
 }
 
+// Only correct for the case uo
+int kbengine::_correctMark(const UInt8 &keycode)
+{
+    bool foundPreviousHook = false;
+    
+    for (int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
+        if (this->_buffer[i].roofType == RoofType::HOOK) {
+            foundPreviousHook = true;
+            break;
+        }
+    }
+    
+    LOG_DEBUG("Correct uo+ -> u+o+");
+    
+    int foundIdx = -1;
+    if (foundPreviousHook) {
+        vector<UInt16> matchCombine;
+        foundIdx = this->_findSyllable(matchCombine, MASK_HOOK, KEY_U);
+        
+        // only process if match uo and a <char>
+        if (matchCombine.size() >= 4) {
+            PRINT_VECTOR(matchCombine);
+            
+            int endIdx = this->_bufferSize;
+            int numBackSpaces = (endIdx - foundIdx) - 1;
+
+            bool canSetHook = false;
+            
+            // ignore the first element since it is category of combine
+            for (int i = 1; i < matchCombine.size(); i++) {
+                if (i == 1 || (matchCombine[i] & MASK_EXTRA_MARK) == MASK_EXTRA_MARK) {
+                    int buffIndex = (i-1) + foundIdx;   // (i-1) since we ignore the first value of combine
+                    if (this->_buffer[buffIndex].roofType == ORIGIN) {
+                        this->_buffer[buffIndex].roofType = RoofType::HOOK;
+                        
+                        canSetHook = true;
+                    }
+                }
+            }
+            
+            LOG_DEBUG("Can set hook: %d", canSetHook);
+            LOG_DEBUG("numBackSpaces: %d, foundIdx: %d", numBackSpaces, foundIdx);
+            
+            if (canSetHook)
+                this->_processKeyCodeOutput(numBackSpaces, foundIdx, endIdx);
+        }
+    }
+    
+    return foundIdx;
+}
+
 
 void kbengine::_processKeyCodeOutput(int numDelete, int startPos, int endPos)
 {
+    this->_keyCodeOutput.clear();
     // prepare keystroke to be sent
     for(int i = 0; i < numDelete; i ++)
         this->_keyCodeOutput.push_back(KEY_DELETE);
@@ -486,8 +559,10 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
                 actionResult = this->_processMark(keycode, RoofType::ROOF_E);
                 break;
             case HookAll:
-            case Bowl:
                 actionResult = this->_processMark(keycode, RoofType::HOOK);
+                break;
+            case Breve:
+                actionResult = this->_processMark(keycode, RoofType::BREVE);
                 break;
             case HookO:
             case HookU:
@@ -526,7 +601,8 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
     LOG_DEBUG("Character Printable: %d", printable);
     if (printable && !otherControl) {
         _addKeyCode(keycode, shiftCap);
-        _correctSpelling(keycode);
+        _correctTone(keycode);
+        _correctMark(keycode);
     }
     else {
         // Check delete key
