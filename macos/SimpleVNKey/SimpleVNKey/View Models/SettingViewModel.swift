@@ -76,7 +76,6 @@ class SettingViewModel: ObservableObject {
         $hotKeyCharacter.sink { val in
             self.processHotkey(appStoreKey: "SimpleVNKey.HotKeyCharacter", val: val)
         }.store(in: &cancellables)
-        
     }
     
     func processHotkey(appStoreKey: String, val: Published<Any>.Publisher.Output) -> Void {

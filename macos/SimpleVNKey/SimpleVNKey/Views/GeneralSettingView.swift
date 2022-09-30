@@ -41,8 +41,8 @@ struct GeneralSettingView: View {
                         
                         ZStack(alignment: .leading) {
                             Text(hotKeyCharDisplay)
-                                .frame(width: 70, alignment: .center)
-                                .padding(EdgeInsets.init(top: 3, leading: 20, bottom: 3, trailing: 0))
+                                .frame(width: 100, alignment: .leading)
+                                .padding(EdgeInsets.init(top: 3, leading: 35, bottom: 3, trailing: 0))
                             
                             TextField("", text: $hotKeyChar)
                                 .disableAutocorrection(true)
@@ -50,13 +50,14 @@ struct GeneralSettingView: View {
                                     if (newValue.count == 0) {
                                         return
                                     }
-                                    
+//
                                     if (newValue == " ") {
-                                        hotKeyCharDisplay = "SPACE"
+                                        hotKeyCharDisplay = String(localized: "Space")
                                     }
                                     else if (newValue.count > 0) {
                                         hotKeyCharDisplay = hotKeyChar.uppercased()
                                     }
+                                    
                                     
                                     let chars = Array(hotKeyChar)
                                     // set to VM state
@@ -68,8 +69,12 @@ struct GeneralSettingView: View {
                     }
                 }
             }.task {
+//                let hotkeyChar = Character.init(Unicode.Scalar.init(UInt8(appSettingVM.hotKeyCharacter)))
+//                let n = String(hotkeyChar).unicodeScalars.compactMap(\.properties.name).first
+//                hotKeyCharDisplay = n!.localizedUppercase
+                
                 let hotkeyChar = Character.init(Unicode.Scalar.init(UInt8(appSettingVM.hotKeyCharacter)))
-                hotKeyCharDisplay = (appSettingVM.hotKeyCharacter == 32) ? "SPACE" : String(hotkeyChar).uppercased()
+                hotKeyCharDisplay = (appSettingVM.hotKeyCharacter == 32) ? String(localized: "Space") : String(hotkeyChar).uppercased()
             }
         }.frame(width: 400)
             .padding()

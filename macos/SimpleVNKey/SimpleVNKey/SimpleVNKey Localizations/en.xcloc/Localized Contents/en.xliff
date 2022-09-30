@@ -92,6 +92,11 @@
         <target>Simple Telex</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
+      <trans-unit id="Space" xml:space="preserve">
+        <source>Space</source>
+        <target>Space</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
       <trans-unit id="Switch Input Method Hot Key" xml:space="preserve">
         <source>Switch Input Method Hot Key</source>
         <target>Switch Input Method Hot Key</target>

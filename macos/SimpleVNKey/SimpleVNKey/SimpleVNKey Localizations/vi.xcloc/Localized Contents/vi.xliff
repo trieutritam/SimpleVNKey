@@ -51,7 +51,7 @@
       </trans-unit>
       <trans-unit id="English" xml:space="preserve">
         <source>English</source>
-        <target>Tiếng Việt</target>
+        <target>Tiếng Anh</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="General" xml:space="preserve">
@@ -88,9 +88,14 @@
         <source>Simple Telex</source>
         <note>No comment provided by engineer.</note>
       </trans-unit>
+      <trans-unit id="Space" xml:space="preserve">
+        <source>Space</source>
+        <target>Dấu cách</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
       <trans-unit id="Switch Input Method Hot Key" xml:space="preserve">
         <source>Switch Input Method Hot Key</source>
-        <target>Phím nóng chuyển đổi chế độ gõ</target>
+        <target>Phím chuyển chế độ gõ</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="VNI" xml:space="preserve">

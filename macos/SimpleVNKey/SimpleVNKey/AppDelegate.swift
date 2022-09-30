@@ -60,6 +60,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         appPreference.inputMethod = inputMethod
     }
     
+    func updateSwitchHotkeyIndicator() {
+        let n = String(Character(Unicode.Scalar.init(appPreference.hotKeyCharacter)!))
+                .unicodeScalars.compactMap(\.properties.name).first
+        print("Update HotKey indicator", n!.localizedCapitalized)
+        
+        
+        menu.updateSwitchHotkeyIndicator(isCtrl: appPreference.hotKeyControl,
+                                         isOpt: appPreference.hotKeyOption,
+                                         isCmd: appPreference.hotKeyCommand,
+                                         isShift: appPreference.hotKeyShift,
+                                         hotKeyChar: appPreference.hotKeyCharacter)
+    }
     
     func setUpMenu() {
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -74,6 +86,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //        // Assign our custom menu to the status bar
         statusBarItem.menu = menu.build(statusBarItem: statusBarItem)
         statusBarItem.menu?.delegate = menu;
+        
+        updateSwitchHotkeyIndicator()
     }
     
     

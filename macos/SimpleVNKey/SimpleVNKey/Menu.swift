@@ -26,7 +26,8 @@ class MainMenu: NSObject, NSMenuDelegate {
         let subMenu = menu.item(withTag: 10)?.submenu;
         subMenu?.item(at: 0)?.state = AppDelegate.instance.getInputMethod() == 0 ? NSControl.StateValue.on : NSControl.StateValue.off
         subMenu?.item(at: 1)?.state = AppDelegate.instance.getInputMethod() == 1 ? NSControl.StateValue.on : NSControl.StateValue.off
-
+        
+        AppDelegate.instance.updateSwitchHotkeyIndicator()
     }
     
     func build(statusBarItem: NSStatusItem) -> NSMenu {
@@ -119,6 +120,40 @@ class MainMenu: NSObject, NSMenuDelegate {
         menu.addItem(quitMenuItem)
         
         return menu
+    }
+    
+    func updateSwitchHotkeyIndicator(isCtrl: Bool, isOpt: Bool, isCmd: Bool, isShift: Bool, hotKeyChar: UInt16) {
+        guard let char = Unicode.Scalar.init(hotKeyChar) else { return }
+        
+        enableVNItem!.keyEquivalent = String(Character.init(char))
+        
+        if isCtrl {
+            enableVNItem!.keyEquivalentModifierMask.insert(NSEvent.ModifierFlags.control)
+        }
+        else {
+            enableVNItem!.keyEquivalentModifierMask.remove(NSEvent.ModifierFlags.control)
+        }
+        
+        if isOpt {
+            enableVNItem!.keyEquivalentModifierMask.insert(NSEvent.ModifierFlags.option)
+        }
+        else {
+            enableVNItem!.keyEquivalentModifierMask.remove(NSEvent.ModifierFlags.option)
+        }
+        
+        if isCmd {
+            enableVNItem!.keyEquivalentModifierMask.insert(NSEvent.ModifierFlags.command)
+        }
+        else {
+            enableVNItem!.keyEquivalentModifierMask.remove(NSEvent.ModifierFlags.command)
+        }
+        
+        if isShift {
+            enableVNItem!.keyEquivalentModifierMask.insert(NSEvent.ModifierFlags.shift)
+        }
+        else {
+            enableVNItem!.keyEquivalentModifierMask.remove(NSEvent.ModifierFlags.shift)
+        }
     }
     
     func addInputMethodMenu(menu: NSMenu) {

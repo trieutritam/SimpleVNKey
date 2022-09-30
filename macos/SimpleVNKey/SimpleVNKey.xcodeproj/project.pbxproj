@@ -50,6 +50,8 @@
 		AF373E9228E576650092A0D0 /* GeneralSettingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralSettingView.swift; sourceTree = "<group>"; };
 		AF373E9428E5987F0092A0D0 /* CGKeyCodeInitializers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGKeyCodeInitializers.swift; sourceTree = "<group>"; };
 		AF373E9728E5ADA30092A0D0 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AF43045028E6A31800C99D7C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		AF43045228E6A3DB00C99D7C /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		AF5AFC6228E2027A00CE6D12 /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
 		AF5AFC6828E2106B00CE6D12 /* SimpleVNKey-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimpleVNKey-Bridging-Header.h"; sourceTree = "<group>"; };
 		AF5AFC6928E2106B00CE6D12 /* KBEngineWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KBEngineWrapper.h; sourceTree = "<group>"; };
@@ -113,6 +115,15 @@
 			path = platforms;
 			sourceTree = "<group>";
 		};
+		AF43044F28E6A31800C99D7C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AF43045228E6A3DB00C99D7C /* Carbon.framework */,
+				AF43045028E6A31800C99D7C /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AF5AFC6128E2025E00CE6D12 /* View Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -163,6 +174,7 @@
 				AFFB6AD828E1D26200229BDD /* SimpleVNKeyTests */,
 				AFFB6AE228E1D26200229BDD /* SimpleVNKeyUITests */,
 				AFFB6AC528E1D26100229BDD /* Products */,
+				AF43044F28E6A31800C99D7C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};

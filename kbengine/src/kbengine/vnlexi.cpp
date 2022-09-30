@@ -94,6 +94,9 @@ map<UInt8, vector<vector<UInt16>>> syllableTable = {
             {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_P },
             {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_T },
             {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_Y },
+            
+            // oe
+            {MASK_ORIGIN                            ,   KEY_O, KEY_E },
         }
     },
     {   KEY_U, {

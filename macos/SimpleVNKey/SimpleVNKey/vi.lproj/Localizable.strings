@@ -14,7 +14,7 @@
 "Enable Vietnamese" = "Bật tiếng Việt";
 
 /* No comment provided by engineer. */
-"English" = "Tiếng Việt";
+"English" = "Tiếng Anh";
 
 /* No comment provided by engineer. */
 "General" = "Cấu hình";
@@ -35,7 +35,10 @@
 "Quit SimpleVNKey" = "Thoát";
 
 /* No comment provided by engineer. */
-"Switch Input Method Hot Key" = "Phím nóng chuyển đổi chế độ gõ";
+"Space" = "Dấu cách";
+
+/* No comment provided by engineer. */
+"Switch Input Method Hot Key" = "Phím chuyển chế độ gõ";
 
 /* No comment provided by engineer. */
 "Version: " = "Phiên bản: ";
