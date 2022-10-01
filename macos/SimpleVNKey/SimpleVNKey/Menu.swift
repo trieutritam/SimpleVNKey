@@ -9,6 +9,20 @@ import Cocoa
 import SwiftUI
 
 
+let FxKeyCodeMapping = [
+    122 : NSF1FunctionKey,
+    120 : NSF2FunctionKey,
+    99  : NSF3FunctionKey,
+    118 : NSF4FunctionKey,
+    96  : NSF5FunctionKey,
+    97  : NSF6FunctionKey,
+    98  : NSF7FunctionKey,
+    100 : NSF8FunctionKey,
+    101 : NSF9FunctionKey,
+    109 : NSF10FunctionKey,
+    111 : NSF12FunctionKey,
+]
+
 class MainMenu: NSObject, NSMenuDelegate {
     
     // A new menu instance ready to add items to
@@ -123,9 +137,21 @@ class MainMenu: NSObject, NSMenuDelegate {
     }
     
     func updateSwitchHotkeyIndicator(isCtrl: Bool, isOpt: Bool, isCmd: Bool, isShift: Bool, hotKeyChar: UInt16) {
-        guard let char = Unicode.Scalar.init(hotKeyChar) else { return }
-        
-        enableVNItem!.keyEquivalent = String(Character.init(char))
+//        guard let char = Unicode.Scalar.init(hotKeyChar) else { return }
+//
+//        enableVNItem!.keyEquivalent = String(Character.init(char))
+        if let fxCode = FxKeyCodeMapping[Int(hotKeyChar)] {
+            let fxCharacter: Character = Character(UnicodeScalar(fxCode)!)
+
+            enableVNItem!.keyEquivalent = String(fxCharacter)
+        }
+        else {
+            guard let cgEvent = CGEvent.init(keyboardEventSource: nil, virtualKey: CGKeyCode(hotKeyChar), keyDown: true) else { return }
+            guard let event = NSEvent.init(cgEvent: cgEvent) else { return }
+            guard let chars = event.characters(byApplyingModifiers: .numericPad) else { return }
+            
+            enableVNItem!.keyEquivalent = String(Character(chars))
+        }
         
         if isCtrl {
             enableVNItem!.keyEquivalentModifierMask.insert(NSEvent.ModifierFlags.control)

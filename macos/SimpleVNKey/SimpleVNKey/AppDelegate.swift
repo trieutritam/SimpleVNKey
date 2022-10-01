@@ -61,9 +61,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func updateSwitchHotkeyIndicator() {
-        let n = String(Character(Unicode.Scalar.init(appPreference.hotKeyCharacter)!))
-                .unicodeScalars.compactMap(\.properties.name).first
-        print("Update HotKey indicator", n!.localizedCapitalized)
+//        let n = String(Character(Unicode.Scalar.init(appPreference.hotKeyCharacter)!))
+//                .unicodeScalars.compactMap(\.properties.name).first
+//        
+//        print("Update HotKey indicator", n!.localizedCapitalized)
         
         
         menu.updateSwitchHotkeyIndicator(isCtrl: appPreference.hotKeyControl,
@@ -169,11 +170,12 @@ func checkHotKeyPressed(flag: CGEventFlags, actualKeyCode: Int64, appSetting: Se
         return false
     }
     
-    let expectedChar = String(Character.init(Unicode.Scalar
-                                .init(UInt8(appSetting.hotKeyCharacter))))
-                                .uppercased() // need convert to uppercase since CGKeyCode.init only search Upper char
-    let expectedKeyCode = CGKeyCode.init(character: expectedChar) ?? UInt16(VKKeyCode.KEY_EMPTY.rawValue)
-    print("expectedChar: ", expectedChar, expectedKeyCode)
+//    let expectedChar = String(Character.init(Unicode.Scalar
+//                                .init(UInt8(appSetting.hotKeyCharacter))))
+//                                .uppercased() // need convert to uppercase since CGKeyCode.init only search Upper char
+//    let expectedKeyCode = CGKeyCode.init(character: expectedChar) ?? UInt16(VKKeyCode.KEY_EMPTY.rawValue)
+    let expectedKeyCode = appSetting.hotKeyCharacter
+    print("expectedCode: ", expectedKeyCode)
     if (actualKeyCode != expectedKeyCode) {
         return false
     }

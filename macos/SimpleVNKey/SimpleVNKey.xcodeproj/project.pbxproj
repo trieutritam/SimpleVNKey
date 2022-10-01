@@ -19,6 +19,7 @@
 		AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA3453428E467B500FAD0BD /* AboutView.swift */; };
 		AFEC3E4C28E1D36100A67F12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */; };
 		AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4D28E1D5E200A67F12 /* Menu.swift */; };
+		AFF88B5F28E8975B0082EC8F /* KeycodeCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF88B5E28E8975B0082EC8F /* KeycodeCaptureView.swift */; };
 		AFFB6AC828E1D26100229BDD /* SimpleVNKeyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB6AC728E1D26100229BDD /* SimpleVNKeyApp.swift */; };
 		AFFB6ACA28E1D26100229BDD /* PreferenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB6AC928E1D26100229BDD /* PreferenceView.swift */; };
 		AFFB6ACC28E1D26200229BDD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB6ACB28E1D26200229BDD /* Assets.xcassets */; };
@@ -69,6 +70,7 @@
 		AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AFEC3E4D28E1D5E200A67F12 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		AFEC3E5128E1D8DE00A67F12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AFF88B5E28E8975B0082EC8F /* KeycodeCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeycodeCaptureView.swift; sourceTree = "<group>"; };
 		AFFB6AC428E1D26100229BDD /* SimpleVNKey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleVNKey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFFB6AC728E1D26100229BDD /* SimpleVNKeyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleVNKeyApp.swift; sourceTree = "<group>"; };
 		AFFB6AC928E1D26100229BDD /* PreferenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceView.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				AF373E9228E576650092A0D0 /* GeneralSettingView.swift */,
 				AFFB6AC928E1D26100229BDD /* PreferenceView.swift */,
 				AFA3453428E467B500FAD0BD /* AboutView.swift */,
+				AFF88B5E28E8975B0082EC8F /* KeycodeCaptureView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				AF373E9528E5987F0092A0D0 /* CGKeyCodeInitializers.swift in Sources */,
 				AF5AFC7C28E2125B00CE6D12 /* vnlexi.cpp in Sources */,
 				AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */,
+				AFF88B5F28E8975B0082EC8F /* KeycodeCaptureView.swift in Sources */,
 				AFFB6ACA28E1D26100229BDD /* PreferenceView.swift in Sources */,
 				AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */,
 				AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */,
