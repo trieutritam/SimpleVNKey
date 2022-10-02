@@ -14,6 +14,8 @@ struct GeneralSettingView: View {
     @State private var hotKeyCharDisplay: String = ""
     @State private var hotkeyCode: UInt16 = UInt16.zero
     
+    @State private var text = ""
+    
     var body: some View {
         VStack(alignment: .leading) {
             Section() {
@@ -44,39 +46,9 @@ struct GeneralSettingView: View {
                             appSettingVM.hotKeyCharacter =  event.keyCode
                         })
                         .frame(width: 50, height: 22)
-//                        ZStack(alignment: .leading) {
-//                            Text(hotKeyCharDisplay)
-//                                .frame(width: 100, alignment: .leading)
-//                                .padding(EdgeInsets.init(top: 3, leading: 35, bottom: 3, trailing: 0))
-//                            TextField("", text: $hotKeyChar)
-//                                .disableAutocorrection(true)
-//                                .onChange(of: hotKeyChar, perform: { newValue in
-//                                    if (newValue.count == 0) {
-//                                        return
-//                                    }
-////
-//                                    if (newValue == " ") {
-//                                        hotKeyCharDisplay = String(localized: "Space")
-//                                    }
-//                                    else if (newValue.count > 0) {
-//                                        hotKeyCharDisplay = hotKeyChar.uppercased()
-//                                    }
-//
-//
-//                                    let chars = Array(hotKeyChar)
-//                                    // set to VM state
-//                                    appSettingVM.hotKeyCharacter =  (chars.count > 0) ? UInt16(chars[0].asciiValue ?? 0) : 0
-//
-//                                    hotKeyChar = ""
-//                                }).frame(width: 30).labelsHidden()
-//                        }
                     }
                 }
             }.task {
-//                let hotkeyChar = Character.init(Unicode.Scalar.init(UInt8(appSettingVM.hotKeyCharacter)))
-//                let n = String(hotkeyChar).unicodeScalars.compactMap(\.properties.name).first
-//                hotKeyCharDisplay = n!.localizedUppercase
-                
                 let hotkeyChar = Character.init(Unicode.Scalar.init(UInt8(appSettingVM.hotKeyCharacter)))
                 hotKeyCharDisplay = (appSettingVM.hotKeyCharacter == 32) ? String(localized: "Space") : String(hotkeyChar).uppercased()
             }
