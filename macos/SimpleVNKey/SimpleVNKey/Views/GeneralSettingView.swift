@@ -45,7 +45,7 @@ struct GeneralSettingView: View {
                             print ("Pressed: " , event.keyCode)
                             appSettingVM.hotKeyCharacter =  event.keyCode
                         })
-                        .frame(width: 50, height: 22)
+                        .frame(width: 80, height: 26)
                     }
                 }
             }.task {

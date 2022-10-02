@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Cocoa
 
 protocol KeycodeFieldDelegate {
     func handleKeyDown(event: NSEvent)
@@ -79,6 +80,15 @@ class KeycodeField: NSTextView {
             delegate.handleKeyDown(event: event)
         }
     }
+
+    override var focusRingMaskBounds: NSRect {
+        return bounds
+    }
+    
+    override func drawFocusRingMask() {
+        let rect = bounds;
+        rect.fill()
+    }
 }
 
 struct KeycodeCaptureView: NSViewRepresentable {
@@ -91,8 +101,9 @@ struct KeycodeCaptureView: NSViewRepresentable {
         textField.minSize = NSSize(width: 30, height: 22)
         textField.textContainerInset = NSSize(width: 2, height: 4)
         textField.keycodeDelegate = self
-        textField.font = textField.font?.withSize(NSFont.systemFontSize)
+        textField.font = textField.font?.withSize(16)
         textField.alignment = NSTextAlignment.center
+        textField.isEditable = false
         
         return textField
     }
