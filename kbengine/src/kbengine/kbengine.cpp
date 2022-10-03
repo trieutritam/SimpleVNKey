@@ -210,12 +210,6 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
             break;
     }
     
-    // in case of HOOK we have two expected case:
-    // if  a( or u+
-    if (roofType == HOOK) {
-        
-    }
-    
     int foundIdx = this->_findSyllable(matchCombine, maskType, expectedKey);
 
     if (matchCombine.size() >= 0) {
@@ -231,7 +225,7 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
         for (int i = 1; i < matchCombine.size(); i++) {
             if (i == 1 || (matchCombine[i] & MASK_EXTRA_MARK) == MASK_EXTRA_MARK) {
                 int buffIndex = (i-1) + foundIdx;   // (i-1) since we ignore the first value of combine
-                if (this->_buffer[buffIndex].roofType == ORIGIN) {
+                if (this->_buffer[buffIndex].roofType != targetRoofType) {
                     this->_buffer[buffIndex].roofType = targetRoofType;
                     
                     canSetHook = true;
