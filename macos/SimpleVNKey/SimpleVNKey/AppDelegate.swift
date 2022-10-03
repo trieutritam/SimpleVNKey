@@ -14,6 +14,9 @@ struct Global {
 class AppDelegate: NSObject, NSApplicationDelegate {
     static private(set) var instance: AppDelegate!
     
+    private var aboutBoxWindowController: NSWindowController?
+
+    
     private var kbEngine = KBEngineWrapper();
     
     private var eventTap: CFMachPort?;
@@ -96,6 +99,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setUpMenu()
         
         startCFRunLoop()
+    }
+    
+    func showAboutDialog() {
+        if (aboutBoxWindowController == nil) {
+            let styleMask: NSWindow.StyleMask = [.closable, .miniaturizable,/* .resizable,*/ .titled]
+            let window = NSWindow()
+            window.styleMask = styleMask
+            window.title = String(localized: "About") + " " + (Bundle.main.appName)
+            window.contentView = NSHostingView(rootView: AboutView())
+            window.center()
+            aboutBoxWindowController = NSWindowController(window: window)
+        }
+        
+        aboutBoxWindowController?.showWindow(aboutBoxWindowController?.window)
     }
     
     @objc func togglePopover() {

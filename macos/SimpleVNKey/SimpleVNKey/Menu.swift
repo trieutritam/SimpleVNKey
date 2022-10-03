@@ -234,7 +234,8 @@ class MainMenu: NSObject, NSMenuDelegate {
     
     @objc func about(sender: NSMenuItem) {
         NSApp.activate(ignoringOtherApps: true)
-        NSApp.orderFrontStandardAboutPanel()
+        //NSApp.orderFrontStandardAboutPanel()
+        AppDelegate.instance.showAboutDialog()
     }
     
     @objc func toggleVNMode(sender: NSMenuItem) {

@@ -20,22 +20,26 @@ struct GeneralSettingView: View {
         VStack(alignment: .leading) {
             Section() {
                 Form {
-                    Picker("Input Mode", selection: $appSettingVM.isVNEnabled) {
-                        Text("Vietnamese").tag(true)
-                        Text("English").tag(false)
-                    }.frame(width: 200)
+                    Toggle("Enable Vietnamese",
+                           isOn: $appSettingVM.isVNEnabled)
+                    .toggleStyle(.switch)
                     
+//                    Picker("Input Mode", selection: $appSettingVM.isVNEnabled) {
+//                        Text("Vietnamese").tag(true)
+//                        Text("ABC").tag(false)
+//                    }
+//                    .pickerStyle(RadioGroupPickerStyle())
+//                    .frame(width: 200)
                     Picker(selection: $appSettingVM.inputMethod,
                            label: Text("Input Method")) {
                         Text("VNI").tag(0)
                         Text("Simple Telex").tag(1)
-                    }.pickerStyle(RadioGroupPickerStyle())
-                        .horizontalRadioGroupLayout()
+                    }.horizontalRadioGroupLayout()
                 }
             }
             Divider()
             Section("Switch Input Method Hot Key") {
-                Form {
+                GroupBox() {
                     HStack(spacing: 20) {
                         Toggle("Ctrl", isOn: $appSettingVM.hotKeyControl)
                         Toggle("⌥ Alt", isOn: $appSettingVM.hotKeyOption)
@@ -45,7 +49,7 @@ struct GeneralSettingView: View {
                             print ("Pressed: " , event.keyCode)
                             appSettingVM.hotKeyCharacter =  event.keyCode
                         })
-                        .frame(width: 80, height: 26)
+                        .frame(width: .infinity, height: 26)
                     }
                 }
             }.task {

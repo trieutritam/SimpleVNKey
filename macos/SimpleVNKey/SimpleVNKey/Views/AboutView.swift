@@ -25,11 +25,9 @@ struct AboutView: View {
             Image("AppLogo")
                 .padding()
             VStack(alignment: .leading) {
-                Text(Bundle.main.infoDictionary!["CFBundleName"] as! String)
-                    .bold()
-                Text(String(localized: "Version: ") + (Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String))
-                let author = Bundle.main.object(forInfoDictionaryKey: "Author") as! String
-                Text(String(localized: "Author: ") + author)
+                Text(Bundle.main.appName).bold()
+                Text(String(localized: "Version: ") + (Bundle.main.appVersionLong))
+                Text(String(localized: "Author: ") + Bundle.main.copyright)
             }.padding()
         }
         .frame(minWidth: 300, minHeight: 100, alignment: .topLeading)
