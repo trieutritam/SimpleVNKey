@@ -56,9 +56,9 @@ class kbengine {
     // output after processing
     vector<UInt32> _keyCodeOutput;
 
-    int _processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc);
+    int _processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc = false);
     int _processD(const UInt8 &keycode);
-    int _processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc);
+    int _processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false);
     
     int _correctTone(const UInt8 &keycode);
     int _correctMark(const UInt8 &keycode);
@@ -68,7 +68,7 @@ class kbengine {
     void _startNewWord();
     void _addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap);
     
-    int _findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expectedType, const UInt16 &expectedKey);
+    int _findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY);
 public:
 	kbengine();
 	virtual ~kbengine();

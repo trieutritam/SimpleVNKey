@@ -125,7 +125,7 @@ kbengine::~kbengine()
     // TODO Auto-generated destructor stub
 }
 
-int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY)
+int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expectedType, const UInt16 &expectedKey)
 {
     int endIdx = this->_bufferSize;
     int curIdx = this->_bufferStartWordIdx;
@@ -175,7 +175,7 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
     return curIdx;
 }
 
-int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc = false)
+int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc)
 {
     vector<UInt16> matchCombine;
     auto maskType = MASK_ORIGIN;
@@ -300,7 +300,7 @@ int kbengine::_processD(const UInt8 &keycode) {
 /**
  * In the case of correct spelling tone, we need previousTonePosition to start from there
  */
-int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false)
+int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc)
 {
     vector<UInt16> syllableCombine;
     int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
