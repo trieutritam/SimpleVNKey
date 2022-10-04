@@ -1,0 +1,10 @@
+{
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "cmake.debugConfig":
+    {
+        "stopAtEntry": true,       
+        "args": [], 
+        "MIMode": "gdb",
+        "externalConsole": false,
+    }
+}
