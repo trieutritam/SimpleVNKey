@@ -15,6 +15,8 @@ using namespace std;
 
 #define MAX_BUFF 32
 
+#define UNICODE_MASK 0x00010000
+
 enum RoofType {
     ORIGIN,
     ROOF, ROOF_A, ROOF_E, ROOF_O,

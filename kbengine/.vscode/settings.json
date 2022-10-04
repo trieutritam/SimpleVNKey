@@ -6,5 +6,11 @@
         "args": [], 
         "MIMode": "gdb",
         "externalConsole": false,
+    },
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+      "*.gas": "javascript",
+      "*.gs": "javascript",
+      "map": "cpp"
     }
 }

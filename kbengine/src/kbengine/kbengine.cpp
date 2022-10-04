@@ -17,7 +17,6 @@ using namespace std;
 
 #define ACTION_NOT_PROCESSED(ret) (ret < 0)
 #define ACTION_PROCESSED(ret) (ret >= 0)
-#define UNICODE_MASK 0x00010000
 
 enum InputMethodType {
     VNI,

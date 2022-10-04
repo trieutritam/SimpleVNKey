@@ -5,31 +5,28 @@ project(kbengine VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-include(CTest)
-enable_testing()
-
 add_subdirectory(src)
-# list(APPEND SOURCES src
-#     # ${CMAKE_CURRENT_LIST_DIR}/kbengine-test.cpp
-#     # ${CMAKE_CURRENT_LIST_DIR}/kbengine/kbengine.cpp
-#     # ${CMAKE_CURRENT_LIST_DIR}/kbengine/vnlexi.cpp
-# )
-# list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/src")
 
-
-# # include(src/CMakeLists.txt)
-
+# Built the kbengine-test file
 add_executable(kbengine_test src/kbengine-test.cpp)
 target_link_libraries(kbengine_test PUBLIC kbengine)
+install(TARGETS kbengine_test DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
+# End build kbengine-test
 
-# # add the binary tree to the search path for include files
-# # so that we will find TutorialConfig.h
-# target_include_directories(kbengine PUBLIC
-#                            "${PROJECT_BINARY_DIR}"
-#                            ${EXTRA_INCLUDES}
-#                            )
+target_include_directories(kbengine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
+
+# GoogleTest Primer
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG release-1.12.1
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
