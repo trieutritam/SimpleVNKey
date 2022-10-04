@@ -14,7 +14,7 @@ install(DIRECTORY  ${CMAKE_CURRENT_LIST_DIR}/kbengine DESTINATION ${CMAKE_CURREN
 
 #Test
 
-add_executable(test_main test/test-main.cc)
+add_executable(test_main test/test-main.cc test/test-telex.cc)
 target_link_libraries(
   test_main
   GTest::gtest_main

@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-
 #include "fixture/kbengine-test.cc"
 
 TEST_F(KbEngineTest, TestKeyStroke_Input_viet65) {

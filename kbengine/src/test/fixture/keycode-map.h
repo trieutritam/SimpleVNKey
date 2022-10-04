@@ -2,6 +2,9 @@
 #include <map>
 using namespace std;
 
+#ifndef TEST_KEYCODE_MAP_H_
+#define TEST_KEYCODE_MAP_H_
+
 map<UInt16, UInt16> charToKeyCode = {
   { 'A', KEY_A },
   { 'B', KEY_B },
@@ -38,5 +41,9 @@ map<UInt16, UInt16> charToKeyCode = {
   { '7', KEY_7 },
   { '8', KEY_8 },
   { '9', KEY_9 },
-  { '0', KEY_0 }
+  { '0', KEY_0 },
+  { '[', KEY_LEFT_BRACKET },
+  { ']', KEY_RIGHT_BRACKET }
 };
+
+#endif // TEST_KEYCODE_MAP_H_

@@ -396,6 +396,42 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
     return foundIdx;
 }
 
+// This handle hook O/U, specialize for Telex
+int kbengine::_processHookOU(const UInt8 &keycode, const UInt16 &expectedKey)
+{
+    LOG_DEBUG("_processHookOU, keycode: %d, buffSize: %d", keycode, this->_bufferSize);
+    int foundIdx = this->_bufferSize;
+    int endIdx = this->_bufferSize;
+    int numBackSpaces = 0;
+    
+    // find previous char have keycode or not
+    
+    if (this->_bufferSize > 0) {
+        int curIndex = this->_bufferSize - 1;
+        BufferEntry bufferEntry = this->_buffer[curIndex];
+        
+        LOG_DEBUG("Previous code: %d", bufferEntry.keyCode);
+        
+        // if previous already have u+/o+, we need to remove it and replace with  ']' or '['
+        if (bufferEntry.keyCode == expectedKey && bufferEntry.roofType == RoofType::HOOK) {
+            this->_buffer[curIndex].keyCode = keycode;
+            this->_buffer[curIndex].roofType = RoofType::ORIGIN;
+            numBackSpaces = 1;
+            foundIdx = curIndex;
+        }
+    }
+    
+    if (numBackSpaces == 0) {
+        this->_addKeyCode(expectedKey, 0);
+        this->_buffer[this->_bufferSize-1].roofType = RoofType::HOOK;
+        endIdx ++;
+    }
+    LOG_DEBUG("Num backspace: %d, foundIdx: %d, endIdx: %d", numBackSpaces, foundIdx, endIdx);
+    this->_processKeyCodeOutput(numBackSpaces, foundIdx, endIdx);
+    
+    return foundIdx;
+}
+
 /*
  * - get the tone of last word.
  * - call _processToneTraditional or _processToneNew to reprocess tone
@@ -530,14 +566,15 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
     
     LOG_DEBUG("KeyCode: %d - charCode: %c, shiftCap: %d, otherControl: %d ", keycode, UInt8(charCode), shiftCap, otherControl);
 
-    
     auto action = InputMethodMapping[this->_currentInputMethod].find(keycode);
     
     KeyEvent result = Normal;
     int actionResult = -1;
-    if (shiftCap == 0 && !otherControl && action != InputMethodMapping[_currentInputMethod].end() && this->_bufferSize > 0)
+    if (shiftCap == 0 && !otherControl && action != InputMethodMapping[_currentInputMethod].end()) // && this->_bufferSize > 0)
     {
         result = (KeyEvent) action->second;
+        LOG_DEBUG("Action: %d", result);
+        
         switch (result) {
             case RoofAll:
                 actionResult = this->_processMark(keycode, RoofType::ROOF);
@@ -558,8 +595,10 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
                 actionResult = this->_processMark(keycode, RoofType::BREVE);
                 break;
             case HookO:
+                actionResult = this->_processHookOU(keycode, KEY_O);
+                break;
             case HookU:
-                LOG_DEBUG("Process HookO, hookU in Telex");
+                actionResult = this->_processHookOU(keycode, KEY_U);
                 break;
             case Dd:
                 actionResult = this->_processD(keycode);

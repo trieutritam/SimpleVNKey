@@ -61,6 +61,7 @@ class kbengine {
     int _processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc = false);
     int _processD(const UInt8 &keycode);
     int _processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false);
+    int _processHookOU(const UInt8 &keycode, const UInt16 &expectedKey);
     
     int _correctTone(const UInt8 &keycode);
     int _correctMark(const UInt8 &keycode);
