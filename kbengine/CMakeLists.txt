@@ -5,15 +5,18 @@ project(kbengine VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+include(CTest)
+enable_testing()
+
 add_subdirectory(src)
 
-# Built the kbengine-test file
-add_executable(kbengine_test src/kbengine-test.cpp)
-target_link_libraries(kbengine_test PUBLIC kbengine)
-install(TARGETS kbengine_test DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
-# End build kbengine-test
+# # Built the kbengine-test file
+# add_executable(kbengine_test src/kbengine-test.cpp)
+# target_link_libraries(kbengine_test PUBLIC kbengine)
+# install(TARGETS kbengine_test DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
+# # End build kbengine-test
 
-target_include_directories(kbengine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+# target_include_directories(kbengine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

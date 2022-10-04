@@ -13,7 +13,6 @@ install(DIRECTORY  ${CMAKE_CURRENT_LIST_DIR}/kbengine DESTINATION ${CMAKE_CURREN
 
 
 #Test
-enable_testing()
 
 add_executable(test_main test/test-main.cc)
 target_link_libraries(
@@ -22,7 +21,7 @@ target_link_libraries(
   kbengine
 )
 
-target_include_directories(test_main PUBLIC ${CMAKE_CURRENT_LIST_DIR}/../include)
+target_include_directories(test_main PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 include(GoogleTest)
 gtest_discover_tests(test_main)
