@@ -15,6 +15,7 @@
 		AF5AFC7C28E2125B00CE6D12 /* vnlexi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7528E2125B00CE6D12 /* vnlexi.cpp */; };
 		AF5AFC7D28E2125B00CE6D12 /* kbengine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */; };
 		AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7F28E217BC00CE6D12 /* Common.swift */; };
+		AF7680C828ED8E3F00B7A14A /* Yaml in Frameworks */ = {isa = PBXBuildFile; productRef = AF7680C728ED8E3F00B7A14A /* Yaml */; };
 		AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */; };
 		AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA3453428E467B500FAD0BD /* AboutView.swift */; };
 		AFADA70928EAD4B5006B435D /* BundleExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFADA70828EAD4B5006B435D /* BundleExt.swift */; };
@@ -91,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF7680C828ED8E3F00B7A14A /* Yaml in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +259,9 @@
 			dependencies = (
 			);
 			name = SimpleVNKey;
+			packageProductDependencies = (
+				AF7680C728ED8E3F00B7A14A /* Yaml */,
+			);
 			productName = SimpleVNKey;
 			productReference = AFFB6AC428E1D26100229BDD /* SimpleVNKey.app */;
 			productType = "com.apple.product-type.application";
@@ -331,6 +336,9 @@
 				vi,
 			);
 			mainGroup = AFFB6ABB28E1D26100229BDD;
+			packageReferences = (
+				AF7680C628ED8E3F00B7A14A /* XCRemoteSwiftPackageReference "YamlSwift" */,
+			);
 			productRefGroup = AFFB6AC528E1D26100229BDD /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -734,6 +742,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AF7680C628ED8E3F00B7A14A /* XCRemoteSwiftPackageReference "YamlSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/behrang/YamlSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AF7680C728ED8E3F00B7A14A /* Yaml */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF7680C628ED8E3F00B7A14A /* XCRemoteSwiftPackageReference "YamlSwift" */;
+			productName = Yaml;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AFFB6ABC28E1D26100229BDD /* Project object */;
 }

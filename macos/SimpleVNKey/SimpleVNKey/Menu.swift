@@ -23,6 +23,11 @@ let FxKeyCodeMapping = [
     111 : NSF12FunctionKey,
 ]
 
+enum MenuTag : Int {
+    case InputMethodMenu = 100
+    case CharacterEncodingMenu = 200
+}
+
 class MainMenu: NSObject, NSMenuDelegate {
     
     // A new menu instance ready to add items to
@@ -32,6 +37,8 @@ class MainMenu: NSObject, NSMenuDelegate {
     private var statusBarItem: NSStatusItem?
     
     private var enableVNItem: NSMenuItem?
+    
+    private var characterEncodingMenu: NSMenu?
     
     func menuWillOpen(_ menu: NSMenu) {
         
@@ -79,8 +86,11 @@ class MainMenu: NSObject, NSMenuDelegate {
         
         enableVNItem!.target = self
         menu.addItem(enableVNItem!)
-        
+                
         self.addInputMethodMenu(menu: menu)
+        
+        self.addCharacterEncodingMenu(menu: menu)
+
         
         // Adding a seperator
         menu.addItem(NSMenuItem.separator())
@@ -191,6 +201,25 @@ class MainMenu: NSObject, NSMenuDelegate {
         }
     }
     
+    func addCharacterEncodingMenu(menu: NSMenu) {
+        characterEncodingMenu = NSMenu()
+        
+        // Unicode
+        let unicodeMenu = NSMenuItem(title: String(localized: "Unicode"), action: #selector(selectCharacterEncoding), keyEquivalent: "")
+        unicodeMenu.representedObject = CharacterEncoding.Unicode
+        unicodeMenu.target = self
+        
+        characterEncodingMenu?.addItem(unicodeMenu)
+        
+        //TODO: add another character encoding based on file config
+        
+        let charEncodingMenu = NSMenuItem(title: String(localized: "Character Encoding"), action: nil, keyEquivalent: "")
+        charEncodingMenu.submenu = characterEncodingMenu
+        charEncodingMenu.target = self
+        charEncodingMenu.tag = MenuTag.CharacterEncodingMenu.rawValue
+        menu.addItem(charEncodingMenu)
+    }
+    
     func addInputMethodMenu(menu: NSMenu) {
         // VNI Menu
         let inputVNI = NSMenuItem(title: String(localized: "VNI"), action: #selector(selectInputSource), keyEquivalent: "")
@@ -214,7 +243,7 @@ class MainMenu: NSObject, NSMenuDelegate {
         let inputMethodItem = NSMenuItem(title: String(localized: "Input Methods"), action: nil, keyEquivalent: "")
         inputMethodItem.submenu = inputMethodMenu
         inputMethodItem.target = self
-        inputMethodItem.tag = 10
+        inputMethodItem.tag = MenuTag.InputMethodMenu.rawValue
         menu.addItem(inputMethodItem)
     }
     
@@ -276,6 +305,12 @@ class MainMenu: NSObject, NSMenuDelegate {
 //        NSApp.mainWindow?.display()
 //        NSApp.sendAction(Selector(("showMainWindows:")), to: nil, from: nil)
         //NSApp.activate(ignoringOtherApps: true)
+    }
+    
+    @objc func selectCharacterEncoding(sender: NSMenuItem) {
+        let selItem = sender.representedObject as! Int
+
+        print("Select Character Encoding: ", selItem)
     }
     
     // The selector that quits the app
