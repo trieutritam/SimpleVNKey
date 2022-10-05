@@ -37,9 +37,18 @@ class MainMenu: NSObject, NSMenuDelegate {
         
         menu.item(at: 0)?.state = AppDelegate.instance.getVNEnabled() ? NSControl.StateValue.on : NSControl.StateValue.off
         
+        // Input Method menu items
         let subMenu = menu.item(withTag: 10)?.submenu;
-        subMenu?.item(at: 0)?.state = AppDelegate.instance.getInputMethod() == 0 ? NSControl.StateValue.on : NSControl.StateValue.off
-        subMenu?.item(at: 1)?.state = AppDelegate.instance.getInputMethod() == 1 ? NSControl.StateValue.on : NSControl.StateValue.off
+        if (subMenu != nil) {
+            let items = subMenu!.items
+            for item in items {
+                let active = Int(AppDelegate.instance.getInputMethod()) == item.representedObject as! Int;
+                item.state = active ? NSControl.StateValue.on : NSControl.StateValue.off
+            }
+        }
+//        subMenu?.item(at: 0)?.state = AppDelegate.instance.getInputMethod() == 0 ? NSControl.StateValue.on : NSControl.StateValue.off
+//        subMenu?.item(at: 1)?.state = AppDelegate.instance.getInputMethod() == 1 ? NSControl.StateValue.on : NSControl.StateValue.off
+//        subMenu?.item(at: 2)?.state = AppDelegate.instance.getInputMethod() == 1 ? NSControl.StateValue.on : NSControl.StateValue.off
         
         AppDelegate.instance.updateSwitchHotkeyIndicator()
     }
@@ -187,15 +196,19 @@ class MainMenu: NSObject, NSMenuDelegate {
         let inputVNI = NSMenuItem(title: String(localized: "VNI"), action: #selector(selectInputSource), keyEquivalent: "")
         inputVNI.representedObject = InputMethod.VNI.rawValue
         inputVNI.target = self
-//        inputVNI.state = curInput == InputMethod.VNI.rawValue ? NSControl.StateValue.on : NSControl.StateValue.off
         
         // Simple Telex
-        let inputTelex = NSMenuItem(title: String(localized: "Simple Telex"), action: #selector(selectInputSource), keyEquivalent: "")
-        inputTelex.representedObject = InputMethod.SIMPLE_TELEX.rawValue
+        let inputSimpleTelex = NSMenuItem(title: String(localized: "Simple Telex"), action: #selector(selectInputSource), keyEquivalent: "")
+        inputSimpleTelex.representedObject = InputMethod.SIMPLE_TELEX.rawValue
+        inputSimpleTelex.target = self
+        
+        // Telex
+        let inputTelex = NSMenuItem(title: String(localized: "Telex"), action: #selector(selectInputSource), keyEquivalent: "")
+        inputTelex.representedObject = InputMethod.TELEX.rawValue
         inputTelex.target = self
-//        inputTelex.state = curInput == InputMethod.SIMPLE_TELEX.rawValue ? NSControl.StateValue.on : NSControl.StateValue.off
         
         inputMethodMenu.addItem(inputVNI)
+        inputMethodMenu.addItem(inputSimpleTelex)
         inputMethodMenu.addItem(inputTelex)
         
         let inputMethodItem = NSMenuItem(title: String(localized: "Input Methods"), action: nil, keyEquivalent: "")

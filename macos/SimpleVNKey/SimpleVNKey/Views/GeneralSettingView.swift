@@ -24,16 +24,11 @@ struct GeneralSettingView: View {
                            isOn: $appSettingVM.isVNEnabled)
                     .toggleStyle(.switch)
                     
-//                    Picker("Input Mode", selection: $appSettingVM.isVNEnabled) {
-//                        Text("Vietnamese").tag(true)
-//                        Text("ABC").tag(false)
-//                    }
-//                    .pickerStyle(RadioGroupPickerStyle())
-//                    .frame(width: 200)
                     Picker(selection: $appSettingVM.inputMethod,
                            label: Text("Input Method")) {
                         Text("VNI").tag(0)
                         Text("Simple Telex").tag(1)
+                        Text("Telex").tag(2)
                     }.horizontalRadioGroupLayout()
                 }
             }
@@ -49,8 +44,8 @@ struct GeneralSettingView: View {
                             print ("Pressed: " , event.keyCode)
                             appSettingVM.hotKeyCharacter =  event.keyCode
                         })
-                        .frame(width: .infinity, height: 26)
-                    }
+                        .frame(width: 90, height: 26)
+                    }.frame(width: .infinity, alignment: .center)
                 }
             }.task {
                 let hotkeyChar = Character.init(Unicode.Scalar.init(UInt8(appSettingVM.hotKeyCharacter)))

@@ -96,6 +96,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         initCGEvent()
         
+        appPreference.loadSettings();
+        
         setUpMenu()
         
         startCFRunLoop()

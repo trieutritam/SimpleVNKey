@@ -13,16 +13,17 @@ class SettingViewModel: ObservableObject {
     @Published var inputMethod = 0;
     @Published var isVNEnabled = false;
     
-    @Published var hotKeyControl = true;
-    @Published var hotKeyOption = false;
-    @Published var hotKeyCommand = false;
-    @Published var hotKeyShift = true;
-    @Published var hotKeyCharacter = UInt16(32) // Space
+    @Published var hotKeyControl = true
+    @Published var hotKeyOption = false
+    @Published var hotKeyCommand = false
+    @Published var hotKeyShift = true
+    @Published var hotKeyCharacter = UInt16(VKKeyCode.KEY_0.rawValue)
     
     private var cancellables = Set<AnyCancellable>()
     
     
     func loadSettings() {
+        print("Load Settings")
         isVNEnabled = (UserDefaults.standard.value(forKey: "SimpleVNKey.Enabled") ?? false) as! Bool
         inputMethod = (UserDefaults.standard.value(forKey: "SimpleVNKey.InputMethod") ?? 0) as! Int
         
@@ -31,11 +32,15 @@ class SettingViewModel: ObservableObject {
         hotKeyOption = (UserDefaults.standard.value(forKey: "SimpleVNKey.HotKeyOption")      ?? false) as! Bool
         hotKeyCommand = (UserDefaults.standard.value(forKey: "SimpleVNKey.HotKeyCommand")    ?? false) as! Bool
         hotKeyShift = (UserDefaults.standard.value(forKey: "SimpleVNKey.HotKeyShift")        ?? true) as! Bool
-        hotKeyCharacter = UInt16((UserDefaults.standard.value(forKey: "SimpleVNKey.HotKeyCharacter") ?? UInt16(32)) as! Int)
+        hotKeyCharacter = (UserDefaults.standard.value(forKey: "SimpleVNKey.HotKeyCharacter") ?? VKKeyCode.KEY_SPACE.rawValue) as! UInt16
         
         print("Load SimpleVNKey.isVNEnabled: ", isVNEnabled)
         print("Load SimpleVNKey.InputMethod: ", inputMethod)
         print("Load SimpleVNKey.HotKey: ", hotKeyControl, hotKeyOption, hotKeyCommand, hotKeyShift, hotKeyCharacter)
+        
+        guard let appDelegate = AppDelegate.instance else { return }
+        isVNEnabled ? appDelegate.enableVN() : appDelegate.disableVN()
+        appDelegate.setInputMethod(inputMethod: UInt8(inputMethod))
     }
     
     
