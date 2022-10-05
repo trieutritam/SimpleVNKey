@@ -249,26 +249,15 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
                     
                     for keystroke in keystrokes {
                         let keyData = keystroke as? UInt32
-                        //print(keyData ?? "null")
 
-                        var eUp: CGEvent?
-                        var eDown: CGEvent?
                         // Check unicode mask
                         if ((keyData! & 0x00010000) == 0x00010000) {
-                            eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: 0x0032, keyDown: false)
-                            eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: 0x0032, keyDown: true)
-                            //print("keyData = ", UniChar(keyData! ^ 0x00010000))
                             let tempChar = [UniChar(keyData! ^ 0x00010000)]
-                            eUp?.keyboardSetUnicodeString(stringLength: tempChar.count, unicodeString: tempChar)
-                            eDown?.keyboardSetUnicodeString(stringLength: tempChar.count, unicodeString: tempChar)
+                            sendKeyStroke(proxy: proxy, keyData: UInt32(VKKeyCode.KEY_SPACE.rawValue), unicodeString: tempChar)
                         }
                         else {
-                            eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData!), keyDown: false)
-                            eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData!), keyDown: true)
+                            sendKeyStroke(proxy: proxy, keyData: keyData!)
                         }
-                        eDown?.tapPostEvent(proxy)
-                        eUp?.tapPostEvent(proxy)
-                        
                     }
                     
                     return nil;
@@ -278,6 +267,19 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
     }
     
     return Unmanaged.passRetained(event)
+}
+
+func sendKeyStroke(proxy: CGEventTapProxy, keyData: UInt32, unicodeString: [UniChar]? = nil) {
+    let eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData), keyDown: false)
+    let eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData), keyDown: true)
+    
+    if (unicodeString != nil) {
+        eUp?.keyboardSetUnicodeString(stringLength: unicodeString!.count, unicodeString: unicodeString!)
+        eDown?.keyboardSetUnicodeString(stringLength: unicodeString!.count, unicodeString: unicodeString!)
+    }
+    
+    eDown?.tapPostEvent(proxy)
+    eUp?.tapPostEvent(proxy)
 }
 
 /**
