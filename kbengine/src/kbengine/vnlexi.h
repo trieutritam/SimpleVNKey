@@ -26,6 +26,6 @@ enum CodeTable {
 };
 
 extern map<UInt8, vector<vector<UInt16>>> syllableTable;
-extern map<UInt32, vector<UInt16>> codeTable[];
+extern vector<map<UInt32, vector<UInt16>>> codeTableList;
 
 #endif /* KBENGINE_VNLEXI_H_ */

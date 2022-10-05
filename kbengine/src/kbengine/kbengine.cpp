@@ -99,9 +99,11 @@ UInt32 _getCharacterCode(int codeTableIndex, const BufferEntry& entry ) {
         keyCode = keyCode | MASK_ROOF;
     else if (entry.roofType == HOOK)
         keyCode = keyCode | MASK_HOOK;
-    
-    if (codeTable[codeTableIndex].find(keyCode) != codeTable[codeTableIndex].end()) {
-        vector<UInt16> charList = codeTable[codeTableIndex][keyCode];
+
+    auto codeTable = codeTableList.at(codeTableIndex);
+
+    if (codeTable.find(keyCode) != codeTable.end()) {
+        vector<UInt16> charList = codeTable[keyCode];
         int index = (entry.tone - KeyEvent::Tone0) * 2 + (entry.cap ? 0 : 1);
         
         UInt32 result = index >= 0 && charList.size() > 0 ? charList[index] | UNICODE_MASK : keyCode;
@@ -706,6 +708,12 @@ void kbengine::setInputMethod(const UInt8 &inputMethod)
     }
 }
 
-UInt8 kbengine::getInputMethod() {
+UInt8 kbengine::getInputMethod()
+{
     return this->_currentInputMethod;
+}
+
+void kbengine::addCharacterSet(const map<UInt32, vector<UInt16>> &codeTable)
+{
+    codeTableList.push_back(codeTable);
 }

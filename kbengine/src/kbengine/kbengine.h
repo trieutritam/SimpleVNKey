@@ -9,6 +9,7 @@
 #define KBENGINE_KBENGINE_H_
 
 #include <vector>
+#include <map>
 using namespace std;
 
 #include "datatypes.h"
@@ -85,6 +86,8 @@ public:
 
 	// TODO: test only
 	BufferEntry* getBuffer();
+
+    void addCharacterSet(const map<UInt32, vector<UInt16>> &codeTable);
 };
 
 #endif /* KBENGINE_KBENGINE_H_ */

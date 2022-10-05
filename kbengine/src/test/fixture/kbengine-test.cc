@@ -2,7 +2,7 @@
 #include "keycode-map.h"
 
 void KbEngineTest::SetUp() {
-  charList = codeTable[0];  // Unicode encoding
+  charList = codeTableList.at(0);  // Unicode encoding
 }
 
 UInt32 KbEngineTest::getVNCharAt(UInt16 charCodeType, int index) {
