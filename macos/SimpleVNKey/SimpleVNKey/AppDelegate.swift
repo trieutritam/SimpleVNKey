@@ -20,6 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var kbEngine = KBEngineWrapper();
     
     private var eventTap: CFMachPort?;
+    private var runLoopSource: CFRunLoopSource?;
 
     private var statusBarItem: NSStatusItem!
     private var popover: NSPopover!
@@ -158,7 +159,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         print("CGEventTap Created")
         
-        let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
+        self.runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
         // will enabled by load preference
         CGEvent.tapEnable(tap: self.eventTap!, enable: true)
@@ -166,6 +167,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func startCFRunLoop() {
         CFRunLoopRun()
+    }
+    
+    func applicationWillTerminate(_ notification: Notification) {
+        CGEvent.tapEnable(tap: self.eventTap!, enable: false)
+        
+        CFRunLoopStop(CFRunLoopGetCurrent())
+        CFRunLoopRemoveSource(CFRunLoopGetCurrent(), self.runLoopSource, .commonModes)
+        
+        CFMachPortInvalidate(self.eventTap)
     }
 }
 
