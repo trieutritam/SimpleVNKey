@@ -14,10 +14,7 @@
 "Enable Vietnamese" = "Bật tiếng Việt";
 
 /* No comment provided by engineer. */
-"English" = "Tiếng Anh";
-
-/* No comment provided by engineer. */
-"General" = "Cấu hình";
+"General" = "Bộ gõ";
 
 /* No comment provided by engineer. */
 "Input Method" = "Kiểu gõ";
@@ -26,10 +23,7 @@
 "Input Methods" = "Kiểu gõ";
 
 /* No comment provided by engineer. */
-"Input Mode" = "Chế độ gõ";
-
-/* No comment provided by engineer. */
-"Preferences..." = "Cấu hình...";
+"Preferences..." = "Tùy chọn...";
 
 /* No comment provided by engineer. */
 "Quit SimpleVNKey" = "Thoát";
@@ -42,7 +36,4 @@
 
 /* No comment provided by engineer. */
 "Version: " = "Phiên bản: ";
-
-/* No comment provided by engineer. */
-"Vietnamese" = "Tiếng Việt";
 
