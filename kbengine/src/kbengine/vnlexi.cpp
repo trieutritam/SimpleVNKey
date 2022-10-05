@@ -167,3 +167,17 @@ vector<map<UInt32, vector<UInt16>>> codeTableList = {
         {KEY_D | MASK_ROOF,     { 0x0110, 0x0111 }}
     }
 };
+
+
+map<char, UInt16> charToKeyCode = {
+    { 'a', KEY_A },
+    // { 'b', KEY_B },
+    // { 'c', KEY_C },
+    // { 'd', KEY_D },
+     { 'e', KEY_E },
+     { 'i', KEY_I },
+     { 'y', KEY_Y },
+     { 'o', KEY_O },
+     { 'u', KEY_U },
+     { 'd', KEY_D },
+};

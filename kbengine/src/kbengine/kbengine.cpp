@@ -713,7 +713,38 @@ UInt8 kbengine::getInputMethod()
     return this->_currentInputMethod;
 }
 
-void kbengine::addCharacterSet(const map<UInt32, vector<UInt16>> &codeTable)
+void kbengine::setActiveCodeTable(int codeTableNumber)
 {
-    codeTableList.push_back(codeTable);
+    if (codeTableNumber >= codeTableList.size())
+        codeTableNumber = 0;
+    
+    this->currentCodeTable = codeTableNumber;
+    LOG_DEBUG("Selected Code Table Index: %d", codeTableNumber);
+}
+
+void kbengine::addCharacterSet(const map<std::string, vector<UInt16>> &codeTableRaw)
+{
+    LOG_DEBUG("codeTable items: %ld", codeTableRaw.size());
+    map<UInt32, vector<UInt16>> codeTable;
+    
+    for (auto const& mapItem : codeTableRaw) {
+        auto key = mapItem.first;
+        auto values = mapItem.second;
+        //PRINT_VECTOR(values);
+        auto keyChar = key[0];
+        auto keyNum = '0';
+        if (key.size() > 1) keyNum = key[1];
+        if (charToKeyCode.find(keyChar) != charToKeyCode.end() && values.size() > 0) {
+            UInt32 keyCode = charToKeyCode.at(keyChar);
+            keyCode |= (keyNum == '1') ? MASK_ROOF : ((keyNum == '2') ? MASK_HOOK: 0);
+            LOG_DEBUG("key %c, %c - keyCode %u", keyChar, keyNum, keyCode);
+            
+            codeTable.insert(std::pair<UInt32, vector<UInt16>>(keyCode, values));
+        }
+    }
+    
+    if (codeTable.size() > 0) {
+        codeTableList.push_back(codeTable);
+        LOG_INFO("Code Table added, character set count: %lu", codeTableList.size());
+    }
 }

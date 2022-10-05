@@ -87,7 +87,8 @@ public:
 	// TODO: test only
 	BufferEntry* getBuffer();
 
-    void addCharacterSet(const map<UInt32, vector<UInt16>> &codeTable);
+    void setActiveCodeTable(int codeTableNumber);
+    void addCharacterSet(const map<std::string, vector<UInt16>> &codeTableRaw);
 };
 
 #endif /* KBENGINE_KBENGINE_H_ */

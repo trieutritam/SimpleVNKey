@@ -16,6 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var aboutBoxWindowController: NSWindowController?
 
+    private var characterEncodingLoader: CharacterEncodingLoader?
     
     private var kbEngine = KBEngineWrapper();
     
@@ -95,6 +96,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("In AppDelegate")
         AppDelegate.instance = self
         
+        characterEncodingLoader = CharacterEncodingLoader(self)
+        characterEncodingLoader!.loadFromFiles()
+        
         initCGEvent()
         
         appPreference.loadSettings();
@@ -102,6 +106,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setUpMenu()
         
         startCFRunLoop()
+        
+        kbEngine.setActiveCodeTable(1);
     }
     
     func showAboutDialog() {

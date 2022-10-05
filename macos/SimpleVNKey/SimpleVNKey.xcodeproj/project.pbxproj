@@ -16,6 +16,7 @@
 		AF5AFC7D28E2125B00CE6D12 /* kbengine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */; };
 		AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7F28E217BC00CE6D12 /* Common.swift */; };
 		AF7680C828ED8E3F00B7A14A /* Yaml in Frameworks */ = {isa = PBXBuildFile; productRef = AF7680C728ED8E3F00B7A14A /* Yaml */; };
+		AF7680CA28ED9A6900B7A14A /* CharacterEncodingLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7680C928ED9A6900B7A14A /* CharacterEncodingLoader.swift */; };
 		AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */; };
 		AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA3453428E467B500FAD0BD /* AboutView.swift */; };
 		AFADA70928EAD4B5006B435D /* BundleExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFADA70828EAD4B5006B435D /* BundleExt.swift */; };
@@ -65,6 +66,7 @@
 		AF5AFC7A28E2125B00CE6D12 /* kbengine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kbengine.h; path = ../../../../kbengine/src/kbengine/kbengine.h; sourceTree = "<group>"; };
 		AF5AFC7B28E2125B00CE6D12 /* vnlexi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vnlexi.h; path = ../../../../kbengine/src/kbengine/vnlexi.h; sourceTree = "<group>"; };
 		AF5AFC7F28E217BC00CE6D12 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		AF7680C928ED9A6900B7A14A /* CharacterEncodingLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterEncodingLoader.swift; sourceTree = "<group>"; };
 		AF9E91FC28E2C9EF00DFC7C8 /* macrologger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = macrologger.h; path = ../../../../kbengine/src/kbengine/macrologger.h; sourceTree = "<group>"; };
 		AF9E91FD28E2CF1B00DFC7C8 /* datatypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = datatypes.h; path = ../../../../kbengine/src/kbengine/datatypes.h; sourceTree = "<group>"; };
 		AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCode.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 				AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */,
 				AF373E9428E5987F0092A0D0 /* CGKeyCodeInitializers.swift */,
 				AFADA70828EAD4B5006B435D /* BundleExt.swift */,
+				AF7680C928ED9A6900B7A14A /* CharacterEncodingLoader.swift */,
 			);
 			path = SimpleVNKey;
 			sourceTree = "<group>";
@@ -385,6 +388,7 @@
 				AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */,
 				AF5AFC7D28E2125B00CE6D12 /* kbengine.cpp in Sources */,
 				AFEC3E4C28E1D36100A67F12 /* AppDelegate.swift in Sources */,
+				AF7680CA28ED9A6900B7A14A /* CharacterEncodingLoader.swift in Sources */,
 				AF373E9528E5987F0092A0D0 /* CGKeyCodeInitializers.swift in Sources */,
 				AF5AFC7C28E2125B00CE6D12 /* vnlexi.cpp in Sources */,
 				AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */,
