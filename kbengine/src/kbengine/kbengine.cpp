@@ -572,7 +572,7 @@ int kbengine::_calculateNumberOfBackSpace(int startIdx, int endIdx)
             LOG_DEBUG("CharCode: %04X, %02X - charType: %d", charCode, highByte, charType);
 
             //currentCodeTable is double byte
-            if ( charType == 2 &&  BYTE_HIGH(charCode) > 0) {
+            if ( charType == 2 && highByte > 0) {
                 LOG_DEBUG("Add more backspace");
                 numBackSpace += 1;
             }

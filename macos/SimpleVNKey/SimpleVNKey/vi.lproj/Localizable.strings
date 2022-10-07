@@ -8,6 +8,9 @@
 "Author: " = "Tác giả: ";
 
 /* No comment provided by engineer. */
+"Character Encoding" = "Bảng mã";
+
+/* No comment provided by engineer. */
 "Check For Updates..." = "Kiểm tra bản cập nhật...";
 
 /* No comment provided by engineer. */
@@ -21,6 +24,9 @@
 
 /* No comment provided by engineer. */
 "Input Methods" = "Kiểu gõ";
+
+/* No comment provided by engineer. */
+"Powered by:" = "Cung cấp bởi:";
 
 /* No comment provided by engineer. */
 "Preferences..." = "Tùy chọn...";
