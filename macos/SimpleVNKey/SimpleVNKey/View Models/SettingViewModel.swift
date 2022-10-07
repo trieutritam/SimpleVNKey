@@ -19,7 +19,16 @@ class SettingViewModel: ObservableObject {
     @Published var hotKeyShift = true
     @Published var hotKeyCharacter = UInt16(VKKeyCode.KEY_0.rawValue)
     
+    @Published var characterEncoding = CharacterEncodingType.Unicode.rawValue;
+    
     private var cancellables = Set<AnyCancellable>()
+    
+    var listCharacterEncoding = [CharacterEncodingInfo(id: Int(CharacterEncodingType.Unicode.rawValue),
+                                                               name: "Unicode", author: "", charType: 1)]
+    
+    func setCharacterEncodingList(_ listCharEnc: Array<CharacterEncodingInfo>) {
+        listCharacterEncoding.append(contentsOf: listCharEnc)
+    }
     
     
     func loadSettings() {
@@ -34,8 +43,11 @@ class SettingViewModel: ObservableObject {
         hotKeyShift = (UserDefaults.standard.value(forKey: "SimpleVNKey.HotKeyShift")        ?? true) as! Bool
         hotKeyCharacter = (UserDefaults.standard.value(forKey: "SimpleVNKey.HotKeyCharacter") ?? VKKeyCode.KEY_SPACE.rawValue) as! UInt16
         
+        characterEncoding = (UserDefaults.standard.value(forKey: "SimpleVNKey.CharacterEncoding") ?? CharacterEncodingType.Unicode.rawValue) as! Int
+        
         print("Load SimpleVNKey.isVNEnabled: ", isVNEnabled)
         print("Load SimpleVNKey.InputMethod: ", inputMethod)
+        print("Load SimpleVNKey.CharacterEncoding: ", characterEncoding)
         print("Load SimpleVNKey.HotKey: ", hotKeyControl, hotKeyOption, hotKeyCommand, hotKeyShift, hotKeyCharacter)
         
         guard let appDelegate = AppDelegate.instance else { return }
@@ -80,6 +92,12 @@ class SettingViewModel: ObservableObject {
         
         $hotKeyCharacter.sink { val in
             self.processHotkey(appStoreKey: "SimpleVNKey.HotKeyCharacter", val: val)
+        }.store(in: &cancellables)
+        
+        $characterEncoding.sink { currentCharEnc in
+            UserDefaults.standard.set(currentCharEnc, forKey: "SimpleVNKey.CharacterEncoding")
+            guard let appDelegate = AppDelegate.instance else { return }
+            appDelegate.setActiveCharacterEncoding(currentCharEnc)
         }.store(in: &cancellables)
     }
     

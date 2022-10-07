@@ -145,6 +145,7 @@ map<UInt8, vector<vector<UInt16>>> syllableTable = {
 vector<map<UInt32, vector<UInt16>>> codeTableList = {
     // Unicode
     {
+        {CODE_TABLE_CHAR_TYPE,   {1} },  // code table type: 1 bytes or 2 bytes
         //KEY_A,    {A, a, Á, á, À, à, Ả, ả, Ã, ã, Ạ, ạ}
         {KEY_A,                 { 0x0041, 0x0061, 0x00C1, 0x00E1, 0x00C0, 0x00E0, 0x1EA2, 0x1EA3, 0x00C3, 0x00E3, 0x1EA0, 0x1EA1 }},
         {KEY_A | MASK_ROOF,     { 0x00C2, 0x00E2, 0x1EA4, 0x1EA5, 0x1EA6, 0x1EA7, 0x1EA8, 0x1EA9, 0x1EAA, 0x1EAB, 0x1EAC, 0x1EAD }},
@@ -169,7 +170,7 @@ vector<map<UInt32, vector<UInt16>>> codeTableList = {
 };
 
 
-map<char, UInt16> charToKeyCode = {
+map<char, UInt16> vowelToKeyCode = {
     { 'a', KEY_A },
     // { 'b', KEY_B },
     // { 'c', KEY_C },

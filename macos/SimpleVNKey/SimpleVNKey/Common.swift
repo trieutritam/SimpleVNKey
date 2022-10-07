@@ -11,7 +11,7 @@ enum InputMethod : Int {
     case VNI = 0, SIMPLE_TELEX = 1, TELEX = 2
 }
 
-enum CharacterEncoding : Int {
+enum CharacterEncodingType : Int {
     case Unicode = 0
 }
 

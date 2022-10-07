@@ -30,6 +30,14 @@ struct GeneralSettingView: View {
                         Text("Simple Telex").tag(1)
                         Text("Telex").tag(2)
                     }.horizontalRadioGroupLayout()
+                    
+                    Picker(selection: $appSettingVM.characterEncoding,
+                           label: Text("Character Encoding")) {
+                        ForEach(appSettingVM.listCharacterEncoding.indices, id: \.self) { (index: Int) in
+                            let item = self.appSettingVM.listCharacterEncoding[index]
+                            Text(item.name).tag(item.id)
+                        }
+                    }.horizontalRadioGroupLayout()
                 }
             }
             Divider()

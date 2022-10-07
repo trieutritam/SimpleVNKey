@@ -47,12 +47,23 @@ static kbengine engine;
     engine.resetBuffer();
 }
 
-- (void)setActiveCodeTable: (int) codeTableNumber
+- (void)setActiveCodeTable: (UInt8) codeTableNumber
 {
     engine.setActiveCodeTable(codeTableNumber);
 }
 
-- (void)addCharacterEncoding: (NSDictionary*) characterEncoding
+
+- (UInt8)getCurrentCodeTable
+{
+    return engine.getCurrentCodeTable();
+}
+
+- (UInt8)getTotalCodeTable
+{
+    return engine.getTotalCodeTable();
+}
+
+- (void)addCharacterEncoding: (NSDictionary*)characterEncoding charType: (UInt8) charType
 {
     std::map<std::string, vector<UInt16>> codeTable;
     
@@ -74,6 +85,6 @@ static kbengine engine;
         codeTable.insert(std::pair<std::string, std::vector<UInt16>>(stdKey, vectorList));
     }
     
-    engine.addCharacterSet(codeTable);
+    engine.addCodeTable(charType, codeTable);
 }
 @end

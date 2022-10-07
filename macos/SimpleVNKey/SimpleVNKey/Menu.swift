@@ -7,6 +7,7 @@
 
 import Cocoa
 import SwiftUI
+import OSLog
 
 
 let FxKeyCodeMapping = [
@@ -29,6 +30,7 @@ enum MenuTag : Int {
 }
 
 class MainMenu: NSObject, NSMenuDelegate {
+    private static var log = Logger()
     
     // A new menu instance ready to add items to
     let menu = NSMenu(title: "Quick")
@@ -45,7 +47,7 @@ class MainMenu: NSObject, NSMenuDelegate {
         menu.item(at: 0)?.state = AppDelegate.instance.getVNEnabled() ? NSControl.StateValue.on : NSControl.StateValue.off
         
         // Input Method menu items
-        let subMenu = menu.item(withTag: 10)?.submenu;
+        var subMenu = menu.item(withTag: MenuTag.InputMethodMenu.rawValue)?.submenu;
         if (subMenu != nil) {
             let items = subMenu!.items
             for item in items {
@@ -53,9 +55,16 @@ class MainMenu: NSObject, NSMenuDelegate {
                 item.state = active ? NSControl.StateValue.on : NSControl.StateValue.off
             }
         }
-//        subMenu?.item(at: 0)?.state = AppDelegate.instance.getInputMethod() == 0 ? NSControl.StateValue.on : NSControl.StateValue.off
-//        subMenu?.item(at: 1)?.state = AppDelegate.instance.getInputMethod() == 1 ? NSControl.StateValue.on : NSControl.StateValue.off
-//        subMenu?.item(at: 2)?.state = AppDelegate.instance.getInputMethod() == 1 ? NSControl.StateValue.on : NSControl.StateValue.off
+        
+        // Character Encoding Method menu items
+        subMenu = menu.item(withTag: MenuTag.CharacterEncodingMenu.rawValue)?.submenu;
+        if (subMenu != nil) {
+            let items = subMenu!.items
+            for item in items {
+                let active = UInt8(AppDelegate.instance.getEngine().getCurrentCodeTable()) == item.representedObject as! UInt8;
+                item.state = active ? NSControl.StateValue.on : NSControl.StateValue.off
+            }
+        }
         
         AppDelegate.instance.updateSwitchHotkeyIndicator()
     }
@@ -89,7 +98,7 @@ class MainMenu: NSObject, NSMenuDelegate {
                 
         self.addInputMethodMenu(menu: menu)
         
-        self.addCharacterEncodingMenu(menu: menu)
+        self.initCharacterEncodingMenu(menu: menu)
 
         
         // Adding a seperator
@@ -201,23 +210,31 @@ class MainMenu: NSObject, NSMenuDelegate {
         }
     }
     
-    func addCharacterEncodingMenu(menu: NSMenu) {
+    private func initCharacterEncodingMenu(menu: NSMenu) {
         characterEncodingMenu = NSMenu()
         
         // Unicode
         let unicodeMenu = NSMenuItem(title: String(localized: "Unicode"), action: #selector(selectCharacterEncoding), keyEquivalent: "")
-        unicodeMenu.representedObject = CharacterEncoding.Unicode
+        unicodeMenu.representedObject = CharacterEncodingType.Unicode.rawValue
         unicodeMenu.target = self
         
         characterEncodingMenu?.addItem(unicodeMenu)
-        
-        //TODO: add another character encoding based on file config
-        
+                
         let charEncodingMenu = NSMenuItem(title: String(localized: "Character Encoding"), action: nil, keyEquivalent: "")
         charEncodingMenu.submenu = characterEncodingMenu
         charEncodingMenu.target = self
         charEncodingMenu.tag = MenuTag.CharacterEncodingMenu.rawValue
         menu.addItem(charEncodingMenu)
+    }
+    
+    func addCharacterEncodingMenu(info: CharacterEncodingInfo) {
+        Self.log.info("Add Character Encoding Menu: \(info.id) - \(info.name)")
+        let menuItem = NSMenuItem(title: String(info.name), action: #selector(selectCharacterEncoding), keyEquivalent: "")
+        menuItem.representedObject = UInt8(info.id)
+        menuItem.toolTip = String(localized: "Powered by:") + " " + info.author
+        menuItem.target = self
+        
+        characterEncodingMenu?.addItem(menuItem)
     }
     
     func addInputMethodMenu(menu: NSMenu) {
@@ -309,8 +326,8 @@ class MainMenu: NSObject, NSMenuDelegate {
     
     @objc func selectCharacterEncoding(sender: NSMenuItem) {
         let selItem = sender.representedObject as! Int
-
         print("Select Character Encoding: ", selItem)
+        AppDelegate.instance.appPreference.characterEncoding = selItem
     }
     
     // The selector that quits the app

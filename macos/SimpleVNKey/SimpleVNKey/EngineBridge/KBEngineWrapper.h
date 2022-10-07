@@ -18,8 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setInputMethod: (UInt8) inputMethod;
 - (UInt8)getInputMethod;
 - (void)resetBuffer;
-- (void)setActiveCodeTable: (int) codeTableNumber;
-- (void)addCharacterEncoding: (NSDictionary*)characterEncoding;
+- (void)setActiveCodeTable: (UInt8) codeTableNumber;
+- (UInt8)getCurrentCodeTable;
+- (UInt8)getTotalCodeTable;
+- (void)addCharacterEncoding: (NSDictionary*)characterEncoding charType: (UInt8) charType;
 @end
 
 NS_ASSUME_NONNULL_END

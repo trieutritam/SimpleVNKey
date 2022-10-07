@@ -5,7 +5,7 @@ using namespace std;
 #ifndef TEST_KEYCODE_MAP_H_
 #define TEST_KEYCODE_MAP_H_
 
-map<UInt16, UInt16> charToKeyCode = {
+map<UInt16, UInt16> UpperCharToKeyCode = {
   { 'A', KEY_A },
   { 'B', KEY_B },
   { 'C', KEY_C },

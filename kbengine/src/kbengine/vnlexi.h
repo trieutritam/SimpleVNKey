@@ -20,6 +20,8 @@ using namespace std;
 
 #define MASK_EXTRA_MARK   0x0100
 
+// Used for store num of bytes in codeTable
+#define CODE_TABLE_CHAR_TYPE     0xFFFFFFFF
 
 enum CodeTable {
     UNICODE
@@ -27,6 +29,6 @@ enum CodeTable {
 
 extern map<UInt8, vector<vector<UInt16>>> syllableTable;
 extern vector<map<UInt32, vector<UInt16>>> codeTableList;
-extern map<char, UInt16> charToKeyCode;
+extern map<char, UInt16> vowelToKeyCode;
 
 #endif /* KBENGINE_VNLEXI_H_ */

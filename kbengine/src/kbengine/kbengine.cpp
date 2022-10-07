@@ -18,6 +18,9 @@ using namespace std;
 #define ACTION_NOT_PROCESSED(ret) (ret < 0)
 #define ACTION_PROCESSED(ret) (ret >= 0)
 
+#define  BYTE_HIGH(x)   ((x >> 8) & 0xff)
+#define  BYTE_LOW(x)    (x & 0xff)
+
 enum InputMethodType {
     VNI,
     SimpleTelex,
@@ -89,32 +92,6 @@ static map<UInt16, int> InputMethodMapping[] = {
 // map tone to key mapping, will be init when we change input method
 static map<int, UInt16> ToneToKeyCodeMapping = {};
 
-/**
- * codeTableIndex: bang ma can dung. 0 = unicode
- */
-UInt32 _getCharacterCode(int codeTableIndex, const BufferEntry& entry ) {
-    UInt16 keyCode = entry.keyCode;
-    
-    if (entry.roofType == ROOF)
-        keyCode = keyCode | MASK_ROOF;
-    else if (entry.roofType == HOOK)
-        keyCode = keyCode | MASK_HOOK;
-
-    auto codeTable = codeTableList.at(codeTableIndex);
-
-    if (codeTable.find(keyCode) != codeTable.end()) {
-        vector<UInt16> charList = codeTable[keyCode];
-        int index = (entry.tone - KeyEvent::Tone0) * 2 + (entry.cap ? 0 : 1);
-        
-        UInt32 result = index >= 0 && charList.size() > 0 ? charList[index] | UNICODE_MASK : keyCode;
-        
-        return result;
-    }
-    
-    return entry.keyCode;
-}
-
-
 kbengine::kbengine()
 {
     this->resetBuffer();
@@ -135,6 +112,8 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
     {
         UInt16 curKeyCode = this->_buffer[curIdx].keyCode;
         
+        LOG_DEBUG("Find syllableCombine, Idx: %d", curIdx);
+        
         if (expectedKey != KEY_EMPTY && curKeyCode != expectedKey) {
             LOG_DEBUG("Ignore %d due to expected: %d", curKeyCode, expectedKey);
             continue;
@@ -143,6 +122,8 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
         
         if (findResult == syllableTable.end())
             continue;
+        
+        LOG_DEBUG("Find syllableCombine, found! %lu", findResult->second.size());
         
         vector<vector<UInt16>> syllableList = findResult->second;
         for (vector<vector<UInt16>>::iterator it = syllableList.begin(); it != syllableList.end(); ++it)
@@ -166,6 +147,8 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
             }
             
             if (found) {
+                LOG_DEBUG("Found syllableCombine");
+                PRINT_VECTOR(combine);
                 syllableCombine = combine;
                 break;
             }
@@ -218,7 +201,7 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
         
         int endIdx = this->_bufferSize;
         
-        int numBackSpaces = (endIdx - foundIdx);
+        int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx);
 
         bool canSetHook = false;
         
@@ -278,7 +261,7 @@ int kbengine::_processD(const UInt8 &keycode) {
     
     if (foundIdx >= 0) {
         if (this->_buffer[foundIdx-1].keyCode == KEY_D) {
-            int numBackSpaces = (endIdx - foundIdx) + 1; // delete vowel & d character
+            int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx) + 1;//(endIdx - foundIdx) + 1; // delete vowel & d character
             
             if (this->_buffer[foundIdx-1].roofType == ROOF) {
                 this->_buffer[foundIdx-1].roofType = ORIGIN;
@@ -323,6 +306,7 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
         if (tonePosition < 0) {
             int vowelCount = 0;
             bool lastIsVowel = true;   // keep track the last char is vowel or not
+            PRINT_VECTOR(syllableCombine);
             for(int i = 1; i < syllableCombine.size(); i++) {
                 auto keyCode = EXCLUDE_MARK(syllableCombine[i]);
                 
@@ -352,42 +336,55 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
         }
 
         if (tonePosition >= 0) {
+            LOG_DEBUG("Target tone posision: %d", tonePosition);
             int endIdx = this->_bufferSize;
-            int numBackSpaces = (endIdx - tonePosition);
-            // if not call from correctSpelling, we reverse tone
-            if (this->_buffer[tonePosition].tone == tone && !fromCorrectFunc) {
-                this->_buffer[tonePosition].tone = KeyEvent::Tone0;
-                _addKeyCode(keycode, 0);
-                endIdx ++;
-            }
-            else
-                this->_buffer[tonePosition].tone = tone;
+            int numBackSpaces = 0; //_calculateNumberOfBackSpace(tonePosition, endIdx); //(endIdx - tonePosition);
             
+            KeyEvent targetTone = tone;
+            bool isCaseReset = false;
+            
+            // check target tonePosision have tone or not
+            if (this->_buffer[tonePosition].tone == tone && !fromCorrectFunc) {
+                //this->_buffer[tonePosition].tone = KeyEvent::Tone0;
+                LOG_DEBUG("Found previous tone at target posision: %d", this->_buffer[tonePosition].tone);
 
-            LOG_DEBUG("Found tonePosition: %d", tonePosition);
+                targetTone = KeyEvent::Tone0;
+                isCaseReset = true;
+            }
+            
             int previousTonePos = -1;
+            // check whole word to detect previous tone, we have this case is move tone
             for (int i = this->_bufferStartWordIdx; i < tonePosition; i++) {
-                LOG_DEBUG("Buff idx: %d, tone: %d", i, this->_buffer[i].tone);
+                LOG_DEBUG("Buffer index: %d, tone: %d", i, this->_buffer[i].tone);
                 if (this->_buffer[i].tone != KeyEvent::Tone0) {
-                    this->_buffer[i].tone = KeyEvent::Tone0;
                     previousTonePos = i;
                     break;
                 }
             }
+            // calculate number of backspace
+            numBackSpaces = _calculateNumberOfBackSpace(previousTonePos >=0 ? previousTonePos : tonePosition, endIdx);
             
-            LOG_DEBUG("Previous tone: %d , endIdx: %d", previousTonePos, endIdx);
-            if (previousTonePos >= 0) {
-                tonePosition = previousTonePos;
-                numBackSpaces = (endIdx - previousTonePos);
+            if (isCaseReset) {
+                this->_buffer[tonePosition].tone = KeyEvent::Tone0;
+                _addKeyCode(keycode, 0);
+                endIdx ++;
+            }
+            else {
+                this->_buffer[tonePosition].tone = targetTone;
             }
             
-            // call from correct function, decrease backspace
-            if (fromCorrectFunc)
+            if (previousTonePos >=0) {
+                this->_buffer[previousTonePos].tone = KeyEvent::Tone0;
+                tonePosition = previousTonePos;
+            }
+            
+            if (fromCorrectFunc) {
+                LOG_DEBUG("Call from CorrectFunc, numBackSpace before adjusted: %d", numBackSpaces);
                 numBackSpaces -= 1;
+            }
             
         
-            LOG_DEBUG("tone Pos: %d , endIdx: %d", tonePosition, endIdx);
-            LOG_DEBUG("Num Backspaces: %d", numBackSpaces);
+            LOG_DEBUG("tone Pos: %d , endIdx: %d, Num Backspaces: %d", tonePosition, endIdx, numBackSpaces);
             this->_processKeyCodeOutput(numBackSpaces, tonePosition, endIdx);
         }
     }
@@ -448,7 +445,7 @@ int kbengine::_correctTone(const UInt8 &keycode)
 //    }
     
     short currentTone = KeyEvent::Tone0;
-    
+    LOG_DEBUG("Correct Tone - start: %d, end: %d", this->_bufferStartWordIdx, this->_bufferSize);
     for (int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
         if (this->_buffer[i].tone != KeyEvent::Tone0) {
             currentTone = this->_buffer[i].tone;
@@ -490,7 +487,7 @@ int kbengine::_correctMark(const UInt8 &keycode)
             PRINT_VECTOR(matchCombine);
             
             int endIdx = this->_bufferSize;
-            int numBackSpaces = (endIdx - foundIdx) - 1;
+            int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx) - 1;//(endIdx - foundIdx) - 1;
 
             bool canSetHook = false;
             
@@ -526,8 +523,63 @@ void kbengine::_processKeyCodeOutput(int numDelete, int startPos, int endPos)
         this->_keyCodeOutput.push_back(KEY_DELETE);
     
     for (int i = startPos; i < endPos; i ++) {
-        this->_keyCodeOutput.push_back(_getCharacterCode(this->currentCodeTable, this->_buffer[i]));
+        auto charCode = _getCharacterCode(this->_buffer[i]);
+        //LOG_DEBUG("_getCharacterCode: %d", charCode);
+        
+        auto charType = codeTableList[this->currentCodeTable][CODE_TABLE_CHAR_TYPE][0];
+        
+        if (charCode > 0) {
+            if (charType == 2) {
+                charCode = charCode ^ UNICODE_MASK;
+                
+                auto highByte = BYTE_HIGH(charCode);
+                auto lowByte = BYTE_LOW(charCode);
+                
+                LOG_DEBUG("process high: %20X, low: %20X", highByte, lowByte);
+                
+                this->_keyCodeOutput.push_back(lowByte | UNICODE_MASK);
+                
+                if (highByte > 0) this->_keyCodeOutput.push_back(highByte  | UNICODE_MASK);
+            }
+            else {
+                this->_keyCodeOutput.push_back(charCode);
+            }
+        }
+        else {
+            this->_keyCodeOutput.push_back(this->_buffer[i].keyCode);
+        }
     }
+}
+
+int kbengine::_calculateNumberOfBackSpace(int startIdx, int endIdx)
+{
+    LOG_DEBUG("calculateNumberOfBackSpace - start %d, end %d", startIdx, endIdx);
+
+    int numBackSpace = 0;
+    for (int i = startIdx; i < endIdx; i++) {
+        BufferEntry entry = this->_buffer[i];
+        
+        numBackSpace += 1;
+        
+        auto charCode = _getCharacterCode(entry);
+        
+        if (charCode > 0) {
+            charCode = charCode ^ UNICODE_MASK;  //remove unicode mask
+            
+            auto charType = codeTableList[this->currentCodeTable][CODE_TABLE_CHAR_TYPE][0];
+            UInt8 highByte = BYTE_HIGH(charCode);
+            
+            LOG_DEBUG("CharCode: %04X, %02X - charType: %d", charCode, highByte, charType);
+
+            //currentCodeTable is double byte
+            if ( charType == 2 &&  BYTE_HIGH(charCode) > 0) {
+                LOG_DEBUG("Add more backspace");
+                numBackSpace += 1;
+            }
+        }
+    }
+    LOG_DEBUG("calculateNumberOfBackSpace, result: %d", numBackSpace);
+    return numBackSpace;
 }
 
 vector<UInt32> kbengine::getOutputBuffer()
@@ -540,9 +592,14 @@ void kbengine::_addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap) {
         // need to remove all word except the last one
         UInt16 wordSize = this->_bufferSize - this->_bufferStartWordIdx;
         
-        for(int i = this->_bufferStartWordIdx; i < this->_bufferSize; i ++) {
-            int buffIndex = i - this->_bufferStartWordIdx;
-            this->_buffer[buffIndex] = this->_buffer[i];
+        if (wordSize < MAX_BUFF) {
+            for(int i = this->_bufferStartWordIdx; i < this->_bufferSize; i ++) {
+                int buffIndex = i - this->_bufferStartWordIdx;
+                this->_buffer[buffIndex] = this->_buffer[i];
+            }
+        }
+        else {
+            wordSize = 0;
         }
         this->_bufferStartWordIdx = 0;
         this->_bufferSize = wordSize;
@@ -572,7 +629,7 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
     
     KeyEvent result = Normal;
     int actionResult = -1;
-    if (shiftCap == 0 && !otherControl && action != InputMethodMapping[_currentInputMethod].end()) // && this->_bufferSize > 0)
+    if (shiftCap == 0 && !otherControl && action != InputMethodMapping[_currentInputMethod].end())// && this->_bufferSize > 0)
     {
         result = (KeyEvent) action->second;
         LOG_DEBUG("Action: %d", result);
@@ -651,6 +708,7 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
         }
         else if (std::find(_wordBreakCode.begin(), _wordBreakCode.end(), keycode) == _wordBreakCode.end()) {
             // if current keycode is not in list allow new word, we reset buffer
+            LOG_DEBUG("Ignore process keycode, reset buffer");
             this->resetBuffer();
         }
     }
@@ -668,17 +726,58 @@ void kbengine::resetBuffer()
     this->_bufferSize = 0;
 }
 
+UInt32 kbengine::_getCharacterCode(const BufferEntry& entry )
+{
+    UInt16 keyCode = entry.keyCode;
+    
+    if (entry.roofType == ROOF)
+        keyCode = keyCode | MASK_ROOF;
+    else if (entry.roofType == HOOK)
+        keyCode = keyCode | MASK_HOOK;
+
+    auto codeTable = codeTableList.at(this->currentCodeTable);
+
+    if (codeTable.find(keyCode) != codeTable.end()) {
+        vector<UInt16> charList = codeTable[keyCode];
+        int index = (entry.tone - KeyEvent::Tone0) * 2 + (entry.cap ? 0 : 1);
+        
+        UInt32 result = index >= 0 && charList.size() > 0 ? charList[index] | UNICODE_MASK : keyCode;
+        
+        return result;
+    }
+    
+    return 0;
+}
+
+UInt8 kbengine::_getCurrentCodeTableCharType()
+{
+    return codeTableList[this->currentCodeTable][CODE_TABLE_CHAR_TYPE][0];
+}
+
 // Recalculate startIndex of a word & buffer when user press delete
 void kbengine::_processBackSpacePressed() {
+    auto charCode = this->_getCharacterCode(this->_buffer[this->_bufferSize - 1]);
+    
     this->_bufferSize--;
-    this->_bufferStartWordIdx = 0;
+    
     if (this->_bufferSize < 0) this->_bufferSize = 0;
     
-    for (int i = this->_bufferSize - 1; i > 0; i--) {
-        if (std::find (_wordBreakCode.begin(), _wordBreakCode.end(), this->_buffer[i].keyCode) != _wordBreakCode.end()) {
-            this->_bufferStartWordIdx = i;
-            break;
+    if (this->_bufferSize <= this->_bufferStartWordIdx) {
+        this->_bufferStartWordIdx = 0;
+        if (this->_bufferSize < 0) this->_bufferSize = 0;
+        
+        for (int i = this->_bufferSize - 1; i > 0; i--) {
+            if (std::find (_wordBreakCode.begin(), _wordBreakCode.end(), this->_buffer[i].keyCode) != _wordBreakCode.end()) {
+                this->_bufferStartWordIdx = i + 1;
+                break;
+            }
         }
+    }
+    
+    // create output to send delete in case 2 bytes
+    // case 1 byte we let system process
+    if (_getCurrentCodeTableCharType() == 2 && BYTE_HIGH(charCode) > 0) {
+        _processKeyCodeOutput(2, 0, 0);
     }
 }
 
@@ -713,18 +812,30 @@ UInt8 kbengine::getInputMethod()
     return this->_currentInputMethod;
 }
 
-void kbengine::setActiveCodeTable(int codeTableNumber)
+void kbengine::setActiveCodeTable(const UInt8 &codeTableNumber)
 {
-    if (codeTableNumber >= codeTableList.size())
-        codeTableNumber = 0;
-    
-    this->currentCodeTable = codeTableNumber;
+    if (codeTableNumber >= codeTableList.size()) {
+        this->currentCodeTable = 0;
+    }
+    else {
+        this->currentCodeTable = codeTableNumber;
+    }
     LOG_DEBUG("Selected Code Table Index: %d", codeTableNumber);
 }
 
-void kbengine::addCharacterSet(const map<std::string, vector<UInt16>> &codeTableRaw)
+UInt8 kbengine::getCurrentCodeTable()
 {
-    LOG_DEBUG("codeTable items: %ld", codeTableRaw.size());
+    return this->currentCodeTable;
+}
+
+UInt8 kbengine::getTotalCodeTable()
+{
+    return codeTableList.size();
+}
+
+void kbengine::addCodeTable(const unsigned short &charType, const map<std::string, vector<UInt16>> &codeTableRaw)
+{
+    LOG_DEBUG("codeTable items: %ld, type: %d", codeTableRaw.size(), charType);
     map<UInt32, vector<UInt16>> codeTable;
     
     for (auto const& mapItem : codeTableRaw) {
@@ -734,17 +845,18 @@ void kbengine::addCharacterSet(const map<std::string, vector<UInt16>> &codeTable
         auto keyChar = key[0];
         auto keyNum = '0';
         if (key.size() > 1) keyNum = key[1];
-        if (charToKeyCode.find(keyChar) != charToKeyCode.end() && values.size() > 0) {
-            UInt32 keyCode = charToKeyCode.at(keyChar);
+        if (vowelToKeyCode.find(keyChar) != vowelToKeyCode.end() && values.size() > 0) {
+            UInt32 keyCode = vowelToKeyCode.at(keyChar);
             keyCode |= (keyNum == '1') ? MASK_ROOF : ((keyNum == '2') ? MASK_HOOK: 0);
-            LOG_DEBUG("key %c, %c - keyCode %u", keyChar, keyNum, keyCode);
+//            LOG_DEBUG("key %c, %c - keyCode %u", keyChar, keyNum, keyCode);
             
             codeTable.insert(std::pair<UInt32, vector<UInt16>>(keyCode, values));
         }
     }
     
     if (codeTable.size() > 0) {
+        codeTable.insert(std::pair<UInt32, vector<UInt16>>(CODE_TABLE_CHAR_TYPE, { charType }));
         codeTableList.push_back(codeTable);
-        LOG_INFO("Code Table added, character set count: %lu", codeTableList.size());
+        LOG_INFO("Code Table added, character encoding count: %lu", codeTableList.size());
     }
 }

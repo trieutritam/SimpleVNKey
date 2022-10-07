@@ -6,12 +6,15 @@
 //
 import SwiftUI
 import Combine
+import OSLog
 
 struct Global {
     static var myEventSource: CGEventSource?;
 }
 
 class AppDelegate: NSObject, NSApplicationDelegate {
+    private static var log = Logger()
+
     static private(set) var instance: AppDelegate!
     
     private var aboutBoxWindowController: NSWindowController?
@@ -73,7 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                          hotKeyChar: appPreference.hotKeyCharacter)
     }
     
-    func setUpMenu() {
+    func setUpMenu(charEncList: Array<CharacterEncodingInfo>) {
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
 //
@@ -85,7 +88,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //
 //        // Assign our custom menu to the status bar
         statusBarItem.menu = menu.build(statusBarItem: statusBarItem)
+        
         statusBarItem.menu?.delegate = menu;
+        
+        for enc in charEncList {
+            menu.addCharacterEncodingMenu(info: enc)
+        }
         
         updateSwitchHotkeyIndicator()
     }
@@ -97,17 +105,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         AppDelegate.instance = self
         
         characterEncodingLoader = CharacterEncodingLoader(self)
-        characterEncodingLoader!.loadFromFiles()
+        let charEncList = characterEncodingLoader!.loadFromFiles()
         
         initCGEvent()
         
         appPreference.loadSettings();
-        
-        setUpMenu()
+        appPreference.setCharacterEncodingList(charEncList)
+        setUpMenu(charEncList: charEncList)
         
         startCFRunLoop()
         
-        kbEngine.setActiveCodeTable(1);
+        
+    }
+    
+    func addCharacterEncodingToEngine(charEnc: Dictionary<String, Array<UInt16>>, charType: UInt8) {
+        kbEngine.addCharacterEncoding(
+            (charEnc as NSDictionary) as! [AnyHashable : Any],
+            charType: charType)
+    }
+    
+    func setActiveCharacterEncoding(_ characterEnc: Int) {
+        if ( characterEnc >= kbEngine.getTotalCodeTable()) {
+            Self.log.warning("Seleted Character Encoding not found. Reset to Default")
+            //Update the ViewModel so that the app reset the setting
+            appPreference.characterEncoding = CharacterEncodingType.Unicode.rawValue
+        }
+        else {
+            kbEngine.setActiveCodeTable(UInt8(characterEnc));
+        }
     }
     
     func showAboutDialog() {
@@ -227,7 +252,8 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
     statusShiftCap += flag.contains(CGEventFlags.maskAlphaShift) ? 2 : 0
     
     if [.leftMouseDown, .rightMouseDown, .leftMouseDragged, .rightMouseDragged].contains(type) {
-        engine.resetBuffer();
+        //TODO disable for test
+        //engine.resetBuffer();
     }
     else if [.keyDown].contains(type) {
         let otherControl = flag.contains(CGEventFlags.maskCommand)
@@ -268,10 +294,15 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
 
                         // Check unicode mask
                         if ((keyData! & 0x00010000) == 0x00010000) {
-                            let tempChar = [UniChar(keyData! ^ 0x00010000)]
+                            let actualCharCode = keyData! ^ 0x00010000
+                            
+                            print("send: \(String(format:"%02X", actualCharCode))")
+                                  
+                            let tempChar = [UniChar(actualCharCode)]
                             sendKeyStroke(proxy: proxy, keyData: UInt32(VKKeyCode.KEY_SPACE.rawValue), unicodeString: tempChar)
                         }
                         else {
+                            //print("send keycode: \(keyData!)")
                             sendKeyStroke(proxy: proxy, keyData: keyData!)
                         }
                     }
@@ -307,7 +338,7 @@ func sendDummyCharacter(proxy: CGEventTapProxy) {
     // send an empty character
     var eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: VKKeyCode.KEY_SPACE.rawValue, keyDown: false)
     var eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: VKKeyCode.KEY_SPACE.rawValue, keyDown: true)
-    let tempChar = [UniChar(0x202F)]
+    let tempChar = [UniChar(0x00A0)] //in MSWord, cannot use the [UniChar(0x202F)] for dummy
     eUp?.keyboardSetUnicodeString(stringLength: 1, unicodeString: tempChar)
     eDown?.keyboardSetUnicodeString(stringLength: 1, unicodeString: tempChar)
     eDown?.tapPostEvent(proxy)

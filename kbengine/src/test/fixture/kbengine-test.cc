@@ -13,7 +13,7 @@ vector<UInt32> KbEngineTest::sendKeyStrokes(const vector<UInt16> &charCodes) {
   vector<UInt32> output;
   for(int i=0; i < charCodes.size(); i++) {
     char temp = toupper(charCodes[i]);
-    engine.process(charCodes[i], charToKeyCode[temp], 0, false);
+    engine.process(charCodes[i], UpperCharToKeyCode[temp], 0, false);
     vector<UInt32> keystrokes = engine.getOutputBuffer();
 
     for(auto it = keystrokes.begin(); it != keystrokes.end(); it++) {

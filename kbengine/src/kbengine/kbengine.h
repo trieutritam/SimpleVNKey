@@ -48,7 +48,7 @@ struct ModifiedKeyInfo {
 };
 
 class kbengine {
-    short currentCodeTable = 0; // 0 - unicode
+    UInt8 currentCodeTable = 0; // 0 - unicode
     
     short _currentInputMethod =  -1;   //0 VNI, 1 Simple Telex, 2 Telex
         
@@ -68,27 +68,36 @@ class kbengine {
     int _correctMark(const UInt8 &keycode);
     
     void _processKeyCodeOutput(int numDelete, int startPos, int endPos);
+    int _calculateNumberOfBackSpace(int startIdx, int endIdx);
     void _processBackSpacePressed();
     void _startNewWord();
     void _addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap);
     
     int _findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY);
+    
+    UInt32 _getCharacterCode(const BufferEntry& entry );
+    UInt8 _getCurrentCodeTableCharType();
 public:
 	kbengine();
 	virtual ~kbengine();
 
 	void resetBuffer();
-	int process(const UInt16 &charCode, const UInt16 &keycode, const UInt8 &shiftCap, const bool &otherControl);
     vector<UInt32> getOutputBuffer();
+    
+    // Main Process
+	int process(const UInt16 &charCode, const UInt16 &keycode, const UInt8 &shiftCap, const bool &otherControl);
+    
     
     void setInputMethod(const UInt8 &inputMethod);
     UInt8 getInputMethod();
 
 	// TODO: test only
 	BufferEntry* getBuffer();
-
-    void setActiveCodeTable(int codeTableNumber);
-    void addCharacterSet(const map<std::string, vector<UInt16>> &codeTableRaw);
+    
+    UInt8 getCurrentCodeTable();
+    void setActiveCodeTable(const UInt8 &codeTableNumber);
+    UInt8 getTotalCodeTable();
+    void addCodeTable(const unsigned short &charType, const map<std::string, vector<UInt16>> &codeTableRaw);
 };
 
 #endif /* KBENGINE_KBENGINE_H_ */
