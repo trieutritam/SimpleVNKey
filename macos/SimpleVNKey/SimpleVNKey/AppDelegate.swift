@@ -252,8 +252,9 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
     statusShiftCap += flag.contains(CGEventFlags.maskAlphaShift) ? 2 : 0
     
     if [.leftMouseDown, .rightMouseDown, .leftMouseDragged, .rightMouseDragged].contains(type) {
-        //TODO disable for test
-        //engine.resetBuffer();
+        #if !DEBUG
+            engine.resetBuffer();
+        #endif
     }
     else if [.keyDown].contains(type) {
         let otherControl = flag.contains(CGEventFlags.maskCommand)
