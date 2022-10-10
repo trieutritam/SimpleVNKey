@@ -281,6 +281,56 @@ int kbengine::_processD(const UInt8 &keycode) {
     return foundIdx;
 }
 
+int kbengine::_placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCombine)
+{
+    int tonePosition = -1;
+    
+    // if buffer has ê or ơ, tone alway there
+    for(int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
+        if ((this->_buffer[i].keyCode == KEY_E && this->_buffer[i].roofType == ROOF)
+            || (this->_buffer[i].keyCode == KEY_O && this->_buffer[i].roofType == HOOK))
+        {
+            tonePosition = i;
+            break;
+        }
+    }
+    
+    // not found ê or ơ -> check number of vowel
+    if (tonePosition < 0) {
+        int vowelCount = 0;
+        bool lastIsVowel = true;   // keep track the last char is vowel or not
+        PRINT_VECTOR(syllableCombine);
+        for(int i = 1; i < syllableCombine.size(); i++) {
+            auto keyCode = EXCLUDE_MARK(syllableCombine[i]);
+            
+            if (IS_VOWEL(keyCode)) vowelCount++;
+            lastIsVowel = IS_VOWEL(keyCode);
+        }
+        // Nếu có một nguyên âm thì dấu đặt ở nguyên âm: á, tã, nhà, nhãn, gánh, ngáng
+        // Nếu là tập hợp hai (2) nguyên âm (nguyên âm đôi) thì đánh dấu ở nguyên âm đầu.
+        if (vowelCount == 1 || (vowelCount == 2 && lastIsVowel)) tonePosition = foundIdx;
+        
+        // Kiểu cũ dựa trên những từ điển từ trước năm 1950 nên "gi" và "qu" được coi là một mẫu tự riêng.
+        // Vì vậy "già" và "quạ" không phải là nguyên âm đôi "ia" hay "ua" mà là "gi" + "à"; và "qu" + "ạ".
+        // => This case we already count 2 vowels, and we need to adjust
+        if ((vowelCount == 2 && lastIsVowel) && foundIdx > this->_bufferStartWordIdx) {
+            LOG_DEBUG("Special: %d %d", this->_buffer[foundIdx - 1].keyCode, this->_buffer[foundIdx].keyCode);
+            if ( (this->_buffer[foundIdx - 1].keyCode == KEY_Q && this->_buffer[foundIdx].keyCode == KEY_U)
+                || (this->_buffer[foundIdx - 1].keyCode == KEY_G && this->_buffer[foundIdx].keyCode == KEY_I))
+            {
+                tonePosition += 1;
+            }
+        }
+        
+        
+        // Tập hợp ba (3) nguyên âm (nguyên âm ba) hoặc
+        // hai nguyên âm + phụ âm cuối thì vị trí dấu chuyển đến nguyên âm thứ nhì.
+        if (vowelCount == 3 || (vowelCount == 2 && !lastIsVowel)) tonePosition = foundIdx + 1;
+    }
+    
+    return tonePosition;
+}
+
 /**
  * In the case of correct spelling tone, we need previousTonePosition to start from there
  */
@@ -290,50 +340,8 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
     int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
     
     if (syllableCombine.size() >= 0) {
-        // count vowel, ignore first element
-        int tonePosition = -1;
-        // if buffer has ê or ơ, tone alway there
-        for(int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
-            if ((this->_buffer[i].keyCode == KEY_E && this->_buffer[i].roofType == ROOF)
-                || (this->_buffer[i].keyCode == KEY_O && this->_buffer[i].roofType == HOOK))
-            {
-                tonePosition = i;
-                break;
-            }
-        }
         
-        // not found ê or ơ -> check number of vowel
-        if (tonePosition < 0) {
-            int vowelCount = 0;
-            bool lastIsVowel = true;   // keep track the last char is vowel or not
-            PRINT_VECTOR(syllableCombine);
-            for(int i = 1; i < syllableCombine.size(); i++) {
-                auto keyCode = EXCLUDE_MARK(syllableCombine[i]);
-                
-                if (IS_VOWEL(keyCode)) vowelCount++;
-                lastIsVowel = IS_VOWEL(keyCode);
-            }
-            // Nếu có một nguyên âm thì dấu đặt ở nguyên âm: á, tã, nhà, nhãn, gánh, ngáng
-            // Nếu là tập hợp hai (2) nguyên âm (nguyên âm đôi) thì đánh dấu ở nguyên âm đầu.
-            if (vowelCount == 1 || (vowelCount == 2 && lastIsVowel)) tonePosition = foundIdx;
-            
-            // Kiểu cũ dựa trên những từ điển từ trước năm 1950 nên "gi" và "qu" được coi là một mẫu tự riêng.
-            // Vì vậy "già" và "quạ" không phải là nguyên âm đôi "ia" hay "ua" mà là "gi" + "à"; và "qu" + "ạ".
-            // => This case we already count 2 vowels, and we need to adjust
-            if ((vowelCount == 2 && lastIsVowel) && foundIdx > this->_bufferStartWordIdx) {
-                LOG_DEBUG("Special: %d %d", this->_buffer[foundIdx - 1].keyCode, this->_buffer[foundIdx].keyCode);
-                if ( (this->_buffer[foundIdx - 1].keyCode == KEY_Q && this->_buffer[foundIdx].keyCode == KEY_U)
-                    || (this->_buffer[foundIdx - 1].keyCode == KEY_G && this->_buffer[foundIdx].keyCode == KEY_I))
-                {
-                    tonePosition += 1;
-                }
-            }
-            
-            
-            // Tập hợp ba (3) nguyên âm (nguyên âm ba) hoặc
-            // hai nguyên âm + phụ âm cuối thì vị trí dấu chuyển đến nguyên âm thứ nhì.
-            if (vowelCount == 3 || (vowelCount == 2 && !lastIsVowel)) tonePosition = foundIdx + 1;
-        }
+        int tonePosition = _placeToneTraditionalRule(foundIdx, syllableCombine);
 
         if (tonePosition >= 0) {
             LOG_DEBUG("Target tone posision: %d", tonePosition);
@@ -361,8 +369,9 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
                     break;
                 }
             }
+            
             // calculate number of backspace
-            numBackSpaces = _calculateNumberOfBackSpace(previousTonePos >=0 ? previousTonePos : tonePosition, endIdx);
+            numBackSpaces = _calculateNumberOfBackSpace(previousTonePos >= 0 ? previousTonePos : tonePosition, endIdx);
             
             if (isCaseReset) {
                 this->_buffer[tonePosition].tone = KeyEvent::Tone0;
@@ -373,7 +382,7 @@ int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone
                 this->_buffer[tonePosition].tone = targetTone;
             }
             
-            if (previousTonePos >=0) {
+            if (previousTonePos >= 0) {
                 this->_buffer[previousTonePos].tone = KeyEvent::Tone0;
                 tonePosition = previousTonePos;
             }
@@ -756,6 +765,20 @@ UInt8 kbengine::_getCurrentCodeTableCharType()
 
 // Recalculate startIndex of a word & buffer when user press delete
 void kbengine::_processBackSpacePressed() {
+    short currentTone = KeyEvent::Tone0;
+    short currentTonePos = -1;
+   
+    LOG_DEBUG("Process Tone after Delete - start: %d, end: %d", this->_bufferStartWordIdx, this->_bufferSize);
+    for (int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
+        if (this->_buffer[i].tone != KeyEvent::Tone0) {
+            currentTone = this->_buffer[i].tone;
+            currentTonePos = i;
+            break;
+        }
+    }
+    
+    
+    bool isDeleteTone = this->_buffer[this->_bufferSize - 1].tone != KeyEvent::Tone0;
     auto charCode = this->_getCharacterCode(this->_buffer[this->_bufferSize - 1]);
     
     this->_bufferSize--;
@@ -776,8 +799,37 @@ void kbengine::_processBackSpacePressed() {
     
     // create output to send delete in case 2 bytes
     // case 1 byte we let system process
-    if (_getCurrentCodeTableCharType() == 2 && BYTE_HIGH(charCode) > 0) {
-        _processKeyCodeOutput(2, 0, 0);
+    int addDelete = 0;
+    if (_getCurrentCodeTableCharType() == 2 && (BYTE_HIGH(charCode) > 0 || isDeleteTone)) {
+        addDelete = 2;
+    }
+    
+    LOG_DEBUG("Additional Delete: %d", addDelete);
+    
+    if (currentTone != KeyEvent::Tone0) {
+        LOG_DEBUG("curTone: %d", currentTone);
+        
+        vector<UInt16> syllableCombine;
+        int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
+        LOG_DEBUG("Syllable found, size: %lu", syllableCombine.size());
+        if (syllableCombine.size() > 0) {
+            int tonePosition = _placeToneTraditionalRule(foundIdx, syllableCombine);
+
+            if (tonePosition >= 0) {
+                int numBackSpaces = this->_calculateNumberOfBackSpace(tonePosition, this->_bufferSize);
+                
+
+                numBackSpaces += addDelete > 0 ? addDelete : 1;
+                
+                this->_buffer[currentTonePos].tone = KeyEvent::Tone0;
+                this->_buffer[tonePosition].tone = currentTone;
+                
+                this->_processKeyCodeOutput(numBackSpaces, tonePosition, this->_bufferSize);
+            }
+        }
+        else {
+            _processKeyCodeOutput(addDelete, 0, 0);
+        }
     }
 }
 
