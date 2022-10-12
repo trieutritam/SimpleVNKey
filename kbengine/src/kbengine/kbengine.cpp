@@ -330,17 +330,103 @@ int kbengine::_placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCom
     return tonePosition;
 }
 
+
+int kbengine::_placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine)
+{
+    int tonePosition = -1;
+    
+    PRINT_VECTOR(syllableCombine);
+    
+    int vowelCount = 0;
+    int firstVowelPos = -1;
+    int lastVowelPos = -1;
+    bool lastIsVowel = false;
+    
+    bool hasCircumflex = false;
+    int circumflexPos = -1;
+    
+    int endIdx = this->_bufferSize - 1;
+    
+    for(int i = foundIdx; i < this->_bufferSize; i++) {
+        BufferEntry *pEntry = &(this->_buffer[i]);
+        auto keyCode = pEntry->keyCode;
+        
+        if (IS_VOWEL(keyCode)) {
+            vowelCount++;
+            if (firstVowelPos == -1) firstVowelPos = i;
+            lastVowelPos = i;
+        }
+        
+        lastIsVowel = IS_VOWEL(keyCode);
+        hasCircumflex = pEntry->roofType != RoofType::ORIGIN;
+        if (hasCircumflex) {
+            circumflexPos = i;
+        }
+    }
+
+    //Rule 1:
+    LOG_DEBUG("vowelCount: %d - pos: %d", vowelCount, firstVowelPos);
+    if (vowelCount == 1) {
+        tonePosition = firstVowelPos;
+    }
+    else if (vowelCount == 2 && lastIsVowel == false) {
+        // Rule 3
+        LOG_DEBUG("vowelCount: %d - pos: %d - lastIsVowel: %d", vowelCount, firstVowelPos, lastIsVowel);
+        
+        tonePosition = lastVowelPos;
+    }
+    
+    // Rule 2
+    LOG_DEBUG("hasCircumflex: %d - pos: %d", hasCircumflex, circumflexPos);
+    if (hasCircumflex) {
+        tonePosition = circumflexPos;
+    }
+
+    // Rule 4
+    if (vowelCount >= 2 && lastIsVowel) {
+        auto *beforeLast = &(this->_buffer[endIdx - 1]);
+        auto *last = &(this->_buffer[endIdx]);
+        if ((beforeLast->keyCode == KEY_O && last->keyCode == KEY_A)
+            || (beforeLast->keyCode == KEY_O && last->keyCode == KEY_E)
+            || (beforeLast->keyCode == KEY_U && last->keyCode == KEY_Y)
+            ){
+            LOG_DEBUG("Tone: oa,oe,uy");
+            tonePosition = lastVowelPos;
+        }
+        else {
+            LOG_DEBUG("Tone which is not: oa,oe,uy");
+            tonePosition = lastVowelPos - 1;
+            
+            // check start with qu, gi
+            // if beforeLast = u or i && beforeLast's before = g or q
+            if (this->_bufferSize >= 3) {
+                auto beforeBeforeLast = &(this->_buffer[endIdx - 2]);
+                if ((beforeLast->keyCode == KEY_U || beforeLast->keyCode == KEY_I)
+                    && (beforeBeforeLast->keyCode == KEY_G || beforeBeforeLast->keyCode == KEY_Q)) {
+                    tonePosition = lastVowelPos;
+                }
+            }
+        }
+    }
+    
+    LOG_DEBUG("Tone position: %d", tonePosition);
+    
+    
+    return tonePosition;
+}
+
 /**
  * In the case of correct spelling tone, we need previousTonePosition to start from there
  */
-int kbengine::_processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc)
+int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc)
 {
     vector<UInt16> syllableCombine;
     int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
     
     if (syllableCombine.size() >= 0) {
         
-        int tonePosition = _placeToneTraditionalRule(foundIdx, syllableCombine);
+        int tonePosition = _useModernTone ? _placeToneModernRule(foundIdx, syllableCombine)
+                                            : _placeToneTraditionalRule(foundIdx, syllableCombine);
 
         if (tonePosition >= 0) {
             LOG_DEBUG("Target tone posision: %d", tonePosition);
@@ -465,7 +551,7 @@ int kbengine::_correctTone(const UInt8 &keycode)
         LOG_DEBUG("Check spelling, keyCode = %d, curTone: %d", keyCode, currentTone);
         
         // TODO: call new process Tone if support
-        this->_processToneTraditional(keyCode, static_cast<KeyEvent>(currentTone), true);
+        this->_processTone(keyCode, static_cast<KeyEvent>(currentTone), true);
     }
     
     return 0;
@@ -595,6 +681,11 @@ vector<UInt32> kbengine::getOutputBuffer()
     return this->_keyCodeOutput;
 }
 
+void kbengine::setUseModernTone(bool isUse)
+{
+    _useModernTone = isUse;
+}
+
 void kbengine::_addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap) {
     if (this->_bufferSize == MAX_BUFF) {
         // need to remove all word except the last one
@@ -676,7 +767,7 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
             case Tone3:
             case Tone4:
             case Tone5:
-                actionResult = this->_processToneTraditional(keycode, result);
+                actionResult = this->_processTone(keycode, result);
                 break;
             case EscChar:
                 this->resetBuffer();
@@ -831,7 +922,8 @@ void kbengine::_processBackSpacePressed() {
             int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
             LOG_DEBUG("Syllable found, size: %lu", syllableCombine.size());
             if (syllableCombine.size() > 0) {
-                int tonePosition = _placeToneTraditionalRule(foundIdx, syllableCombine);
+                int tonePosition = (_useModernTone ? _placeToneModernRule(foundIdx, syllableCombine)
+                                    : _placeToneTraditionalRule(foundIdx, syllableCombine));
                 LOG_DEBUG("New tonePos: %d", tonePosition);
                 if (tonePosition >= 0 && tonePosition != currentTonePos) {
                     LOG_DEBUG("Reposition tone mark");

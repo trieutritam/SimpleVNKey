@@ -51,6 +51,7 @@ class kbengine {
     UInt8 currentCodeTable = 0; // 0 - unicode
     
     short _currentInputMethod =  -1;   //0 VNI, 1 Simple Telex, 2 Telex
+    short _useModernTone = false;
         
 	BufferEntry _buffer[MAX_BUFF];
     int _bufferStartWordIdx;    // index of begin of the last word in buffer
@@ -64,7 +65,8 @@ class kbengine {
     int _processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc = false);
     int _processD(const UInt8 &keycode);
     int _placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCombine);
-    int _processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false);
+    int _placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine);
+    int _processTone(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false);
     int _processHookOU(const UInt8 &keycode, const UInt16 &expectedKey);
     void _processBackSpacePressed();
 
@@ -86,6 +88,8 @@ public:
 
 	void resetBuffer();
     vector<UInt32> getOutputBuffer();
+    
+    void setUseModernTone(bool isUse);
     
     /* Main Process, after process keycode
      * consumer need call getOutputBuffer() to check whether keycode processed and send keycodes to target app
