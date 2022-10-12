@@ -21,14 +21,14 @@ static kbengine engine;
 {
     engine.process(charCode, keycode, shiftCap, otherControl);
     std::vector<UInt32> output = engine.getOutputBuffer();
-    
-    NSMutableArray *res = [[NSMutableArray alloc]init];
-    
+
+
+    NSMutableArray *res = [NSMutableArray new];
+
     for(auto it = output.begin(); it != output.end(); it ++) {
-//        NSLog(@"%i ", *it);
         [res addObject: [NSNumber numberWithInt: (*it)]];
     }
-    
+
     return [NSArray arrayWithArray:res];
 }
 
@@ -67,17 +67,14 @@ static kbengine engine;
 {
     std::map<std::string, vector<UInt16>> codeTable;
     
-//    NSLog(@"%s", "Convert codeTable");
     for(NSString *key in [characterEncoding allKeys]) {
         NSArray *values = [characterEncoding valueForKey:key];
         vector<UInt16> arr;
 
-//        NSLog(@"%@", key);
         std::vector<UInt16> vectorList;
         vectorList.reserve([values count]);
         
         for (id value in values) {
-//            NSLog(@"%hu", [value unsignedShortValue]);
             vectorList.push_back([value unsignedShortValue]);
         }
         

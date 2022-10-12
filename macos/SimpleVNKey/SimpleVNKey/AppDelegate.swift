@@ -10,6 +10,7 @@ import OSLog
 
 struct Global {
     static var myEventSource: CGEventSource?;
+    static var log = Logger();
 }
 
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -79,14 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func setUpMenu(charEncList: Array<CharacterEncodingInfo>) {
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
-//
-//        popover = NSPopover()
-//        popover.contentSize = NSSize(width: 300, height: 300)
-//        popover.behavior = .transient
-//        popover.contentViewController = NSHostingController(rootView: ContentView())
-//
-//
-//        // Assign our custom menu to the status bar
+        // Assign our custom menu to the status bar
         statusBarItem.menu = menu.build(statusBarItem: statusBarItem)
         
         statusBarItem.menu?.delegate = menu;
@@ -184,11 +178,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                                callback: eventTapCallback,
                                                userInfo: userInfo)
         if ((self.eventTap) == nil) {
-            print("failed to create event tap")
+            Self.log.error("failed to create event tap")
             exit(1)
         }
         
-        print("CGEventTap Created")
+        Self.log.debug("CGEventTap Created")
         
         self.runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
@@ -225,7 +219,7 @@ func checkHotKeyPressed(flag: CGEventFlags, actualKeyCode: Int64, appSetting: Se
     }
     
     let expectedKeyCode = appSetting.hotKeyCharacter
-    print("expectedCode: ", expectedKeyCode)
+    Global.log.debug("expectedCode: \(String(format: "%02X", expectedKeyCode))")
     if (actualKeyCode != expectedKeyCode) {
         return false
     }
@@ -297,13 +291,13 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
                         if ((keyData! & 0x00010000) == 0x00010000) {
                             let actualCharCode = keyData! ^ 0x00010000
                             
-                            print("send: \(String(format:"%02X", actualCharCode))")
+                            Global.log.debug("send keycode: \(String(format:"%02X", actualCharCode))")
                                   
                             let tempChar = [UniChar(actualCharCode)]
                             sendKeyStroke(proxy: proxy, keyData: UInt32(VKKeyCode.KEY_SPACE.rawValue), unicodeString: tempChar)
                         }
                         else {
-                            //print("send keycode: \(keyData!)")
+                            Global.log.debug("send keycode: \(keyData!)")
                             sendKeyStroke(proxy: proxy, keyData: keyData!)
                         }
                     }
@@ -314,20 +308,22 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
         }
     }
     
-    return Unmanaged.passRetained(event)
+    return Unmanaged.passUnretained(event);//Unmanaged.passRetained(event)
 }
 
 func sendKeyStroke(proxy: CGEventTapProxy, keyData: UInt32, unicodeString: [UniChar]? = nil) {
-    let eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData), keyDown: false)
-    let eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData), keyDown: true)
-    
-    if (unicodeString != nil) {
-        eUp?.keyboardSetUnicodeString(stringLength: unicodeString!.count, unicodeString: unicodeString!)
-        eDown?.keyboardSetUnicodeString(stringLength: unicodeString!.count, unicodeString: unicodeString!)
+    autoreleasepool{
+        let eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData), keyDown: false)
+        let eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData), keyDown: true)
+        
+        if (unicodeString != nil) {
+            eUp?.keyboardSetUnicodeString(stringLength: unicodeString!.count, unicodeString: unicodeString!)
+            eDown?.keyboardSetUnicodeString(stringLength: unicodeString!.count, unicodeString: unicodeString!)
+        }
+        
+        eDown?.tapPostEvent(proxy)
+        eUp?.tapPostEvent(proxy)
     }
-    
-    eDown?.tapPostEvent(proxy)
-    eUp?.tapPostEvent(proxy)
 }
 
 /**
