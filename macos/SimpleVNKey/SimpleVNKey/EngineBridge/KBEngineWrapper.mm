@@ -84,4 +84,14 @@ static kbengine engine;
     
     engine.addCodeTable(charType, codeTable);
 }
+
+- (void)setUseModernToneMethod: (bool) isUse
+{
+    engine.setUseModernTone(isUse);
+}
+
+- (bool)isUseModernToneMethod
+{
+    return engine.isUseModernTone();
+}
 @end

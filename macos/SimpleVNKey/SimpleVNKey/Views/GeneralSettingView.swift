@@ -38,6 +38,10 @@ struct GeneralSettingView: View {
                             Text(item.name).tag(item.id)
                         }
                     }.horizontalRadioGroupLayout()
+                    
+                    Toggle("Use oà, uý (instead of òa úy)",
+                           isOn: $appSettingVM.useModernToneMethod)
+                    //.toggleStyle(.switch)
                 }
             }
             Divider()

@@ -129,6 +129,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    func setUseModernToneMethod(_ isUse: Bool) {
+        kbEngine.setUseModernToneMethod(isUse)
+    }
+    
     func showAboutDialog() {
         if (aboutBoxWindowController == nil) {
             let styleMask: NSWindow.StyleMask = [.closable, .miniaturizable,/* .resizable,*/ .titled]

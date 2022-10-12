@@ -21,6 +21,8 @@ class SettingViewModel: ObservableObject {
     
     @Published var characterEncoding = CharacterEncodingType.Unicode.rawValue;
     
+    @Published var useModernToneMethod = false;
+    
     private var cancellables = Set<AnyCancellable>()
     
     var listCharacterEncoding = [CharacterEncodingInfo(id: Int(CharacterEncodingType.Unicode.rawValue),
@@ -45,17 +47,21 @@ class SettingViewModel: ObservableObject {
         
         characterEncoding = (UserDefaults.standard.value(forKey: "SimpleVNKey.CharacterEncoding") ?? CharacterEncodingType.Unicode.rawValue) as! Int
         
+        useModernToneMethod = (UserDefaults.standard.value(forKey: "SimpleVNKey.UseModernToneMethod") ?? false) as! Bool
+
+        
         print("Load SimpleVNKey.isVNEnabled: ", isVNEnabled)
         print("Load SimpleVNKey.InputMethod: ", inputMethod)
         print("Load SimpleVNKey.CharacterEncoding: ", characterEncoding)
         print("Load SimpleVNKey.HotKey: ", hotKeyControl, hotKeyOption, hotKeyCommand, hotKeyShift, hotKeyCharacter)
+        print("Load SimpleVNKey.UseModernToneMethod: ", useModernToneMethod)
         
         guard let appDelegate = AppDelegate.instance else { return }
         isVNEnabled ? appDelegate.enableVN() : appDelegate.disableVN()
         appDelegate.setInputMethod(inputMethod: UInt8(inputMethod))
     }
     
-    
+
     init() {
         self.loadSettings()
         
@@ -98,6 +104,12 @@ class SettingViewModel: ObservableObject {
             UserDefaults.standard.set(currentCharEnc, forKey: "SimpleVNKey.CharacterEncoding")
             guard let appDelegate = AppDelegate.instance else { return }
             appDelegate.setActiveCharacterEncoding(currentCharEnc)
+        }.store(in: &cancellables)
+        
+        $useModernToneMethod.sink { val in
+            UserDefaults.standard.set(val, forKey: "SimpleVNKey.UseModernToneMethod")
+            guard let appDelegate = AppDelegate.instance else { return }
+            appDelegate.setUseModernToneMethod(val)
         }.store(in: &cancellables)
     }
     
