@@ -112,7 +112,7 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
     {
         UInt16 curKeyCode = this->_buffer[curIdx].keyCode;
         
-        LOG_DEBUG("Find syllableCombine, Idx: %d", curIdx);
+//        LOG_DEBUG("Find syllableCombine, Idx: %d", curIdx);
         
         if (expectedKey != KEY_EMPTY && curKeyCode != expectedKey) {
             LOG_DEBUG("Ignore %d due to expected: %d", curKeyCode, expectedKey);
@@ -147,7 +147,6 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
             }
             
             if (found) {
-                LOG_DEBUG("Found syllableCombine");
                 PRINT_VECTOR(combine);
                 syllableCombine = combine;
                 break;
@@ -764,71 +763,88 @@ UInt8 kbengine::_getCurrentCodeTableCharType()
 }
 
 // Recalculate startIndex of a word & buffer when user press delete
+// Solution:
+//  Check the last character has tone mark or circumflex?
+//      - if it has tone mark -> remove tone mark.
+//      - else if it has circumflex  -> remove circumflex.
+//      ==> Both case we don't reduce buffer size since the character still be there.
+//  If the last character doesn't has tone mark and circumflex?
+//      - Reduce buffer size, reposition tone mark.
 void kbengine::_processBackSpacePressed() {
-    short currentTone = KeyEvent::Tone0;
-    short currentTonePos = -1;
-   
-    LOG_DEBUG("Process Tone after Delete - start: %d, end: %d", this->_bufferStartWordIdx, this->_bufferSize);
-    for (int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
-        if (this->_buffer[i].tone != KeyEvent::Tone0) {
-            currentTone = this->_buffer[i].tone;
-            currentTonePos = i;
-            break;
-        }
-    }
     
+    if (this->_bufferSize == 0) return;
     
-    bool isDeleteTone = this->_buffer[this->_bufferSize - 1].tone != KeyEvent::Tone0;
-    auto charCode = this->_getCharacterCode(this->_buffer[this->_bufferSize - 1]);
-    
-    this->_bufferSize--;
-    
-    if (this->_bufferSize < 0) this->_bufferSize = 0;
-    
-    if (this->_bufferSize <= this->_bufferStartWordIdx) {
-        this->_bufferStartWordIdx = 0;
-        if (this->_bufferSize < 0) this->_bufferSize = 0;
+    BufferEntry *pCurBuffer = &(this->_buffer[this->_bufferSize-1]);
+    LOG_DEBUG("Has tone: %d or Roof: %d", pCurBuffer->tone != KeyEvent::Tone0, pCurBuffer->roofType != RoofType::ORIGIN);
+
+    if (pCurBuffer->tone != KeyEvent::Tone0 || pCurBuffer->roofType != RoofType::ORIGIN) {
+        short numDelete = 1;
+        auto charCode = this->_getCharacterCode(*pCurBuffer);
         
-        for (int i = this->_bufferSize - 1; i > 0; i--) {
-            if (std::find (_wordBreakCode.begin(), _wordBreakCode.end(), this->_buffer[i].keyCode) != _wordBreakCode.end()) {
-                this->_bufferStartWordIdx = i + 1;
+        // remove tone first
+        if (pCurBuffer->tone != KeyEvent::Tone0) {
+            pCurBuffer->tone = KeyEvent::Tone0;
+        }
+        else if (pCurBuffer->roofType != RoofType::ORIGIN) {
+            pCurBuffer->roofType = RoofType::ORIGIN;
+        }
+        
+        if (_getCurrentCodeTableCharType() >= 2 && BYTE_HIGH(charCode) > 0) {
+            numDelete = 2;
+        }
+        
+        
+        this->_processKeyCodeOutput(numDelete, this->_bufferSize - 1, this->_bufferSize);
+    }
+    else {
+        short currentTone = KeyEvent::Tone0;
+        short currentTonePos = -1;
+        
+        LOG_DEBUG("Process Tone after Delete - start: %d, end: %d", this->_bufferStartWordIdx, this->_bufferSize);
+        for (int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
+            if (this->_buffer[i].tone != KeyEvent::Tone0) {
+                currentTone = this->_buffer[i].tone;
+                currentTonePos = i;
                 break;
             }
         }
-    }
     
-    // create output to send delete in case 2 bytes
-    // case 1 byte we let system process
-    int addDelete = 0;
-    if (_getCurrentCodeTableCharType() == 2 && (BYTE_HIGH(charCode) > 0 || isDeleteTone)) {
-        addDelete = 2;
-    }
+        this->_bufferSize--;
     
-    LOG_DEBUG("Additional Delete: %d", addDelete);
+        if (this->_bufferSize <= this->_bufferStartWordIdx) {
+            this->_bufferStartWordIdx = 0;
     
-    if (currentTone != KeyEvent::Tone0) {
-        LOG_DEBUG("curTone: %d", currentTone);
-        
-        vector<UInt16> syllableCombine;
-        int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
-        LOG_DEBUG("Syllable found, size: %lu", syllableCombine.size());
-        if (syllableCombine.size() > 0) {
-            int tonePosition = _placeToneTraditionalRule(foundIdx, syllableCombine);
-
-            if (tonePosition >= 0) {
-                int numBackSpaces = this->_calculateNumberOfBackSpace(tonePosition, this->_bufferSize);
-                
-
-                numBackSpaces += addDelete > 0 ? addDelete : 1;
-                
-                this->_buffer[currentTonePos].tone = KeyEvent::Tone0;
-                this->_buffer[tonePosition].tone = currentTone;
-                
-                this->_processKeyCodeOutput(numBackSpaces, tonePosition, this->_bufferSize);
+            // Find the start position of the word
+            for (int i = this->_bufferSize - 1; i > 0; i--) {
+                if (std::find (_wordBreakCode.begin(), _wordBreakCode.end(), this->_buffer[i].keyCode) != _wordBreakCode.end()) {
+                    this->_bufferStartWordIdx = i + 1;
+                    break;
+                }
             }
         }
-        else {
-            _processKeyCodeOutput(addDelete, 0, 0);
+        
+        // if the word has any tone, we need to reposition it
+        if (currentTone != KeyEvent::Tone0) {
+            LOG_DEBUG("curTone: %d, curTonePos: %d", currentTone, currentTonePos);
+    
+            vector<UInt16> syllableCombine;
+            int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
+            LOG_DEBUG("Syllable found, size: %lu", syllableCombine.size());
+            if (syllableCombine.size() > 0) {
+                int tonePosition = _placeToneTraditionalRule(foundIdx, syllableCombine);
+                LOG_DEBUG("New tonePos: %d", tonePosition);
+                if (tonePosition >= 0 && tonePosition != currentTonePos) {
+                    LOG_DEBUG("Reposition tone mark");
+                    int numBackSpaces = this->_calculateNumberOfBackSpace(tonePosition, this->_bufferSize);
+    
+                    numBackSpaces += 1;
+    
+                    this->_buffer[currentTonePos].tone = KeyEvent::Tone0;
+                    this->_buffer[tonePosition].tone = currentTone;
+    
+                    this->_processKeyCodeOutput(numBackSpaces, tonePosition, this->_bufferSize);
+                }
+            }
         }
     }
 }

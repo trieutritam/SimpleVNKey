@@ -58,19 +58,21 @@ class kbengine {
     
     // output after processing
     vector<UInt32> _keyCodeOutput;
-
+    
+    int _calculateNumberOfBackSpace(int startIdx, int endIdx);
+    
     int _processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc = false);
     int _processD(const UInt8 &keycode);
     int _placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCombine);
     int _processToneTraditional(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false);
     int _processHookOU(const UInt8 &keycode, const UInt16 &expectedKey);
-    
+    void _processBackSpacePressed();
+
     int _correctTone(const UInt8 &keycode);
     int _correctMark(const UInt8 &keycode);
     
     void _processKeyCodeOutput(int numDelete, int startPos, int endPos);
-    int _calculateNumberOfBackSpace(int startIdx, int endIdx);
-    void _processBackSpacePressed();
+    
     void _startNewWord();
     void _addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap);
     
@@ -85,9 +87,10 @@ public:
 	void resetBuffer();
     vector<UInt32> getOutputBuffer();
     
-    // Main Process
+    /* Main Process, after process keycode
+     * consumer need call getOutputBuffer() to check whether keycode processed and send keycodes to target app
+     */
 	int process(const UInt16 &charCode, const UInt16 &keycode, const UInt8 &shiftCap, const bool &otherControl);
-    
     
     void setInputMethod(const UInt8 &inputMethod);
     UInt8 getInputMethod();

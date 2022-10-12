@@ -2,7 +2,7 @@
 #include "fixture/kbengine-test-telex.cc"
 
 // Test input ] --> ư
-TEST_F(KbEngineTestTelex, TestKeyStroke_Input_LEFT_BRACKET_Get_U_Hook) {
+TEST_F(KbEngineTestTelex, TestTelex_Input_LEFT_BRACKET_Get_U_Hook) {
   vector<UInt16> charCodes = { ']' };
 
   vector<UInt32> expectedOut = {
@@ -11,13 +11,13 @@ TEST_F(KbEngineTestTelex, TestKeyStroke_Input_LEFT_BRACKET_Get_U_Hook) {
 
   engine.resetBuffer();
   
-  vector<UInt32> output = sendKeyStrokes(charCodes);
+  vector<UInt32> output = sendCharCodes(charCodes);
   
   EXPECT_EQ(output, expectedOut);
 }
 
 // Test input ]] --> ]
-TEST_F(KbEngineTestTelex, TestKeyStroke_Input_LEFT_BRACKET_Get_Right_Bracket) {
+TEST_F(KbEngineTestTelex, TestTelex_Input_LEFT_BRACKET_Get_Right_Bracket) {
   vector<UInt16> charCodes = { ']' };
 
   vector<UInt32> expectedOut = {
@@ -28,15 +28,15 @@ TEST_F(KbEngineTestTelex, TestKeyStroke_Input_LEFT_BRACKET_Get_Right_Bracket) {
   engine.resetBuffer();
   
   // send first ']'
-  sendKeyStrokes(charCodes);
+  sendCharCodes(charCodes);
   // send next ']'
-  vector<UInt32> output = sendKeyStrokes(charCodes);
+  vector<UInt32> output = sendCharCodes(charCodes);
   
   EXPECT_EQ(output, expectedOut);
 }
 
 // Test input [ --> o+
-TEST_F(KbEngineTestTelex, TestKeyStroke_Input_RIGHT_BRACKET_Get_O_Hook) {
+TEST_F(KbEngineTestTelex, TestTelex_Input_RIGHT_BRACKET_Get_O_Hook) {
   vector<UInt16> charCodes = { '[' };
 
   vector<UInt32> expectedOut = {
@@ -45,7 +45,7 @@ TEST_F(KbEngineTestTelex, TestKeyStroke_Input_RIGHT_BRACKET_Get_O_Hook) {
 
   engine.resetBuffer();
   
-  vector<UInt32> output = sendKeyStrokes(charCodes);
+  vector<UInt32> output = sendCharCodes(charCodes);
   
   EXPECT_EQ(output, expectedOut);
 }
