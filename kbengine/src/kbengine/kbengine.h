@@ -90,6 +90,7 @@ public:
     vector<UInt32> getOutputBuffer();
     
     void setUseModernTone(bool isUse);
+    bool isUseModernTone();
     
     /* Main Process, after process keycode
      * consumer need call getOutputBuffer() to check whether keycode processed and send keycodes to target app

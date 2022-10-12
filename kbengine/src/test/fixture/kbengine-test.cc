@@ -1,9 +1,7 @@
 #include "kbengine-test.h"
 #include "keycode-map.h"
 
-void KbEngineTest::SetUp() {
-  charList = codeTableList.at(0);  // Unicode encoding
-
+KbEngineTest::KbEngineTest() {
   map<std::string, vector<UInt16>> vniChars = {
       { "a"   ,  {0x0041, 0x0061, 0xd941, 0xf961, 0xd841, 0xf861, 0xdb41, 0xfb61, 0xd541, 0xf561, 0xcf41, 0xef6 }},
       { "a1"  ,  {0xc241, 0xe261, 0xc141, 0xe161, 0xc041, 0xe061, 0xc541, 0xe561, 0xc341, 0xe361, 0xc441, 0xe46 }},
@@ -24,10 +22,22 @@ void KbEngineTest::SetUp() {
   engine.addCodeTable(2, vniChars);
 }
 
-void KbEngineTest::activateVNIWindows()
+void KbEngineTest::SetUp() {
+  charList = codeTableList.at(0);  // Unicode encoding
+
+  engine.setActiveCodeTable(0);
+  engine.setUseModernTone(false);
+}
+
+void KbEngineTest::activateVNIWindowsMethod()
 {
   engine.setActiveCodeTable(1);
   charList = codeTableList.at(1);
+}
+
+void KbEngineTest::useModernToneMethod()
+{
+  engine.setUseModernTone(true);
 }
 
 UInt32 KbEngineTest::getVNCharAt(UInt16 charCodeType, int index) {

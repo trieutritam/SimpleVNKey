@@ -18,7 +18,12 @@ install(DIRECTORY  ${CMAKE_CURRENT_LIST_DIR}/kbengine DESTINATION ${CMAKE_CURREN
 set(SOURCES test/fixture/kbengine-test.cc test/fixture/kbengine-test-telex.cc)
 
 # Add sources which contains test cases
-add_executable(test_main test/test-main.cc test/test-telex.cc test/test-vniwindows.cc ${SOURCES})
+add_executable(test_main 
+                test/test-main.cc 
+                test/test-telex.cc 
+                test/test-vniwindows.cc 
+                test/test-modern-tone.cc 
+                ${SOURCES})
 target_link_libraries(
   test_main
   GTest::gtest_main

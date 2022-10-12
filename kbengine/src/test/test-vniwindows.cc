@@ -4,7 +4,7 @@
 TEST_F(KbEngineTest, TestVNIWindows_Input_viet65) {
   vector<UInt16> charCodes = { 'v', 'i', 'e', 't', '6', '5' };
 
-  activateVNIWindows();
+  activateVNIWindowsMethod();
   // expect 2 delete keystore, unicode-ê, KEY_T
   vector<UInt32> expectedOut = {
                                  // receive key 6
@@ -30,7 +30,7 @@ TEST_F(KbEngineTest, TestVNIWindows_Input_viet65) {
 TEST_F(KbEngineTest,TestVNIWindows_Input_uo7) {
   vector<UInt16> charCodes = { 'u', 'o', '7' };
 
-  activateVNIWindows();
+  activateVNIWindowsMethod();
   vector<UInt32> expectedOut = {
                                 // receive key 7
                                  UInt32(KEY_DELETE),      // delete 1 chars
@@ -48,7 +48,7 @@ TEST_F(KbEngineTest,TestVNIWindows_Input_uo7) {
 TEST_F(KbEngineTest,TestVNIWindows_Input_uo7n) {
   vector<UInt16> charCodes = { 'u', 'o', '7', 'n' };
 
-  activateVNIWindows();
+  activateVNIWindowsMethod();
 
   vector<UInt32> expectedOut = {
                                   // receive key 7
@@ -73,7 +73,7 @@ TEST_F(KbEngineTest,TestVNIWindows_Input_uo7n) {
 TEST_F(KbEngineTest,TestVNIWindows_Input_uon7) {
   vector<UInt16> charCodes = { 'u', 'o', 'n', '7' };
 
-  activateVNIWindows();
+  activateVNIWindowsMethod();
   vector<UInt32> expectedOut = {
                                  // receive 'n'
                                  UInt32(KEY_DELETE), UInt32(KEY_DELETE), UInt32(KEY_DELETE), // delete 3 chars
@@ -93,7 +93,7 @@ TEST_F(KbEngineTest,TestVNIWindows_Input_uon7) {
 TEST_F(KbEngineTest,TestVNIWindows_DELETE_With_Input_tuong71) {
   vector<UInt16> charCodes = { 't', 'u', 'o', 'n', 'g', '7', '1' };
 
-  activateVNIWindows();
+  activateVNIWindowsMethod();
 
 
   vector<UInt32> expectedOut = {}; // this case there is no output since we delete normal char
@@ -113,7 +113,7 @@ TEST_F(KbEngineTest,TestVNIWindows_DELETE_With_Input_tuong71) {
 TEST_F(KbEngineTest,TestVNIWindows_With_Input_tuon71_2xDELETE) {
   vector<UInt16> charCodes = { 't', 'u', 'o', 'n', '7', '1' };
 
-  activateVNIWindows();
+  activateVNIWindowsMethod();
 
   vector<UInt32> expectedOut = {
     KEY_DELETE, KEY_DELETE,
@@ -141,7 +141,7 @@ TEST_F(KbEngineTest,TestVNIWindows_With_Input_tuon71_2xDELETE) {
 TEST_F(KbEngineTest,TestVNIWindows_With_Input_tuon71_3xDELETE) {
   vector<UInt16> charCodes = { 't', 'u', 'o', 'n', '7', '1' };
 
-  activateVNIWindows();
+  activateVNIWindowsMethod();
 
   vector<UInt32> expectedOut = {
     KEY_DELETE,

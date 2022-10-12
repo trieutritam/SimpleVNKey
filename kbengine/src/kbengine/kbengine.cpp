@@ -686,6 +686,11 @@ void kbengine::setUseModernTone(bool isUse)
     _useModernTone = isUse;
 }
 
+bool kbengine::isUseModernTone()
+{
+    return _useModernTone;
+}
+
 void kbengine::_addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap) {
     if (this->_bufferSize == MAX_BUFF) {
         // need to remove all word except the last one

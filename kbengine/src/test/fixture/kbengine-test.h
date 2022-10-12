@@ -33,7 +33,9 @@ class KbEngineTest: public ::testing::Test {
     vector<UInt32> sendCharCodes(const vector<UInt16> &charCodes);
 
   public:
-    void activateVNIWindows();
+    KbEngineTest();
+    void activateVNIWindowsMethod();
+    void useModernToneMethod();
 };
 
 #endif
