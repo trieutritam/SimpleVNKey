@@ -16,6 +16,8 @@ struct CharacterEncodingInfo {
     var charType: UInt8
 }
 
+let ENCODING_DIR = ".simplevnkey/encoding"
+
 class CharacterEncodingLoader {
     private static let log = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -34,7 +36,7 @@ class CharacterEncodingLoader {
         var charEncList = Array<CharacterEncodingInfo>()
         do {
             var homeUrl = fm.homeDirectoryForCurrentUser
-            homeUrl.appendPathComponent(".simplevnkey")
+            homeUrl.appendPathComponent(ENCODING_DIR)
             
             let path = homeUrl.path
             print("Load file from: ", path)
