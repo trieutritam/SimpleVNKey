@@ -806,7 +806,6 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
                 this->resetBuffer();
             }
             else {
-                // TODO: Implement replace the tone if any
                 this->_processBackSpacePressed();
             }
         }
@@ -866,7 +865,7 @@ UInt8 kbengine::_getCurrentCodeTableCharType()
 //      ==> Both case we don't reduce buffer size since the character still be there.
 //  If the last character doesn't has tone mark and circumflex?
 //      - Reduce buffer size, reposition tone mark.
-void kbengine::_processBackSpacePressed() {
+void kbengine::_processBackSpacePressed2() {
     
     if (this->_bufferSize == 0) return;
     
@@ -944,6 +943,38 @@ void kbengine::_processBackSpacePressed() {
             }
         }
     }
+}
+
+void kbengine::_processBackSpacePressed() {
+    if (this->_bufferSize == 0) return;
+    
+    // create output to send delete in case 2 bytes
+    // case 1 byte we let system process
+    auto charCode = this->_getCharacterCode(this->_buffer[this->_bufferSize - 1]);
+    
+    int addDelete = 0;
+    if (_getCurrentCodeTableCharType() == 2 && (BYTE_HIGH(charCode) > 0)) {
+        addDelete = 2;
+    }
+    
+    this->_bufferSize--;
+    
+    // Reupdate start position of word
+    if (this->_bufferSize <= this->_bufferStartWordIdx) {
+        this->_bufferStartWordIdx = 0;
+
+        // Find the start position of the word
+        for (int i = this->_bufferSize - 1; i > 0; i--) {
+            if (std::find (_wordBreakCode.begin(), _wordBreakCode.end(), this->_buffer[i].keyCode) != _wordBreakCode.end()) {
+                this->_bufferStartWordIdx = i + 1;
+                break;
+            }
+        }
+    }
+    
+    LOG_DEBUG("Number Delete: %d", addDelete);
+    if (addDelete > 0)
+        _processKeyCodeOutput(addDelete, 0, 0);
 }
 
 // Recalculate startIndex of a word when user start new word

@@ -117,7 +117,7 @@ TEST_F(KbEngineTest,TestVNIWindows_With_Input_tuon71_2xDELETE) {
 
   vector<UInt32> expectedOut = {
     KEY_DELETE, KEY_DELETE,
-    getVNCharAt(KEY_O| MASK_HOOK, 1),    // add ơ
+    // getVNCharAt(KEY_O| MASK_HOOK, 1),    // add ơ
   };
 
   engine.resetBuffer();
@@ -144,8 +144,8 @@ TEST_F(KbEngineTest,TestVNIWindows_With_Input_tuon71_3xDELETE) {
   activateVNIWindowsMethod();
 
   vector<UInt32> expectedOut = {
-    KEY_DELETE,
-    getVNCharAt(KEY_O, 1),    // add o
+    // KEY_DELETE,
+    // getVNCharAt(KEY_O, 1),    // add o
   };
 
   engine.resetBuffer();
