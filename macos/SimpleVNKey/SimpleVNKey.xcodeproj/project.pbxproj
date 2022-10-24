@@ -17,7 +17,6 @@
 		AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5AFC7F28E217BC00CE6D12 /* Common.swift */; };
 		AF7680C828ED8E3F00B7A14A /* Yaml in Frameworks */ = {isa = PBXBuildFile; productRef = AF7680C728ED8E3F00B7A14A /* Yaml */; };
 		AF7680CA28ED9A6900B7A14A /* CharacterEncodingLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7680C928ED9A6900B7A14A /* CharacterEncodingLoader.swift */; };
-		AF91C6A02905A4BA00AE9FD2 /* wordbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF91C69E2905A4BA00AE9FD2 /* wordbuffer.cpp */; };
 		AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */; };
 		AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA3453428E467B500FAD0BD /* AboutView.swift */; };
 		AFADA70928EAD4B5006B435D /* BundleExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFADA70828EAD4B5006B435D /* BundleExt.swift */; };
@@ -68,7 +67,6 @@
 		AF5AFC7B28E2125B00CE6D12 /* vnlexi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vnlexi.h; path = ../../../../kbengine/src/kbengine/vnlexi.h; sourceTree = "<group>"; };
 		AF5AFC7F28E217BC00CE6D12 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		AF7680C928ED9A6900B7A14A /* CharacterEncodingLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterEncodingLoader.swift; sourceTree = "<group>"; };
-		AF91C69E2905A4BA00AE9FD2 /* wordbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wordbuffer.cpp; path = ../../../../kbengine/src/kbengine/wordbuffer.cpp; sourceTree = "<group>"; };
 		AF91C69F2905A4BA00AE9FD2 /* wordbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wordbuffer.h; path = ../../../../kbengine/src/kbengine/wordbuffer.h; sourceTree = "<group>"; };
 		AF9E91FC28E2C9EF00DFC7C8 /* macrologger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = macrologger.h; path = ../../../../kbengine/src/kbengine/macrologger.h; sourceTree = "<group>"; };
 		AF9E91FD28E2CF1B00DFC7C8 /* datatypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = datatypes.h; path = ../../../../kbengine/src/kbengine/datatypes.h; sourceTree = "<group>"; };
@@ -147,7 +145,6 @@
 			isa = PBXGroup;
 			children = (
 				AF189A1328E4593E001FD10F /* platforms */,
-				AF91C69E2905A4BA00AE9FD2 /* wordbuffer.cpp */,
 				AF91C69F2905A4BA00AE9FD2 /* wordbuffer.h */,
 				AF9E91FD28E2CF1B00DFC7C8 /* datatypes.h */,
 				AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */,
@@ -402,7 +399,6 @@
 				AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */,
 				AFADA70928EAD4B5006B435D /* BundleExt.swift in Sources */,
 				AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */,
-				AF91C6A02905A4BA00AE9FD2 /* wordbuffer.cpp in Sources */,
 				AFFB6AC828E1D26100229BDD /* SimpleVNKeyApp.swift in Sources */,
 				AF5AFC6B28E2106B00CE6D12 /* KBEngineWrapper.mm in Sources */,
 				AF373E9328E576650092A0D0 /* GeneralSettingView.swift in Sources */,

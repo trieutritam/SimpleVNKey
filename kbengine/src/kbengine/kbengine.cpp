@@ -29,11 +29,12 @@ enum InputMethodType {
     InputMethodTypeCount
 };
 
-static vector<UInt8> _wordBreakCode = {
-    KEY_BACKQUOTE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS, KEY_EQUALS,
-    KEY_LEFT_BRACKET, KEY_RIGHT_BRACKET, KEY_BACK_SLASH,
-    KEY_SEMICOLON, KEY_QUOTE, KEY_COMMA, KEY_DOT, KEY_SLASH, KEY_SPACE
-};
+//
+//static vector<UInt8> _wordBreakCode = {
+//    KEY_BACKQUOTE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS, KEY_EQUALS,
+//    KEY_LEFT_BRACKET, KEY_RIGHT_BRACKET, KEY_BACK_SLASH,
+//    KEY_SEMICOLON, KEY_QUOTE, KEY_COMMA, KEY_DOT, KEY_SLASH, KEY_SPACE
+//};
 
 struct KeyMapping {
 	UInt16 key;
@@ -781,37 +782,53 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
                 break;
         }
     }
+    
+    bool printable = charCode >= 32 && charCode <= 127;
+    
+    if (printable) {
+        KeyStrokeEntry k = { (UInt8) keycode };
+        k.cap = shiftCap > 0 ? true : false;
         
+        _keystrokeBuffer.addEntry(k);
+    }
+
     // keyCode already processed
-    if (result != Normal && ACTION_PROCESSED(actionResult)
-        && this->_keyCodeOutput.size() > 0) {
+    if (result != Normal && ACTION_PROCESSED(actionResult) && this->_keyCodeOutput.size() > 0) {
         LOG_DEBUG("Processed, Begin Idx: %d, EndIdx: %d", this->_bufferStartWordIdx, this->_bufferSize);
         return 1;
     }
-    
-    
-    bool printable = charCode >= 32 && charCode <= 127;
     
     LOG_DEBUG("Character Printable: %d", printable);
     if (printable && !otherControl) {
         _addKeyCode(keycode, shiftCap);
         _correctTone(keycode);
         _correctMark(keycode);
+        
+        // if key is break code
+        if (std::find(_wordBreakCode.begin(), _wordBreakCode.end(), keycode) != _wordBreakCode.end())
+        {
+            _keystrokeBuffer.printBuffer();
+        }
     }
     else {
         // Check delete key
         if (keycode == KEY_DELETE) {
             if (shiftCap > 0 || otherControl) {
                 this->resetBuffer();
+                this->_keystrokeBuffer.resetBuffer();
             }
             else {
                 this->_processBackSpacePressed();
+                this->_keystrokeBuffer.removeLastEntry();
+                
+                _keystrokeBuffer.printBuffer();
             }
         }
         else if (std::find(_wordBreakCode.begin(), _wordBreakCode.end(), keycode) == _wordBreakCode.end()) {
             // if current keycode is not in list allow new word, we reset buffer
             LOG_DEBUG("Ignore process keycode, reset buffer");
             this->resetBuffer();
+            this->_keystrokeBuffer.resetBuffer();
         }
     }
     

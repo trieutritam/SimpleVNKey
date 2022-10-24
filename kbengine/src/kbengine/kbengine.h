@@ -13,7 +13,7 @@
 using namespace std;
 
 #include "datatypes.h"
-#include "entrybuffer.h"
+#include "wordbuffer.h"
 
 #define MAX_BUFF 32
 
@@ -35,8 +35,8 @@ class kbengine {
     int _bufferStartWordIdx;    // index of begin of the last word in buffer
 	int _bufferSize;
 
-    EntryBuffer _wordBuffer;
-    
+    WordBuffer<KeyStrokeEntry> _keystrokeBuffer;
+
     // output after processing
     vector<UInt32> _keyCodeOutput;
     

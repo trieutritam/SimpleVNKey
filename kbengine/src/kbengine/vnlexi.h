@@ -27,6 +27,7 @@ enum CodeTable {
     UNICODE
 };
 
+extern vector<UInt8> _wordBreakCode;
 extern map<UInt8, vector<vector<UInt16>>> syllableTable;
 extern vector<map<UInt32, vector<UInt16>>> codeTableList;
 extern map<char, UInt16> vowelToKeyCode;
