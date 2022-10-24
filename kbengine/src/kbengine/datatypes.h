@@ -29,4 +29,23 @@ typedef unsigned int UInt32;
 //typedef unsigned long int UInt64;
 
 
+enum RoofType {
+    ORIGIN,
+    ROOF, ROOF_A, ROOF_E, ROOF_O,
+    HOOK,
+    BREVE
+};
+
+
+enum KeyEvent {
+  RoofAll, RoofA, RoofE, RoofO,
+  HookAll, Breve, HookO, HookU, // Breve is top of ă
+  Dd,
+  Tone0, Tone1, Tone2, Tone3, Tone4, Tone5,
+  EscChar,
+  Normal, //does not belong to any of the above categories
+  KeyEventCount //just to count how many event types there are
+};
+
+
 #endif /* KBENGINE_DATATYPES_H_ */

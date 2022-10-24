@@ -550,7 +550,6 @@ int kbengine::_correctTone(const UInt8 &keycode)
         UInt8 keyCode = ToneToKeyCodeMapping[currentTone];
         LOG_DEBUG("Check spelling, keyCode = %d, curTone: %d", keyCode, currentTone);
         
-        // TODO: call new process Tone if support
         this->_processTone(keyCode, static_cast<KeyEvent>(currentTone), true);
     }
     
@@ -581,7 +580,7 @@ int kbengine::_correctMark(const UInt8 &keycode)
             PRINT_VECTOR(matchCombine);
             
             int endIdx = this->_bufferSize;
-            int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx) - 1;//(endIdx - foundIdx) - 1;
+            int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx) - 1;
 
             bool canSetHook = false;
             

@@ -13,34 +13,12 @@
 using namespace std;
 
 #include "datatypes.h"
+#include "entrybuffer.h"
 
 #define MAX_BUFF 32
 
 #define UNICODE_MASK 0x00010000
 
-enum RoofType {
-    ORIGIN,
-    ROOF, ROOF_A, ROOF_E, ROOF_O,
-    HOOK,
-    BREVE
-};
-
-enum KeyEvent {
-  RoofAll, RoofA, RoofE, RoofO,
-  HookAll, Breve, HookO, HookU, // Breve is top of ă
-  Dd,
-  Tone0, Tone1, Tone2, Tone3, Tone4, Tone5,
-  EscChar,
-  Normal, //does not belong to any of the above categories
-  KeyEventCount //just to count how many event types there are
-};
-
-struct BufferEntry {
-    UInt8 keyCode;
-    bool cap;    // capitalize or not
-    RoofType roofType = ORIGIN;
-    short tone = KeyEvent::Tone0;    // KeyEvent enum tone: 0 = none, 1 = sac, 2 = huyen, 3 = hoi, 4 = nga, 5 = nang
-};
 
 struct ModifiedKeyInfo {
     UInt16 keyCode;
@@ -56,6 +34,8 @@ class kbengine {
 	BufferEntry _buffer[MAX_BUFF];
     int _bufferStartWordIdx;    // index of begin of the last word in buffer
 	int _bufferSize;
+
+    EntryBuffer _wordBuffer;
     
     // output after processing
     vector<UInt32> _keyCodeOutput;
