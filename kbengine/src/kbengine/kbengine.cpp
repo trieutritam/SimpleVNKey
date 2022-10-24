@@ -821,6 +821,13 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
                 this->_processBackSpacePressed();
                 this->_keystrokeBuffer.removeLastEntry();
                 
+                LOG_DEBUG("After delete, word size: %d", _bufferSize - _bufferStartWordIdx);
+                if (_bufferSize - _bufferStartWordIdx == 0) {
+                    while(_keystrokeBuffer.getWordSize() > 0) {
+                        this->_keystrokeBuffer.removeLastEntry();
+                    }
+                }
+                
                 _keystrokeBuffer.printBuffer();
             }
         }
