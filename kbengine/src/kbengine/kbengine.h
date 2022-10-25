@@ -35,8 +35,6 @@ class kbengine {
     int _bufferStartWordIdx;    // index of begin of the last word in buffer
 	int _bufferSize;
 
-    WordBuffer<KeyStrokeEntry> _keystrokeBuffer;
-
     // output after processing
     vector<UInt32> _keyCodeOutput;
     
@@ -57,12 +55,14 @@ class kbengine {
     void _processKeyCodeOutput(int numDelete, int startPos, int endPos);
     
     void _startNewWord();
-    void _addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap);
+    void _addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap, const bool processed = false);
     
     int _findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY);
     
     UInt32 _getCharacterCode(const BufferEntry& entry );
     UInt8 _getCurrentCodeTableCharType();
+    
+    vector<BufferEntry*> extractWord();
 public:
 	kbengine();
 	virtual ~kbengine();

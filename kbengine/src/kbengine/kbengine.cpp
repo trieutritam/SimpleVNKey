@@ -93,6 +93,58 @@ static map<UInt16, int> InputMethodMapping[] = {
 // map tone to key mapping, will be init when we change input method
 static map<int, UInt16> ToneToKeyCodeMapping = {};
 
+bool checkWord(BufferEntry* pEntryList, int start, int end)
+{
+    // find the fist vowel
+    int startVowel = -1;
+    LOG_DEBUG("Start: %d, end: %d", start, end);
+    
+    for(int i = start; i < end; i++) {
+        BufferEntry *pEntry = (pEntryList + i);
+        if (IS_VOWEL(pEntry->keyCode)) {
+            startVowel = i;
+            break;
+        }
+    }
+    
+    LOG_DEBUG("Start vowel: %d", startVowel);
+
+    
+    if (startVowel == -1)
+        return true;
+    
+    BufferEntry *firstEntry = (pEntryList + startVowel);
+    int expectedSize = end - startVowel;
+    
+    LOG_DEBUG("Start Vowel: %d, size: %d", startVowel, expectedSize);
+    
+    bool isValid = false;
+    for(auto it = syllableTable.begin(); it != syllableTable.end(); it++) {
+        vector<vector<UInt16>> syllableList = it->second;
+        
+        if (firstEntry->keyCode != it->first)
+            continue;
+        
+        for(auto it2 = syllableList.begin(); it2 != syllableList.end(); it2++) {
+            vector<UInt16> syllable = *it2;
+
+            if (expectedSize == (syllable.size() -1)) {
+                isValid = true;
+                for(int i = 1; i < syllable.size(); i++) {
+                    LOG_DEBUG("expexted keycode %dX, syllabel: %X", (firstEntry + (i-1))->keyCode, syllable[i]);
+                    if ((firstEntry + (i-1))->keyCode != syllable[i]) {
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
+            if (isValid)
+                break;
+        }
+    }
+    return isValid;
+}
+
 kbengine::kbengine()
 {
     this->resetBuffer();
@@ -104,16 +156,31 @@ kbengine::~kbengine()
     // TODO Auto-generated destructor stub
 }
 
+vector<BufferEntry*> kbengine::extractWord()
+{
+    vector<BufferEntry*> word;
+    
+    int endIdx = this->_bufferSize;
+    for(int i = this->_bufferStartWordIdx; i < endIdx ; i++)
+    {
+        if (this->_buffer[i].processed) continue;
+        word.push_back(&(this->_buffer[i]));
+    }
+    
+    LOG_DEBUG("ExtractWord, size: %lu", word.size());
+    
+    return word;
+}
+
 int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expectedType, const UInt16 &expectedKey)
 {
-    int endIdx = this->_bufferSize;
-    int curIdx = this->_bufferStartWordIdx;
+    vector<BufferEntry*> word = extractWord();
     
-    for(curIdx = this->_bufferStartWordIdx; curIdx < endIdx ; curIdx++)
-    {
-        UInt16 curKeyCode = this->_buffer[curIdx].keyCode;
-        
-//        LOG_DEBUG("Find syllableCombine, Idx: %d", curIdx);
+    int curIdx = 0;
+    UInt16 wordSize = word.size();
+    
+    for(curIdx = 0; curIdx < word.size(); curIdx++) {
+        UInt16 curKeyCode = word[curIdx]->keyCode;
         
         if (expectedKey != KEY_EMPTY && curKeyCode != expectedKey) {
             LOG_DEBUG("Ignore %d due to expected: %d", curKeyCode, expectedKey);
@@ -124,7 +191,7 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
         if (findResult == syllableTable.end())
             continue;
         
-        LOG_DEBUG("Find syllableCombine, found! %lu", findResult->second.size());
+        LOG_DEBUG("Find syllableCombine, found num of syllable! %lu", findResult->second.size());
         
         vector<vector<UInt16>> syllableList = findResult->second;
         for (vector<vector<UInt16>>::iterator it = syllableList.begin(); it != syllableList.end(); ++it)
@@ -133,15 +200,15 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
             // this combine first item not match expectedType
             // this combine not match the end part of buffer
             //-> ignore
-            if (!(combine[0] & expectedType) || (endIdx - curIdx) != combine.size() - 1) {
+            if (!(combine[0] & expectedType) || (wordSize - curIdx) != combine.size() - 1) {
                 continue;
             }
             
             bool found = true;
             for(auto ii=combine.size()-1; ii >= 1; ii--) {
-                auto bufIdx = ii + curIdx - 1;
+                auto buffIdx = ii + curIdx - 1;
                 UInt8 curCode = UInt8(combine[ii] ^ MASK_EXTRA_MARK);   // remove MASK_EXTRA_MARK if any
-                if (curCode != (int)this->_buffer[bufIdx].keyCode) {
+                if (curCode != (int)word[buffIdx]->keyCode) {
                     found = false;
                     break;
                 }
@@ -155,6 +222,56 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
         }
         if (syllableCombine.size() > 0) break;
     }
+    
+    return curIdx + this->_bufferStartWordIdx;
+    
+//    int endIdx = this->_bufferSize;
+//    int curIdx = this->_bufferStartWordIdx;
+//
+//    for(curIdx = this->_bufferStartWordIdx; curIdx < endIdx ; curIdx++)
+//    {
+//        UInt16 curKeyCode = this->_buffer[curIdx].keyCode;
+//
+//        if (expectedKey != KEY_EMPTY && curKeyCode != expectedKey) {
+//            LOG_DEBUG("Ignore %d due to expected: %d", curKeyCode, expectedKey);
+//            continue;
+//        }
+//        auto findResult = syllableTable.find(curKeyCode);
+//
+//        if (findResult == syllableTable.end())
+//            continue;
+//
+//        LOG_DEBUG("Find syllableCombine, found! %lu", findResult->second.size());
+//
+//        vector<vector<UInt16>> syllableList = findResult->second;
+//        for (vector<vector<UInt16>>::iterator it = syllableList.begin(); it != syllableList.end(); ++it)
+//        {
+//            vector<UInt16> combine = *it;
+//            // this combine first item not match expectedType
+//            // this combine not match the end part of buffer
+//            //-> ignore
+//            if (!(combine[0] & expectedType) || (endIdx - curIdx) != combine.size() - 1) {
+//                continue;
+//            }
+//
+//            bool found = true;
+//            for(auto ii=combine.size()-1; ii >= 1; ii--) {
+//                auto bufIdx = ii + curIdx - 1;
+//                UInt8 curCode = UInt8(combine[ii] ^ MASK_EXTRA_MARK);   // remove MASK_EXTRA_MARK if any
+//                if (curCode != (int)this->_buffer[bufIdx].keyCode) {
+//                    found = false;
+//                    break;
+//                }
+//            }
+//
+//            if (found) {
+//                PRINT_VECTOR(combine);
+//                syllableCombine = combine;
+//                break;
+//            }
+//        }
+//        if (syllableCombine.size() > 0) break;
+//    }
     
     return curIdx;
 }
@@ -229,6 +346,10 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
             // add the pressed keycode back to buffer
             _addKeyCode(keycode, 0);
             endIdx ++;
+        }
+        
+        if (canSetHook) {
+            _addKeyCode(keycode, 0, true);
         }
         
         LOG_DEBUG("Process Mark, Can set hook: %d, From Correct Func: %d", canSetHook, fromCorrectFunc);
@@ -348,8 +469,11 @@ int kbengine::_placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine)
     
     int endIdx = this->_bufferSize - 1;
     
-    for(int i = foundIdx; i < this->_bufferSize; i++) {
-        BufferEntry *pEntry = &(this->_buffer[i]);
+    vector<BufferEntry*> word = extractWord();
+    
+    for(int i = 0; i < word.size(); i++) {
+        BufferEntry *pEntry = word[i];
+        
         auto keyCode = pEntry->keyCode;
         
         if (IS_VOWEL(keyCode)) {
@@ -366,7 +490,7 @@ int kbengine::_placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine)
     }
 
     //Rule 1:
-    LOG_DEBUG("vowelCount: %d - pos: %d", vowelCount, firstVowelPos);
+    LOG_DEBUG("vowelCount: %d - firstVowelPos: %d - lastVowelPos: %d", vowelCount, firstVowelPos, lastVowelPos);
     if (vowelCount == 1) {
         tonePosition = firstVowelPos;
     }
@@ -385,8 +509,8 @@ int kbengine::_placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine)
 
     // Rule 4
     if (vowelCount >= 2 && lastIsVowel) {
-        auto *beforeLast = &(this->_buffer[endIdx - 1]);
-        auto *last = &(this->_buffer[endIdx]);
+        auto *beforeLast = word[word.size() - 2];
+        auto *last = word[word.size() - 1];
         if ((beforeLast->keyCode == KEY_O && last->keyCode == KEY_A)
             || (beforeLast->keyCode == KEY_O && last->keyCode == KEY_E)
             || (beforeLast->keyCode == KEY_U && last->keyCode == KEY_Y)
@@ -400,8 +524,8 @@ int kbengine::_placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine)
             
             // check start with qu, gi
             // if beforeLast = u or i && beforeLast's before = g or q
-            if (this->_bufferSize >= 3) {
-                auto beforeBeforeLast = &(this->_buffer[endIdx - 2]);
+            if (word.size() >= 3) {
+                auto beforeBeforeLast = word[word.size() - 3];
                 if ((beforeLast->keyCode == KEY_U || beforeLast->keyCode == KEY_I)
                     && (beforeBeforeLast->keyCode == KEY_G || beforeBeforeLast->keyCode == KEY_Q)) {
                     tonePosition = lastVowelPos;
@@ -430,6 +554,7 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
                                             : _placeToneTraditionalRule(foundIdx, syllableCombine);
 
         if (tonePosition >= 0) {
+            tonePosition += _bufferStartWordIdx;
             LOG_DEBUG("Target tone posision: %d", tonePosition);
             int endIdx = this->_bufferSize;
             int numBackSpaces = 0; //_calculateNumberOfBackSpace(tonePosition, endIdx); //(endIdx - tonePosition);
@@ -449,6 +574,10 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
             int previousTonePos = -1;
             // check whole word to detect previous tone, we have this case is move tone
             for (int i = this->_bufferStartWordIdx; i < tonePosition; i++) {
+                
+                if(this->_buffer[i].processed)
+                    continue;
+                
                 LOG_DEBUG("Buffer index: %d, tone: %d", i, this->_buffer[i].tone);
                 if (this->_buffer[i].tone != KeyEvent::Tone0) {
                     previousTonePos = i;
@@ -466,6 +595,7 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
             }
             else {
                 this->_buffer[tonePosition].tone = targetTone;
+                _addKeyCode(keycode, 0, true);
             }
             
             if (previousTonePos >= 0) {
@@ -542,8 +672,12 @@ int kbengine::_correctTone(const UInt8 &keycode)
     short currentTone = KeyEvent::Tone0;
     LOG_DEBUG("Correct Tone - start: %d, end: %d", this->_bufferStartWordIdx, this->_bufferSize);
     for (int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
-        if (this->_buffer[i].tone != KeyEvent::Tone0) {
-            currentTone = this->_buffer[i].tone;
+        BufferEntry *entry = &(this->_buffer[i]);
+        
+        if(entry->processed) continue;
+        
+        if (entry->tone != KeyEvent::Tone0) {
+            currentTone = entry->tone;
             break;
         }
     }
@@ -563,13 +697,19 @@ int kbengine::_correctMark(const UInt8 &keycode)
     bool foundPreviousHook = false;
     
     for (int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
-        if (this->_buffer[i].roofType == RoofType::HOOK) {
+        BufferEntry *entry = &(this->_buffer[i]);
+        if (entry->processed)
+            continue;
+
+        if (entry->roofType == RoofType::HOOK) {
             foundPreviousHook = true;
             break;
         }
     }
     
-    LOG_DEBUG("Correct uo+ -> u+o+");
+    LOG_DEBUG("Correct uo+ -> u+o+, foundPreviousHook: %d", foundPreviousHook);
+    
+    vector<BufferEntry*> word = extractWord();
     
     int foundIdx = -1;
     if (foundPreviousHook) {
@@ -589,8 +729,8 @@ int kbengine::_correctMark(const UInt8 &keycode)
             for (int i = 1; i < matchCombine.size(); i++) {
                 if (i == 1 || (matchCombine[i] & MASK_EXTRA_MARK) == MASK_EXTRA_MARK) {
                     int buffIndex = (i-1) + foundIdx;   // (i-1) since we ignore the first value of combine
-                    if (this->_buffer[buffIndex].roofType == ORIGIN) {
-                        this->_buffer[buffIndex].roofType = RoofType::HOOK;
+                    if (word[buffIndex]->roofType == ORIGIN) {
+                        word[buffIndex]->roofType = RoofType::HOOK;
                         
                         canSetHook = true;
                     }
@@ -617,6 +757,9 @@ void kbengine::_processKeyCodeOutput(int numDelete, int startPos, int endPos)
         this->_keyCodeOutput.push_back(KEY_DELETE);
     
     for (int i = startPos; i < endPos; i ++) {
+        if (this->_buffer[i].processed)
+            continue;
+        
         auto charCode = _getCharacterCode(this->_buffer[i]);
         //LOG_DEBUG("_getCharacterCode: %d", charCode);
         
@@ -651,11 +794,14 @@ int kbengine::_calculateNumberOfBackSpace(int startIdx, int endIdx)
 
     int numBackSpace = 0;
     for (int i = startIdx; i < endIdx; i++) {
-        BufferEntry entry = this->_buffer[i];
+        BufferEntry *entry = &this->_buffer[i];
+        
+        if (entry->processed)
+            continue;
         
         numBackSpace += 1;
         
-        auto charCode = _getCharacterCode(entry);
+        auto charCode = _getCharacterCode(*entry);
         
         if (charCode > 0) {
             charCode = charCode ^ UNICODE_MASK;  //remove unicode mask
@@ -691,7 +837,7 @@ bool kbengine::isUseModernTone()
     return _useModernTone;
 }
 
-void kbengine::_addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap) {
+void kbengine::_addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap, bool processed) {
     if (this->_bufferSize == MAX_BUFF) {
         // need to remove all word except the last one
         UInt16 wordSize = this->_bufferSize - this->_bufferStartWordIdx;
@@ -713,11 +859,12 @@ void kbengine::_addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap) {
     
     BufferEntry e = { keycode };
     e.cap = shiftCap > 0 ? true : false;
+    e.processed = processed;
     this->_buffer[this->_bufferSize] = e;
     this->_bufferSize++;
     
     // Check if we start new word
-    if (std::find (_wordBreakCode.begin(), _wordBreakCode.end(), keycode) != _wordBreakCode.end())
+    if (!processed && std::find (_wordBreakCode.begin(), _wordBreakCode.end(), keycode) != _wordBreakCode.end())
     {
         this->_startNewWord();
     }
@@ -785,13 +932,6 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
     
     bool printable = charCode >= 32 && charCode <= 127;
     
-    if (printable) {
-        KeyStrokeEntry k = { (UInt8) keycode };
-        k.cap = shiftCap > 0 ? true : false;
-        
-        _keystrokeBuffer.addEntry(k);
-    }
-
     // keyCode already processed
     if (result != Normal && ACTION_PROCESSED(actionResult) && this->_keyCodeOutput.size() > 0) {
         LOG_DEBUG("Processed, Begin Idx: %d, EndIdx: %d", this->_bufferStartWordIdx, this->_bufferSize);
@@ -803,39 +943,21 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
         _addKeyCode(keycode, shiftCap);
         _correctTone(keycode);
         _correctMark(keycode);
-        
-        // if key is break code
-        if (std::find(_wordBreakCode.begin(), _wordBreakCode.end(), keycode) != _wordBreakCode.end())
-        {
-            _keystrokeBuffer.printBuffer();
-        }
     }
     else {
         // Check delete key
         if (keycode == KEY_DELETE) {
             if (shiftCap > 0 || otherControl) {
                 this->resetBuffer();
-                this->_keystrokeBuffer.resetBuffer();
             }
             else {
                 this->_processBackSpacePressed();
-                this->_keystrokeBuffer.removeLastEntry();
-                
-                LOG_DEBUG("After delete, word size: %d", _bufferSize - _bufferStartWordIdx);
-                if (_bufferSize - _bufferStartWordIdx == 0) {
-                    while(_keystrokeBuffer.getWordSize() > 0) {
-                        this->_keystrokeBuffer.removeLastEntry();
-                    }
-                }
-                
-                _keystrokeBuffer.printBuffer();
             }
         }
         else if (std::find(_wordBreakCode.begin(), _wordBreakCode.end(), keycode) == _wordBreakCode.end()) {
             // if current keycode is not in list allow new word, we reset buffer
             LOG_DEBUG("Ignore process keycode, reset buffer");
             this->resetBuffer();
-            this->_keystrokeBuffer.resetBuffer();
         }
     }
     
@@ -968,8 +1090,32 @@ void kbengine::_processBackSpacePressed2() {
     }
 }
 
-void kbengine::_processBackSpacePressed() {
+void kbengine::_processBackSpacePressed()
+{
     if (this->_bufferSize == 0) return;
+    
+    // remove all keycode marked process (key tone, roof, hook,...)
+    int lastChar = this->_bufferSize - 1;
+    while(this->_buffer[lastChar].processed) {
+        lastChar--;
+    }
+    LOG_DEBUG("Last char position: %d, processed: %d", lastChar, this->_buffer[lastChar].processed);
+    
+    // if we delete VN char, we also delete processed keycode
+    if (this->_buffer[lastChar].roofType != RoofType::ORIGIN
+        || this->_buffer[lastChar].tone != Tone0) {
+        
+        while(this->_buffer[_bufferSize-1].processed) {
+            _bufferSize--;
+        }
+    }
+    else {
+        for(int i = lastChar; i < _bufferSize-1; i ++) {
+            _buffer[i] = _buffer[i+1];
+        }
+    }
+    LOG_DEBUG("Buffer size: %d", _bufferSize);
+    
     
     // create output to send delete in case 2 bytes
     // case 1 byte we let system process
@@ -988,6 +1134,8 @@ void kbengine::_processBackSpacePressed() {
 
         // Find the start position of the word
         for (int i = this->_bufferSize - 1; i > 0; i--) {
+            if (this->_buffer[i].processed)
+                continue;
             if (std::find (_wordBreakCode.begin(), _wordBreakCode.end(), this->_buffer[i].keyCode) != _wordBreakCode.end()) {
                 this->_bufferStartWordIdx = i + 1;
                 break;

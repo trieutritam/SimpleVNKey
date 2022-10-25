@@ -20,6 +20,7 @@
 		AF9E91FF28E2EE3200DFC7C8 /* KeyCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */; };
 		AFA3453528E467B500FAD0BD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA3453428E467B500FAD0BD /* AboutView.swift */; };
 		AFADA70928EAD4B5006B435D /* BundleExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFADA70828EAD4B5006B435D /* BundleExt.swift */; };
+		AFB115BE29079EDC004C3617 /* wordbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFB115BD29079EDC004C3617 /* wordbuffer.cpp */; };
 		AFEC3E4C28E1D36100A67F12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */; };
 		AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC3E4D28E1D5E200A67F12 /* Menu.swift */; };
 		AFF88B5F28E8975B0082EC8F /* KeycodeCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF88B5E28E8975B0082EC8F /* KeycodeCaptureView.swift */; };
@@ -73,6 +74,7 @@
 		AF9E91FE28E2EE3200DFC7C8 /* KeyCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCode.swift; sourceTree = "<group>"; };
 		AFA3453428E467B500FAD0BD /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		AFADA70828EAD4B5006B435D /* BundleExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExt.swift; sourceTree = "<group>"; };
+		AFB115BD29079EDC004C3617 /* wordbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wordbuffer.cpp; path = ../../../../kbengine/src/kbengine/wordbuffer.cpp; sourceTree = "<group>"; };
 		AFEC3E4B28E1D36100A67F12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AFEC3E4D28E1D5E200A67F12 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		AFEC3E5128E1D8DE00A67F12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				AF189A1328E4593E001FD10F /* platforms */,
+				AFB115BD29079EDC004C3617 /* wordbuffer.cpp */,
 				AF91C69F2905A4BA00AE9FD2 /* wordbuffer.h */,
 				AF9E91FD28E2CF1B00DFC7C8 /* datatypes.h */,
 				AF5AFC7828E2125B00CE6D12 /* kbengine.cpp */,
@@ -399,6 +402,7 @@
 				AF5AFC8028E217BC00CE6D12 /* Common.swift in Sources */,
 				AFADA70928EAD4B5006B435D /* BundleExt.swift in Sources */,
 				AFEC3E4E28E1D5E200A67F12 /* Menu.swift in Sources */,
+				AFB115BE29079EDC004C3617 /* wordbuffer.cpp in Sources */,
 				AFFB6AC828E1D26100229BDD /* SimpleVNKeyApp.swift in Sources */,
 				AF5AFC6B28E2106B00CE6D12 /* KBEngineWrapper.mm in Sources */,
 				AF373E9328E576650092A0D0 /* GeneralSettingView.swift in Sources */,
