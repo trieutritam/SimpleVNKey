@@ -62,6 +62,21 @@ class kbengine {
     UInt8 _getCurrentCodeTableCharType();
     
     vector<BufferEntry*> extractWord();
+    
+    //V2
+    void _processWord(vector<BufferEntry*> word, BufferEntry* lastEntry, const UInt8 &shiftCap, const bool &otherControl);
+    int _processMarkV2(const vector<BufferEntry*> &word,
+                       BufferEntry *lastChar,
+                       const RoofType &roofType, const bool &fromCorrectFunc = false);
+    
+    int _findSyllableV2(vector<UInt16> &syllableCombine,
+                        const vector<BufferEntry*> &word, const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY);
+    
+    int _calculateNumberOfBackSpaceV2(const vector<BufferEntry*> &word, int startIdx);
+    void _processKeyCodeOutputV2(const vector<BufferEntry*> &word, int numDelete, int startPos);
+    void _addKeyCodeV2(const UInt16 &keycode, const UInt8 &shiftCap, const bool processed = false);
+    void _processBackSpacePressedV2();
+    
 public:
 	kbengine();
 	virtual ~kbengine();
