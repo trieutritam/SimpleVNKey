@@ -46,13 +46,12 @@ class kbengine {
     int _placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine);
     int _processTone(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false);
     int _processHookOU(const UInt8 &keycode, const UInt16 &expectedKey);
-    void _processBackSpacePressed2();
     void _processBackSpacePressed();
 
     int _correctTone(const UInt8 &keycode);
     int _correctMark(const UInt8 &keycode);
     
-    void _processKeyCodeOutput(int numDelete, int startPos, int endPos);
+    void _processKeyCodeOutput(int numDelete, int startPos);
     
     void _startNewWord();
     void _addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap, const bool processed = false);

@@ -223,7 +223,7 @@ int kbengine::_findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expec
         if (syllableCombine.size() > 0) break;
     }
     
-    return curIdx + this->_bufferStartWordIdx;
+    return curIdx < word.size() ? curIdx : -1;  // + this->_bufferStartWordIdx;
     
 //    int endIdx = this->_bufferSize;
 //    int curIdx = this->_bufferStartWordIdx;
@@ -315,7 +315,7 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
     
     vector<BufferEntry*> word = extractWord();
     
-    if (matchCombine.size() >= 0) {
+    if (matchCombine.size() > 0) {
         PRINT_VECTOR(matchCombine);
         
         int endIdx = this->_bufferSize;
@@ -359,7 +359,7 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
         if (fromCorrectFunc)
             numBackSpaces --;
         
-        this->_processKeyCodeOutput(numBackSpaces, foundIdx, endIdx);
+        this->_processKeyCodeOutput(numBackSpaces, foundIdx);
     }
     else {
         foundIdx = -1;
@@ -377,10 +377,9 @@ int kbengine::_processD(const UInt8 &keycode) {
     vector<BufferEntry*> word = extractWord();
     
     // check the previous keycode is d or not
-    for(int i = _bufferSize-1; i >= _bufferStartWordIdx; i --) {
-        BufferEntry *entry = &(_buffer[i]);
-        if (entry->processed)
-            continue;
+    for(int i = (int)word.size() - 1; i >= 0; i --) {
+        BufferEntry *entry = word[i];
+        
         if (entry->keyCode == KEY_D) {
             foundIdx = i;
             break;
@@ -390,16 +389,16 @@ int kbengine::_processD(const UInt8 &keycode) {
     if (foundIdx >= 0) {
         int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx);
         
-        if (this->_buffer[foundIdx].roofType == ROOF) {
-            this->_buffer[foundIdx].roofType = ORIGIN;
+        if (word[foundIdx]->roofType == ROOF) {
+            word[foundIdx]->roofType = ORIGIN;
             _addKeyCode(keycode, 0);
         }
         else {
-            this->_buffer[foundIdx].roofType = ROOF;
+            word[foundIdx]->roofType = ROOF;
             _addKeyCode(keycode, 0, true);
         }
         
-        this->_processKeyCodeOutput(numBackSpaces, foundIdx, _bufferSize);
+        this->_processKeyCodeOutput(numBackSpaces, foundIdx);
     }
     
     return foundIdx;
@@ -619,7 +618,7 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
             
         
             LOG_DEBUG("tone Pos: %d , endIdx: %d, Num Backspaces: %d", tonePosition, endIdx, numBackSpaces);
-            this->_processKeyCodeOutput(numBackSpaces, tonePosition, endIdx);
+            this->_processKeyCodeOutput(numBackSpaces, tonePosition);
         }
     }
     else {
@@ -633,34 +632,37 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
 int kbengine::_processHookOU(const UInt8 &keycode, const UInt16 &expectedKey)
 {
     LOG_DEBUG("_processHookOU, keycode: %d, buffSize: %d", keycode, this->_bufferSize);
-    int foundIdx = this->_bufferSize;
-    int endIdx = this->_bufferSize;
     int numBackSpaces = 0;
     
-    // find previous char have keycode or not
+    vector<BufferEntry*> word = extractWord();
     
-    if (this->_bufferSize > 0) {
-        int curIndex = this->_bufferSize - 1;
-        BufferEntry &bufferEntry = this->_buffer[curIndex];
+    int foundIdx = (int) word.size();
+    
+    // find previous char have keycode or not
+    if (word.size() > 0) {
+        int curIndex = (int)word.size() - 1;
+        BufferEntry *bufferEntry = word[curIndex];
         
-        LOG_DEBUG("Previous code: %d", bufferEntry.keyCode);
+        LOG_DEBUG("Previous code: %d", bufferEntry->keyCode);
         
         // if previous already have u+/o+, we need to remove it and replace with  ']' or '['
-        if (bufferEntry.keyCode == expectedKey && bufferEntry.roofType == RoofType::HOOK) {
-            this->_buffer[curIndex].keyCode = keycode;
-            this->_buffer[curIndex].roofType = RoofType::ORIGIN;
+        if (bufferEntry->keyCode == expectedKey && bufferEntry->roofType == RoofType::HOOK) {
+            bufferEntry->keyCode = keycode;
+            bufferEntry->roofType = RoofType::ORIGIN;
+            bufferEntry->processed = false;
             numBackSpaces = 1;
             foundIdx = curIndex;
         }
     }
     
+    // there is no previous HookOU, just add HoolOU keycode
     if (numBackSpaces == 0) {
         this->_addKeyCode(expectedKey, 0);
         this->_buffer[this->_bufferSize-1].roofType = RoofType::HOOK;
-        endIdx ++;
     }
-    LOG_DEBUG("Num backspace: %d, foundIdx: %d, endIdx: %d", numBackSpaces, foundIdx, endIdx);
-    this->_processKeyCodeOutput(numBackSpaces, foundIdx, endIdx);
+    
+    LOG_DEBUG("Num backspace: %d, foundIdx: %d", numBackSpaces, foundIdx);
+    this->_processKeyCodeOutput(numBackSpaces, foundIdx);
     
     return foundIdx;
 }
@@ -729,7 +731,7 @@ int kbengine::_correctMark(const UInt8 &keycode)
         if (matchCombine.size() >= 4) {
             PRINT_VECTOR(matchCombine);
             
-            int endIdx = this->_bufferSize;
+            int endIdx = (int) word.size();//this->_bufferSize;
             int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx) - 1;
 
             bool canSetHook = false;
@@ -745,12 +747,11 @@ int kbengine::_correctMark(const UInt8 &keycode)
                     }
                 }
             }
-            
             LOG_DEBUG("Can set hook: %d", canSetHook);
             LOG_DEBUG("numBackSpaces: %d, foundIdx: %d", numBackSpaces, foundIdx);
             
             if (canSetHook)
-                this->_processKeyCodeOutput(numBackSpaces, foundIdx, endIdx);
+                this->_processKeyCodeOutput(numBackSpaces, foundIdx);
         }
     }
     
@@ -758,33 +759,32 @@ int kbengine::_correctMark(const UInt8 &keycode)
 }
 
 
-void kbengine::_processKeyCodeOutput(int numDelete, int startPos, int endPos)
+void kbengine::_processKeyCodeOutput(int numDelete, int startPos)
 {
     this->_keyCodeOutput.clear();
+    vector<BufferEntry*> word = extractWord();
+    
     // prepare keystroke to be sent
     for(int i = 0; i < numDelete; i ++)
         this->_keyCodeOutput.push_back(KEY_DELETE);
     
-    for (int i = startPos; i < endPos; i ++) {
-        if (this->_buffer[i].processed)
-            continue;
-        
-        auto charCode = _getCharacterCode(this->_buffer[i]);
+    for (int i = startPos; i < word.size(); i ++) {
+        auto charCode = _getCharacterCode(*word[i]);
         //LOG_DEBUG("_getCharacterCode: %d", charCode);
-        
+
         auto charType = codeTableList[this->currentCodeTable][CODE_TABLE_CHAR_TYPE][0];
-        
+
         if (charCode > 0) {
             if (charType == 2) {
                 charCode = charCode ^ UNICODE_MASK;
-                
+
                 auto highByte = BYTE_HIGH(charCode);
                 auto lowByte = BYTE_LOW(charCode);
-                
+
                 LOG_DEBUG("process high: %20X, low: %20X", highByte, lowByte);
-                
+
                 this->_keyCodeOutput.push_back(lowByte | UNICODE_MASK);
-                
+
                 if (highByte > 0) this->_keyCodeOutput.push_back(highByte  | UNICODE_MASK);
             }
             else {
@@ -792,18 +792,57 @@ void kbengine::_processKeyCodeOutput(int numDelete, int startPos, int endPos)
             }
         }
         else {
-            this->_keyCodeOutput.push_back(this->_buffer[i].keyCode);
+            this->_keyCodeOutput.push_back(word[i]->keyCode);
         }
     }
+    
+    // prepare keystroke to be sent
+//    for(int i = 0; i < numDelete; i ++)
+//        this->_keyCodeOutput.push_back(KEY_DELETE);
+//
+//    for (int i = startPos; i < endPos; i ++) {
+//        if (this->_buffer[i].processed)
+//            continue;
+//
+//        auto charCode = _getCharacterCode(this->_buffer[i]);
+//        //LOG_DEBUG("_getCharacterCode: %d", charCode);
+//
+//        auto charType = codeTableList[this->currentCodeTable][CODE_TABLE_CHAR_TYPE][0];
+//
+//        if (charCode > 0) {
+//            if (charType == 2) {
+//                charCode = charCode ^ UNICODE_MASK;
+//
+//                auto highByte = BYTE_HIGH(charCode);
+//                auto lowByte = BYTE_LOW(charCode);
+//
+//                LOG_DEBUG("process high: %20X, low: %20X", highByte, lowByte);
+//
+//                this->_keyCodeOutput.push_back(lowByte | UNICODE_MASK);
+//
+//                if (highByte > 0) this->_keyCodeOutput.push_back(highByte  | UNICODE_MASK);
+//            }
+//            else {
+//                this->_keyCodeOutput.push_back(charCode);
+//            }
+//        }
+//        else {
+//            this->_keyCodeOutput.push_back(this->_buffer[i].keyCode);
+//        }
+//    }
 }
 
 int kbengine::_calculateNumberOfBackSpace(int startIdx, int endIdx)
 {
-    LOG_DEBUG("calculateNumberOfBackSpace - start %d, end %d", startIdx, endIdx);
+    vector<BufferEntry*> word = extractWord();
+    
+    unsigned long wordSize = word.size();
+    
+    LOG_DEBUG("calculateNumberOfBackSpace - start %d, end %lu", startIdx, wordSize);
 
     int numBackSpace = 0;
-    for (int i = startIdx; i < endIdx; i++) {
-        BufferEntry *entry = &this->_buffer[i];
+    for (unsigned long i = startIdx; i < wordSize; i++) {
+        BufferEntry *entry = word[i];
         
         if (entry->processed)
             continue;
@@ -1011,94 +1050,6 @@ UInt8 kbengine::_getCurrentCodeTableCharType()
     return codeTableList[this->currentCodeTable][CODE_TABLE_CHAR_TYPE][0];
 }
 
-// Recalculate startIndex of a word & buffer when user press delete
-// Solution:
-//  Check the last character has tone mark or circumflex?
-//      - if it has tone mark -> remove tone mark.
-//      - else if it has circumflex  -> remove circumflex.
-//      ==> Both case we don't reduce buffer size since the character still be there.
-//  If the last character doesn't has tone mark and circumflex?
-//      - Reduce buffer size, reposition tone mark.
-void kbengine::_processBackSpacePressed2() {
-    
-    if (this->_bufferSize == 0) return;
-    
-    BufferEntry *pCurBuffer = &(this->_buffer[this->_bufferSize-1]);
-    LOG_DEBUG("Has tone: %d or Roof: %d", pCurBuffer->tone != KeyEvent::Tone0, pCurBuffer->roofType != RoofType::ORIGIN);
-
-    if (pCurBuffer->tone != KeyEvent::Tone0 || pCurBuffer->roofType != RoofType::ORIGIN) {
-        short numDelete = 1;
-        auto charCode = this->_getCharacterCode(*pCurBuffer);
-        
-        // remove tone first
-        if (pCurBuffer->tone != KeyEvent::Tone0) {
-            pCurBuffer->tone = KeyEvent::Tone0;
-        }
-        else if (pCurBuffer->roofType != RoofType::ORIGIN) {
-            pCurBuffer->roofType = RoofType::ORIGIN;
-        }
-        
-        if (_getCurrentCodeTableCharType() >= 2 && BYTE_HIGH(charCode) > 0) {
-            numDelete = 2;
-        }
-        
-        
-        this->_processKeyCodeOutput(numDelete, this->_bufferSize - 1, this->_bufferSize);
-    }
-    else {
-        short currentTone = KeyEvent::Tone0;
-        short currentTonePos = -1;
-        
-        LOG_DEBUG("Process Tone after Delete - start: %d, end: %d", this->_bufferStartWordIdx, this->_bufferSize);
-        for (int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
-            if (this->_buffer[i].tone != KeyEvent::Tone0) {
-                currentTone = this->_buffer[i].tone;
-                currentTonePos = i;
-                break;
-            }
-        }
-    
-        this->_bufferSize--;
-    
-        if (this->_bufferSize <= this->_bufferStartWordIdx) {
-            this->_bufferStartWordIdx = 0;
-    
-            // Find the start position of the word
-            for (int i = this->_bufferSize - 1; i > 0; i--) {
-                if (std::find (_wordBreakCode.begin(), _wordBreakCode.end(), this->_buffer[i].keyCode) != _wordBreakCode.end()) {
-                    this->_bufferStartWordIdx = i + 1;
-                    break;
-                }
-            }
-        }
-        
-        // if the word has any tone, we need to reposition it
-        if (currentTone != KeyEvent::Tone0) {
-            LOG_DEBUG("curTone: %d, curTonePos: %d", currentTone, currentTonePos);
-    
-            vector<UInt16> syllableCombine;
-            int foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
-            LOG_DEBUG("Syllable found, size: %lu", syllableCombine.size());
-            if (syllableCombine.size() > 0) {
-                int tonePosition = (_useModernTone ? _placeToneModernRule(foundIdx, syllableCombine)
-                                    : _placeToneTraditionalRule(foundIdx, syllableCombine));
-                LOG_DEBUG("New tonePos: %d", tonePosition);
-                if (tonePosition >= 0 && tonePosition != currentTonePos) {
-                    LOG_DEBUG("Reposition tone mark");
-                    int numBackSpaces = this->_calculateNumberOfBackSpace(tonePosition, this->_bufferSize);
-    
-                    numBackSpaces += 1;
-    
-                    this->_buffer[currentTonePos].tone = KeyEvent::Tone0;
-                    this->_buffer[tonePosition].tone = currentTone;
-    
-                    this->_processKeyCodeOutput(numBackSpaces, tonePosition, this->_bufferSize);
-                }
-            }
-        }
-    }
-}
-
 void kbengine::_processBackSpacePressed()
 {
     // remove all keycode marked processed (key tone, roof, hook,...)
@@ -1136,7 +1087,7 @@ void kbengine::_processBackSpacePressed()
     
     LOG_DEBUG("Number Delete: %d", addDelete);
     if (addDelete > 0)
-        _processKeyCodeOutput(addDelete, 0, 0);
+        _processKeyCodeOutput(addDelete, _bufferSize); //we pass _bufferSize to process delete only
 }
 
 // Recalculate startIndex of a word when user start new word
