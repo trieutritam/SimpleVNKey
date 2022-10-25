@@ -409,7 +409,7 @@ int kbengine::_placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCom
 {
     int tonePosition = -1;
     
-    vector<BufferEntry*> word =extractWord();
+    vector<BufferEntry*> word = extractWord();
     UInt16 wordSize = word.size();
     
     // if buffer has ê or ơ, tone alway there
@@ -420,14 +420,6 @@ int kbengine::_placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCom
             break;
         }
     }
-//    for(int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
-//        if ((this->_buffer[i].keyCode == KEY_E && this->_buffer[i].roofType == ROOF)
-//            || (this->_buffer[i].keyCode == KEY_O && this->_buffer[i].roofType == HOOK))
-//        {
-//            tonePosition = i;
-//            break;
-//        }
-//    }
     
     // not found ê or ơ -> check number of vowel
     if (tonePosition < 0) {
@@ -480,7 +472,7 @@ int kbengine::_placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine)
     bool hasCircumflex = false;
     int circumflexPos = -1;
     
-    int endIdx = this->_bufferSize - 1;
+    //int endIdx = this->_bufferSize - 1;
     
     vector<BufferEntry*> word = extractWord();
     
@@ -1109,32 +1101,12 @@ void kbengine::_processBackSpacePressed2() {
 
 void kbengine::_processBackSpacePressed()
 {
-    if (this->_bufferSize == 0) return;
-    
-    // remove all keycode marked process (key tone, roof, hook,...)
-    int lastChar = this->_bufferSize - 1;
-    while(this->_buffer[lastChar].processed) {
-        lastChar--;
+    // remove all keycode marked processed (key tone, roof, hook,...)
+    while(this->_buffer[_bufferSize-1].processed && this->_bufferSize > 0) {
+        this->_bufferSize--;
     }
-    LOG_DEBUG("Last char position: %d, processed: %d", lastChar, this->_buffer[lastChar].processed);
-    
-    // if we delete VN char, we also delete processed keycode
-    if (this->_buffer[lastChar].roofType != RoofType::ORIGIN
-        || this->_buffer[lastChar].tone != Tone0) {
-        
-        while(this->_buffer[_bufferSize-1].processed && _bufferSize > 0) {
-            _bufferSize--;
-        }
-    }
-    else {
-        for(int i = lastChar; i < _bufferSize-1; i ++) {
-            _buffer[i] = _buffer[i+1];
-        }
-    }
-    LOG_DEBUG("Buffer size: %d", _bufferSize);
     
     if (this->_bufferSize == 0) return;
-    
     
     // create output to send delete in case 2 bytes
     // case 1 byte we let system process
