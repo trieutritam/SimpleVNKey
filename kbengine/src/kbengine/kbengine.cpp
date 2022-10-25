@@ -409,15 +409,25 @@ int kbengine::_placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCom
 {
     int tonePosition = -1;
     
+    vector<BufferEntry*> word =extractWord();
+    UInt16 wordSize = word.size();
+    
     // if buffer has ê or ơ, tone alway there
-    for(int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
-        if ((this->_buffer[i].keyCode == KEY_E && this->_buffer[i].roofType == ROOF)
-            || (this->_buffer[i].keyCode == KEY_O && this->_buffer[i].roofType == HOOK))
-        {
+    for (UInt16 i = 0; i < wordSize; i++) {
+        BufferEntry *entry = word[i];
+        if ((entry->keyCode == KEY_E && entry->roofType == ROOF) || (entry->keyCode == KEY_O && entry->roofType == HOOK)) {
             tonePosition = i;
             break;
         }
     }
+//    for(int i = this->_bufferStartWordIdx; i < this->_bufferSize; i++) {
+//        if ((this->_buffer[i].keyCode == KEY_E && this->_buffer[i].roofType == ROOF)
+//            || (this->_buffer[i].keyCode == KEY_O && this->_buffer[i].roofType == HOOK))
+//        {
+//            tonePosition = i;
+//            break;
+//        }
+//    }
     
     // not found ê or ơ -> check number of vowel
     if (tonePosition < 0) {
@@ -438,9 +448,9 @@ int kbengine::_placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCom
         // Vì vậy "già" và "quạ" không phải là nguyên âm đôi "ia" hay "ua" mà là "gi" + "à"; và "qu" + "ạ".
         // => This case we already count 2 vowels, and we need to adjust
         if ((vowelCount == 2 && lastIsVowel) && foundIdx > this->_bufferStartWordIdx) {
-            LOG_DEBUG("Special: %d %d", this->_buffer[foundIdx - 1].keyCode, this->_buffer[foundIdx].keyCode);
-            if ( (this->_buffer[foundIdx - 1].keyCode == KEY_Q && this->_buffer[foundIdx].keyCode == KEY_U)
-                || (this->_buffer[foundIdx - 1].keyCode == KEY_G && this->_buffer[foundIdx].keyCode == KEY_I))
+            LOG_DEBUG("Special: %d %d", word[foundIdx - 1]->keyCode, word[foundIdx]->keyCode);
+            if ((word[foundIdx - 1]->keyCode == KEY_Q && word[foundIdx]->keyCode == KEY_U)
+                || (word[foundIdx - 1]->keyCode == KEY_G && word[foundIdx]->keyCode == KEY_I))
             {
                 tonePosition += 1;
             }
