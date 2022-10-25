@@ -312,7 +312,9 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
     }
     
     int foundIdx = this->_findSyllable(matchCombine, maskType, expectedKey);
-
+    
+    vector<BufferEntry*> word = extractWord();
+    
     if (matchCombine.size() >= 0) {
         PRINT_VECTOR(matchCombine);
         
@@ -326,9 +328,8 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
         for (int i = 1; i < matchCombine.size(); i++) {
             if (i == 1 || (matchCombine[i] & MASK_EXTRA_MARK) == MASK_EXTRA_MARK) {
                 int buffIndex = (i-1) + foundIdx;   // (i-1) since we ignore the first value of combine
-                if (this->_buffer[buffIndex].roofType != targetRoofType) {
-                    this->_buffer[buffIndex].roofType = targetRoofType;
-                    
+                if (word[buffIndex]->roofType != targetRoofType) {
+                    word[buffIndex]->roofType = targetRoofType;
                     canSetHook = true;
                 }
             }
@@ -339,8 +340,8 @@ int kbengine::_processMark(const UInt8 &keycode, const RoofType &roofType, const
         if (!canSetHook && !fromCorrectFunc) {
             for (int i = 1; i < matchCombine.size(); i++) {
                 if (i == 1 || (matchCombine[i] & MASK_EXTRA_MARK) == MASK_EXTRA_MARK) {
-                    int buffIndex = (i-1) + foundIdx;   // (i-1) since we ignore the first value of combine
-                    this->_buffer[buffIndex].roofType = ORIGIN;
+                    int buffIndex = (i-1) + foundIdx;
+                    word[buffIndex]->roofType = ORIGIN;
                 }
             }
             // add the pressed keycode back to buffer
@@ -372,31 +373,33 @@ int kbengine::_processD(const UInt8 &keycode) {
     int endIdx = this->_bufferSize;
     
     vector<UInt16> syllableCombine;
+    
+    vector<BufferEntry*> word = extractWord();
+    
     // check the previous keycode is d or not
-    if (this->_buffer[endIdx-1].keyCode == KEY_D) {
-        foundIdx = endIdx;
-    }
-    else {
-        foundIdx = this->_findSyllable(syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
+    for(int i = _bufferSize-1; i >= _bufferStartWordIdx; i --) {
+        BufferEntry *entry = &(_buffer[i]);
+        if (entry->processed)
+            continue;
+        if (entry->keyCode == KEY_D) {
+            foundIdx = i;
+            break;
+        }
     }
     
     if (foundIdx >= 0) {
-        if (this->_buffer[foundIdx-1].keyCode == KEY_D) {
-            int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx) + 1;//(endIdx - foundIdx) + 1; // delete vowel & d character
-            
-            if (this->_buffer[foundIdx-1].roofType == ROOF) {
-                this->_buffer[foundIdx-1].roofType = ORIGIN;
-                _addKeyCode(keycode, 0);
-                endIdx ++;
-            }
-            else
-                this->_buffer[foundIdx-1].roofType = ROOF;
-            
-            this->_processKeyCodeOutput(numBackSpaces, foundIdx-1, endIdx);
+        int numBackSpaces = _calculateNumberOfBackSpace(foundIdx, endIdx);
+        
+        if (this->_buffer[foundIdx].roofType == ROOF) {
+            this->_buffer[foundIdx].roofType = ORIGIN;
+            _addKeyCode(keycode, 0);
         }
         else {
-            foundIdx = -1;
+            this->_buffer[foundIdx].roofType = ROOF;
+            _addKeyCode(keycode, 0, true);
         }
+        
+        this->_processKeyCodeOutput(numBackSpaces, foundIdx, _bufferSize);
     }
     
     return foundIdx;
@@ -553,8 +556,9 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
         int tonePosition = _useModernTone ? _placeToneModernRule(foundIdx, syllableCombine)
                                             : _placeToneTraditionalRule(foundIdx, syllableCombine);
 
+        vector<BufferEntry*> word = extractWord();
         if (tonePosition >= 0) {
-            tonePosition += _bufferStartWordIdx;
+//            tonePosition += _bufferStartWordIdx;
             LOG_DEBUG("Target tone posision: %d", tonePosition);
             int endIdx = this->_bufferSize;
             int numBackSpaces = 0; //_calculateNumberOfBackSpace(tonePosition, endIdx); //(endIdx - tonePosition);
@@ -563,9 +567,10 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
             bool isCaseReset = false;
             
             // check target tonePosision have tone or not
-            if (this->_buffer[tonePosition].tone == tone && !fromCorrectFunc) {
+            //if (this->_buffer[tonePosition].tone == tone && !fromCorrectFunc) {
+            if (word[tonePosition]->tone == tone && !fromCorrectFunc) {
                 //this->_buffer[tonePosition].tone = KeyEvent::Tone0;
-                LOG_DEBUG("Found previous tone at target posision: %d", this->_buffer[tonePosition].tone);
+                LOG_DEBUG("Found previous tone at target posision: %d", tonePosition);
 
                 targetTone = KeyEvent::Tone0;
                 isCaseReset = true;
@@ -573,13 +578,12 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
             
             int previousTonePos = -1;
             // check whole word to detect previous tone, we have this case is move tone
-            for (int i = this->_bufferStartWordIdx; i < tonePosition; i++) {
-                
-                if(this->_buffer[i].processed)
-                    continue;
-                
-                LOG_DEBUG("Buffer index: %d, tone: %d", i, this->_buffer[i].tone);
-                if (this->_buffer[i].tone != KeyEvent::Tone0) {
+            //for (int i = this->_bufferStartWordIdx; i < tonePosition; i++) {
+//                if(this->_buffer[i].processed)
+//                    continue;
+            for (auto i = 0; i < word.size(); i++) {
+                LOG_DEBUG("Buffer index: %d, tone: %d", i, word[i]->tone);
+                if (word[i]->tone != KeyEvent::Tone0) {
                     previousTonePos = i;
                     break;
                 }
@@ -589,17 +593,20 @@ int kbengine::_processTone(const UInt8 &keycode, const KeyEvent &tone, const boo
             numBackSpaces = _calculateNumberOfBackSpace(previousTonePos >= 0 ? previousTonePos : tonePosition, endIdx);
             
             if (isCaseReset) {
-                this->_buffer[tonePosition].tone = KeyEvent::Tone0;
+                //this->_buffer[tonePosition].tone = KeyEvent::Tone0;
+                word[tonePosition]->tone = KeyEvent::Tone0;
                 _addKeyCode(keycode, 0);
                 endIdx ++;
             }
             else {
-                this->_buffer[tonePosition].tone = targetTone;
+                //this->_buffer[tonePosition].tone = targetTone;
+                word[tonePosition]->tone = targetTone;
                 _addKeyCode(keycode, 0, true);
             }
             
-            if (previousTonePos >= 0) {
-                this->_buffer[previousTonePos].tone = KeyEvent::Tone0;
+            if (previousTonePos >= 0 && previousTonePos != tonePosition) {
+                //this->_buffer[previousTonePos].tone = KeyEvent::Tone0;
+                word[previousTonePos]->tone = KeyEvent::Tone0;
                 tonePosition = previousTonePos;
             }
             
@@ -632,7 +639,7 @@ int kbengine::_processHookOU(const UInt8 &keycode, const UInt16 &expectedKey)
     
     if (this->_bufferSize > 0) {
         int curIndex = this->_bufferSize - 1;
-        BufferEntry bufferEntry = this->_buffer[curIndex];
+        BufferEntry &bufferEntry = this->_buffer[curIndex];
         
         LOG_DEBUG("Previous code: %d", bufferEntry.keyCode);
         
@@ -1105,7 +1112,7 @@ void kbengine::_processBackSpacePressed()
     if (this->_buffer[lastChar].roofType != RoofType::ORIGIN
         || this->_buffer[lastChar].tone != Tone0) {
         
-        while(this->_buffer[_bufferSize-1].processed) {
+        while(this->_buffer[_bufferSize-1].processed && _bufferSize > 0) {
             _bufferSize--;
         }
     }
@@ -1115,6 +1122,8 @@ void kbengine::_processBackSpacePressed()
         }
     }
     LOG_DEBUG("Buffer size: %d", _bufferSize);
+    
+    if (this->_bufferSize == 0) return;
     
     
     // create output to send delete in case 2 bytes
