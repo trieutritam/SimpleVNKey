@@ -24,7 +24,8 @@ struct BufferEntry {
     bool cap;    // capitalize or not
     RoofType roofType = ORIGIN;
     short tone = KeyEvent::Tone0;    // KeyEvent enum tone: 0 = none, 1 = sac, 2 = huyen, 3 = hoi, 4 = nga, 5 = nang
-    bool processed;
+    bool processed = false;
+    bool isIMCode = false;
 };
 
 struct KeyStrokeEntry {

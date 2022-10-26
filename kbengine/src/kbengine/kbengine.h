@@ -25,6 +25,13 @@ struct ModifiedKeyInfo {
     bool isUniChar;
 };
 
+struct ProcessResult {
+    int startPosition = -1;
+    bool processed = false;
+    bool ignoreKeyCode = false;
+    int adjustDelete = 0;
+};
+
 class kbengine {
     UInt8 currentCodeTable = 0; // 0 - unicode
     
@@ -64,19 +71,29 @@ class kbengine {
     vector<BufferEntry*> extractWord();
     
     //V2
-    void _processWord(vector<BufferEntry*> word, BufferEntry* lastEntry, const UInt8 &shiftCap, const bool &otherControl);
-    int _processMarkV2(const vector<BufferEntry*> &word,
-                       BufferEntry *lastChar,
+    ProcessResult _processWord(vector<BufferEntry*> word, const UInt16 &keycode, const UInt8 &shiftCap, const bool &otherControl);
+    ProcessResult _processMarkV2(const vector<BufferEntry*> &word,
+                       const UInt16 &keycode,
                        const RoofType &roofType, const bool &fromCorrectFunc = false);
     
-    int _findSyllableV2(vector<UInt16> &syllableCombine,
-                        const vector<BufferEntry*> &word, const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY);
+    int _findSyllableV2(const vector<BufferEntry*> &word,
+                        vector<UInt16> &syllableCombine,
+                        const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY);
     
     int _calculateNumberOfBackSpaceV2(const vector<BufferEntry*> &word, int startIdx);
     void _processKeyCodeOutputV2(const vector<BufferEntry*> &word, int numDelete, int startPos);
     void _addKeyCodeV2(const UInt16 &keycode, const UInt8 &shiftCap, const bool processed = false);
-    void _processBackSpacePressedV2();
-    
+    BufferEntry* _processBackSpacePressedV2();
+    void _processResult(vector<BufferEntry*> word, ProcessResult result, int adjustDelete);
+    ProcessResult _processDV2(const vector<BufferEntry*> &word, const UInt8 &keycode);
+    ProcessResult _processToneV2(const vector<BufferEntry*> &word,
+                                 const UInt8 &keycode,
+                                 const KeyEvent &tone,
+                                 const bool &fromCorrectFunc = false);
+    int _placeToneTraditionalRuleV2(const vector<BufferEntry*> &word, int foundIdx, vector<UInt16> syllableCombine);
+    int _placeToneModernRuleV2(const vector<BufferEntry*> &word, int foundIdx, vector<UInt16> syllableCombine);
+    ProcessResult _processHookOUV2(const vector<BufferEntry*> word, const UInt8 &keycode, const UInt8 &shiftCap, const UInt16 &expectedKey);
+
 public:
 	kbengine();
 	virtual ~kbengine();
