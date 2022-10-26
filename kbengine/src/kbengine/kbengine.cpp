@@ -1186,20 +1186,25 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
             else {
                 //lastEntry = &(_buffer[_bufferSize-1]);
                 this->_processBackSpacePressedV2();
+                
+                lastEntry = &(_buffer[_bufferSize-1]);
                 word = extractWord();
             }
         }
     }
     LOG_DEBUG("Buffer beginIdx: %d, size: %d,", _bufferStartWordIdx, _bufferSize);
     
-    for (int i = _bufferStartWordIdx; i < _bufferSize; i++) {
-        _buffer[i].roofType = RoofType::ORIGIN;
-        _buffer[i].tone = Tone0;
-    }
+//    for (int i = _bufferStartWordIdx; keycode == KEY_DELETE && i < _bufferSize; i++) {
+//        BufferEntry *entry = &(_buffer[i]);
+//        entry->roofType = RoofType::ORIGIN;
+//        entry->tone = Tone0;
+//    }
 
-    lastEntry = &(_buffer[_bufferSize-1]);
     if (lastEntry != NULL) {
         _processWord(word, lastEntry, shiftCap, otherControl);
+        if (keycode == KEY_DELETE) {
+            _keyCodeOutput.insert(_keyCodeOutput.begin(), KEY_DELETE);
+        }
     }
     
     //TODO: start new word?
@@ -1232,8 +1237,8 @@ void kbengine::_processWord(vector<BufferEntry*> word, BufferEntry* lastEntry, c
             }
         }
     }
-//    if (actionResult >= 0) {
-        auto foundIdx = actionResult;
+    if (actionResult >= 0) {
+        auto foundIdx = actionResult >= 0 ? actionResult : 0;
         int numBackSpaces = _calculateNumberOfBackSpaceV2(word, foundIdx);
 
         LOG_DEBUG("Process Mark, numBackSpaces: %d, foundIdx: %d", numBackSpaces, foundIdx);
@@ -1242,7 +1247,7 @@ void kbengine::_processWord(vector<BufferEntry*> word, BufferEntry* lastEntry, c
 //            numBackSpaces --;
         auto newWord = extractWord();
         this->_processKeyCodeOutputV2(newWord, numBackSpaces, foundIdx);
-//    }
+    }
 }
 
 //int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8 &shiftCap, const bool &otherControl)
