@@ -376,7 +376,7 @@ int kbengine::_placeToneModernRuleV2(const vector<BufferEntry*> &word, int found
     
     //int endIdx = this->_bufferSize - 1;
     
-    for(int i = 0; i < word.size(); i++) {
+    for(int i = foundIdx; i < word.size(); i++) {
         BufferEntry *pEntry = word[i];
         
         auto keyCode = pEntry->keyCode;
@@ -885,7 +885,7 @@ void kbengine::_restoreWordIfAny() {
     bool needRestore = false;
     for (int i = _bufferStartWordIdx; i < _bufferSize; i++) {
         BufferEntry *entry = &(_buffer[i]);
-        if (entry->roofType != RoofType::ORIGIN || entry->tone != Tone0) {
+        if (entry->roofType != RoofType::ORIGIN || entry->tone != Tone0 || entry->processed) {
             needRestore = true;
             break;
         }
@@ -902,7 +902,8 @@ void kbengine::_restoreWordIfAny() {
         // This is the copy of word before it's processed by keystroke
         vector<BufferEntry*> pOrigWord;
         for (int i = 0; i < origWord.size(); i++) {
-            pOrigWord.push_back(&(origWord[i]));
+            if (!IS_BREAKCODE(origWord[i].keyCode))
+                pOrigWord.push_back(&(origWord[i]));
         }
         
         for (int i = _bufferStartWordIdx; i < _bufferSize; i++) {
@@ -987,7 +988,7 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
                         if ( highByte > 0) {
                             // delete 2 bytes char, we need to send 2 DELETE KEY
                             ProcessResult result;
-                            result.startPosition = pOrigWord.size() - 2;
+                            result.startPosition = (int)pOrigWord.size() - 1;
                             _processResult(pOrigWord, pCurrentWord, result, 0);
                         }
                     }

@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addCharacterEncoding: (NSDictionary*)characterEncoding charType: (UInt8) charType;
 - (void)setUseModernToneMethod: (bool) isUse;
 - (bool)isUseModernToneMethod;
+- (void)setAutoRestoreWord: (bool) isEnabled;
 @end
 
 NS_ASSUME_NONNULL_END

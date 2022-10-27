@@ -45,7 +45,7 @@ class kbengine {
     
     short _currentInputMethod =  -1;   //0 VNI, 1 Simple Telex, 2 Telex
     short _useModernTone = false;
-    bool  isEnableAutoRestoreWord = true;  // auto restore keystroke for invalid VN word
+    bool  isEnableAutoRestoreWord = false;  // auto restore keystroke for invalid VN word
         
 	BufferEntry _buffer[MAX_BUFF];
     int _bufferStartWordIdx;    // index of begin of the last word in buffer

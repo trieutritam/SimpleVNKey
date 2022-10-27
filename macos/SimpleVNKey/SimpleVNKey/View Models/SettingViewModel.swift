@@ -22,6 +22,7 @@ class SettingViewModel: ObservableObject {
     @Published var characterEncoding = CharacterEncodingType.Unicode.rawValue;
     
     @Published var useModernToneMethod = false;
+    @Published var enableAutoRestoreWord = false;
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -49,12 +50,15 @@ class SettingViewModel: ObservableObject {
         
         useModernToneMethod = (UserDefaults.standard.value(forKey: "SimpleVNKey.UseModernToneMethod") ?? false) as! Bool
 
+        enableAutoRestoreWord = (UserDefaults.standard.value(forKey: "SimpleVNKey.EnableAutoRestoreWord") ?? false) as! Bool
         
         print("Load SimpleVNKey.isVNEnabled: ", isVNEnabled)
         print("Load SimpleVNKey.InputMethod: ", inputMethod)
         print("Load SimpleVNKey.CharacterEncoding: ", characterEncoding)
         print("Load SimpleVNKey.HotKey: ", hotKeyControl, hotKeyOption, hotKeyCommand, hotKeyShift, hotKeyCharacter)
         print("Load SimpleVNKey.UseModernToneMethod: ", useModernToneMethod)
+        print("Load SimpleVNKey.EnableAutoRestoreWord: ", enableAutoRestoreWord)
+
         
         guard let appDelegate = AppDelegate.instance else { return }
         isVNEnabled ? appDelegate.enableVN() : appDelegate.disableVN()
@@ -103,13 +107,19 @@ class SettingViewModel: ObservableObject {
         $characterEncoding.sink { currentCharEnc in
             UserDefaults.standard.set(currentCharEnc, forKey: "SimpleVNKey.CharacterEncoding")
             guard let appDelegate = AppDelegate.instance else { return }
-            appDelegate.setActiveCharacterEncoding(currentCharEnc)
+            appDelegate.setEngineActiveCharacterEncoding(currentCharEnc)
         }.store(in: &cancellables)
         
         $useModernToneMethod.sink { val in
             UserDefaults.standard.set(val, forKey: "SimpleVNKey.UseModernToneMethod")
             guard let appDelegate = AppDelegate.instance else { return }
-            appDelegate.setUseModernToneMethod(val)
+            appDelegate.setEngineUseModernToneMethod(val)
+        }.store(in: &cancellables)
+        
+        $enableAutoRestoreWord.sink { val in
+            UserDefaults.standard.set(val, forKey: "SimpleVNKey.EnableAutoRestoreWord")
+            guard let appDelegate = AppDelegate.instance else { return }
+            appDelegate.setEngineAutoRestoreWord(val)
         }.store(in: &cancellables)
     }
     

@@ -41,7 +41,9 @@ struct GeneralSettingView: View {
                     
                     Toggle("Use oà, uý (instead of òa úy)",
                            isOn: $appSettingVM.useModernToneMethod)
-                    //.toggleStyle(.switch)
+                    
+                    Toggle("Auto restore keys for invalid word",
+                           isOn: $appSettingVM.enableAutoRestoreWord)
                 }
             }
             Divider()

@@ -118,7 +118,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             charType: charType)
     }
     
-    func setActiveCharacterEncoding(_ characterEnc: Int) {
+    func setEngineActiveCharacterEncoding(_ characterEnc: Int) {
         if ( characterEnc >= kbEngine.getTotalCodeTable()) {
             Self.log.warning("Seleted Character Encoding not found. Reset to Default")
             //Update the ViewModel so that the app reset the setting
@@ -129,8 +129,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    func setUseModernToneMethod(_ isUse: Bool) {
+    func setEngineUseModernToneMethod(_ isUse: Bool) {
         kbEngine.setUseModernToneMethod(isUse)
+    }
+    
+    func setEngineAutoRestoreWord(_ enabled: Bool) {
+        Self.log.info("Enable Auto Restore word, value = \(enabled)")
+        kbEngine.setAutoRestoreWord(enabled);
     }
     
     func showAboutDialog() {
