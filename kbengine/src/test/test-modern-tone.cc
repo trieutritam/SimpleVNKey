@@ -83,7 +83,9 @@ TEST_F(KbEngineTest, TestModernTone_Rule2_Input_quyet65) {
   vector<UInt32> expectedOut =  {
                                   KEY_DELETE, KEY_DELETE, KEY_DELETE,
                                   KEY_Y,
-                                  getVNCharAt(KEY_E | MASK_ROOF, 1), KEY_T
+                                  getVNCharAt(KEY_E | MASK_ROOF, 1), KEY_T,
+                                  KEY_DELETE, KEY_DELETE, 
+                                  getVNCharAt(KEY_E | MASK_ROOF, 11), KEY_T
                                 };
 
   engine.resetBuffer();
