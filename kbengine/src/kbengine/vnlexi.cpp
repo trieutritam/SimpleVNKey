@@ -1,5 +1,27 @@
 #include "vnlexi.h"
 
+
+vector<UInt8> _wordBreakCode = {
+    KEY_BACKQUOTE,
+    //KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0,
+    KEY_MINUS, KEY_EQUALS,
+    KEY_LEFT_BRACKET, KEY_RIGHT_BRACKET, KEY_BACK_SLASH,
+    KEY_SEMICOLON, KEY_QUOTE, KEY_COMMA, KEY_DOT, KEY_SLASH, KEY_SPACE,
+    KEY_RETURN, KEY_ENTER
+};
+
+vector<vector<UInt16>> consonantList = {
+    //17 phụ âm đơn: b, c, d, đ, g, h, k, l, m, n, p, q, r, s, t, v, x
+    { KEY_B }, { KEY_C }, { KEY_D }, { KEY_G }, { KEY_H },
+    { KEY_K }, { KEY_L }, { KEY_M }, { KEY_N }, { KEY_P },
+    { KEY_Q }, { KEY_R }, { KEY_S }, { KEY_T }, { KEY_V }, { KEY_X },
+    
+    //10 phụ âm ghép:  ch, gh, gi, kh, ng,
+    //ngh, nh, th, tr, qu.
+    { KEY_C, KEY_H }, { KEY_G, KEY_H }, { KEY_G, KEY_I }, { KEY_K, KEY_H }, { KEY_N, KEY_G },
+    { KEY_N, KEY_G, KEY_H }, { KEY_N, KEY_H }, { KEY_T, KEY_H }, { KEY_T, KEY_R }, { KEY_Q, KEY_U }
+};
+
 map<UInt8, vector<vector<UInt16>>> syllableTable = {
     {
         KEY_A, {
@@ -75,28 +97,28 @@ map<UInt8, vector<vector<UInt16>>> syllableTable = {
             {MASK_ORIGIN | MASK_ROOF | MASK_HOOK,   KEY_O, KEY_I },
             {MASK_ORIGIN | MASK_ROOF | MASK_HOOK,   KEY_O, KEY_M },
             {MASK_ORIGIN | MASK_ROOF | MASK_HOOK,   KEY_O, KEY_N },
-            {MASK_ORIGIN | MASK_ROOF                ,   KEY_O, KEY_N, KEY_G },
+            {MASK_ORIGIN | MASK_ROOF            ,   KEY_O, KEY_N, KEY_G },
             {MASK_ORIGIN | MASK_ROOF | MASK_HOOK,   KEY_O, KEY_P },
             {MASK_ORIGIN | MASK_ROOF | MASK_HOOK,   KEY_O, KEY_T },
             // oo
-            {MASK_ORIGIN                            ,   KEY_O, KEY_O, KEY_C },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_O, KEY_N, KEY_G },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_O, KEY_C },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_O, KEY_N, KEY_G },
             // oa
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_C },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_C, KEY_H },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_I },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_M },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_N },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_N, KEY_G },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_N, KEY_H },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_O },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_P },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_T },
-            {MASK_ORIGIN                            ,   KEY_O, KEY_A, KEY_Y },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_C },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_C, KEY_H },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_I },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_M },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_N },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_N, KEY_G },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_N, KEY_H },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_O },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_P },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_T },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_A, KEY_Y },
             
             // oe
-            {MASK_ORIGIN                            ,   KEY_O, KEY_E },
+            {MASK_ORIGIN                        ,   KEY_O, KEY_E },
         }
     },
     {   KEY_U, {

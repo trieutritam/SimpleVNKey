@@ -1,17 +1,23 @@
 /* No comment provided by engineer. */
-"About" = "Thông tin";
+"About" = "Giới thiệu";
 
 /* No comment provided by engineer. */
-"About SimpleVNKey" = "Thông tin";
+"About SimpleVNKey" = "Giới thiệu";
 
 /* No comment provided by engineer. */
 "Author: " = "Tác giả: ";
+
+/* No comment provided by engineer. */
+"Auto restore keys for invalid word" = "Tự động khôi phục phím với từ sai";
 
 /* No comment provided by engineer. */
 "Character Encoding" = "Bảng mã";
 
 /* No comment provided by engineer. */
 "Check For Updates..." = "Kiểm tra bản cập nhật...";
+
+/* No comment provided by engineer. */
+"Ctrl" = "";
 
 /* No comment provided by engineer. */
 "Enable Vietnamese" = "Bật tiếng Việt";
@@ -29,7 +35,7 @@
 "Powered by:" = "Cung cấp bởi:";
 
 /* No comment provided by engineer. */
-"Preferences..." = "Tùy chọn...";
+"Preferences..." = "Bảng điều khiển...";
 
 /* No comment provided by engineer. */
 "Quit SimpleVNKey" = "Thoát";

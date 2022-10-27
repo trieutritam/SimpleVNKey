@@ -94,4 +94,9 @@ static kbengine engine;
 {
     return engine.isUseModernTone();
 }
+
+- (void)setAutoRestoreWord: (bool) isEnabled
+{
+    engine.setAutoRestoreWord(isEnabled);
+}
 @end

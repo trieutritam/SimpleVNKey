@@ -14,32 +14,18 @@ using namespace std;
 
 #include "datatypes.h"
 
-#define MAX_BUFF 32
+#define MAX_BUFF 64
 
 #define UNICODE_MASK 0x00010000
 
-enum RoofType {
-    ORIGIN,
-    ROOF, ROOF_A, ROOF_E, ROOF_O,
-    HOOK,
-    BREVE
-};
-
-enum KeyEvent {
-  RoofAll, RoofA, RoofE, RoofO,
-  HookAll, Breve, HookO, HookU, // Breve is top of ă
-  Dd,
-  Tone0, Tone1, Tone2, Tone3, Tone4, Tone5,
-  EscChar,
-  Normal, //does not belong to any of the above categories
-  KeyEventCount //just to count how many event types there are
-};
-
 struct BufferEntry {
-    UInt8 keyCode;
+    UInt16 keyCode;
     bool cap;    // capitalize or not
     RoofType roofType = ORIGIN;
     short tone = KeyEvent::Tone0;    // KeyEvent enum tone: 0 = none, 1 = sac, 2 = huyen, 3 = hoi, 4 = nga, 5 = nang
+    bool processed = false;
+    bool isIMCode = false;
+    bool isBreakCode = false;
 };
 
 struct ModifiedKeyInfo {
@@ -47,41 +33,70 @@ struct ModifiedKeyInfo {
     bool isUniChar;
 };
 
+struct ProcessResult {
+    int startPosition = -1;
+    bool processed = false;
+    bool ignoreKeyCode = false;
+    int adjustDelete = 0;
+};
+
 class kbengine {
     UInt8 currentCodeTable = 0; // 0 - unicode
     
     short _currentInputMethod =  -1;   //0 VNI, 1 Simple Telex, 2 Telex
     short _useModernTone = false;
+    bool  isEnableAutoRestoreWord = false;  // auto restore keystroke for invalid VN word
         
 	BufferEntry _buffer[MAX_BUFF];
     int _bufferStartWordIdx;    // index of begin of the last word in buffer
 	int _bufferSize;
-    
+
     // output after processing
     vector<UInt32> _keyCodeOutput;
     
-    int _calculateNumberOfBackSpace(int startIdx, int endIdx);
-    
-    int _processMark(const UInt8 &keycode, const RoofType &roofType, const bool &fromCorrectFunc = false);
-    int _processD(const UInt8 &keycode);
-    int _placeToneTraditionalRule(int foundIdx, vector<UInt16> syllableCombine);
-    int _placeToneModernRule(int foundIdx, vector<UInt16> syllableCombine);
-    int _processTone(const UInt8 &keycode, const KeyEvent &tone, const bool &fromCorrectFunc = false);
-    int _processHookOU(const UInt8 &keycode, const UInt16 &expectedKey);
-    void _processBackSpacePressed();
-
-    int _correctTone(const UInt8 &keycode);
-    int _correctMark(const UInt8 &keycode);
-    
-    void _processKeyCodeOutput(int numDelete, int startPos, int endPos);
-    
-    void _startNewWord();
-    void _addKeyCode(const UInt8 &keycode, const UInt8 &shiftCap);
-    
-    int _findSyllable(vector<UInt16> &syllableCombine, const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY);
-    
     UInt32 _getCharacterCode(const BufferEntry& entry );
     UInt8 _getCurrentCodeTableCharType();
+    
+    vector<BufferEntry*> getCurrentWord();
+    vector<BufferEntry>  extractCurrentWord();
+
+    
+    //V2
+    void _startNewWord();
+    ProcessResult _processWord(vector<BufferEntry*> word, const UInt16 &keycode, const UInt8 &shiftCap, const bool &otherControl);
+    ProcessResult _processMarkV2(const vector<BufferEntry*> &word,
+                       const UInt16 &keycode,
+                       const RoofType &roofType, const bool &fromCorrectFunc = false);
+    
+    int _findSyllableV2(const vector<BufferEntry*> &word,
+                        vector<UInt16> &syllableCombine,
+                        const UInt16 &expectedType, const UInt16 &expectedKey = KEY_EMPTY);
+    
+    int _calculateNumberOfBackSpaceV2(const vector<BufferEntry*> &word, int startIdx);
+    void _processKeyCodeOutputV2(const vector<BufferEntry*> &word, int numDelete, int startPos);
+    void _addKeyCodeV2(const UInt16 &keycode, const UInt8 &shiftCap,
+                       const bool &processed = false,
+                       const bool &isBreakCode = false);
+    BufferEntry* _processBackSpacePressedV2();
+    
+    void _processResult(vector<BufferEntry*> pOldWord, vector<BufferEntry*> word,
+                        ProcessResult result, int adjustDelete);
+    
+    ProcessResult _processDV2(const vector<BufferEntry*> &word, const UInt8 &keycode);
+    ProcessResult _processToneV2(const vector<BufferEntry*> &word,
+                                 const UInt8 &keycode,
+                                 const KeyEvent &tone,
+                                 const bool &fromCorrectFunc = false);
+    int _placeToneTraditionalRuleV2(const vector<BufferEntry*> &word, int foundIdx, vector<UInt16> syllableCombine);
+    int _placeToneModernRuleV2(const vector<BufferEntry*> &word, int foundIdx, vector<UInt16> syllableCombine);
+    ProcessResult _processHookOUV2(const vector<BufferEntry*> word, const UInt8 &keycode, const UInt8 &shiftCap, const UInt16 &expectedKey);
+    
+    ProcessResult _correctUO(const vector<BufferEntry*> &word, const UInt8 &keycode);
+    ProcessResult _correctToneV2(const vector<BufferEntry*> &word, const UInt8 &keycode);
+    
+    BufferEntry* processDelete1(const vector<BufferEntry*> &pOrigWord);
+    void processDelete2(const vector<BufferEntry*> &pOrigWord);
+    void _restoreWordIfAny();
 public:
 	kbengine();
 	virtual ~kbengine();
@@ -91,6 +106,7 @@ public:
     
     void setUseModernTone(bool isUse);
     bool isUseModernTone();
+    void setAutoRestoreWord(bool isEnable);
     
     /* Main Process, after process keycode
      * consumer need call getOutputBuffer() to check whether keycode processed and send keycodes to target app
