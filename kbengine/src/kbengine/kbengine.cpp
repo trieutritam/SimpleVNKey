@@ -342,7 +342,7 @@ int kbengine::_placeToneTraditionalRuleV2(const vector<BufferEntry*> &word, int 
         // Kiểu cũ dựa trên những từ điển từ trước năm 1950 nên "gi" và "qu" được coi là một mẫu tự riêng.
         // Vì vậy "già" và "quạ" không phải là nguyên âm đôi "ia" hay "ua" mà là "gi" + "à"; và "qu" + "ạ".
         // => This case we already count 2 vowels, and we need to adjust
-        if ((vowelCount == 2 && lastIsVowel) && foundIdx > this->_bufferStartWordIdx) {
+        if ((vowelCount == 2 && lastIsVowel) && foundIdx > 0) {
             LOG_DEBUG("Special: %d %d", word[foundIdx - 1]->keyCode, word[foundIdx]->keyCode);
             if ((word[foundIdx - 1]->keyCode == KEY_Q && word[foundIdx]->keyCode == KEY_U)
                 || (word[foundIdx - 1]->keyCode == KEY_G && word[foundIdx]->keyCode == KEY_I))
@@ -454,98 +454,6 @@ int kbengine::_placeToneModernRuleV2(const vector<BufferEntry*> &word, int found
     return tonePosition;
 }
 
-ProcessResult kbengine::_processToneV2(const vector<BufferEntry*> &word, const UInt8 &keycode,
-                                       const KeyEvent &tone, const bool &fromCorrectFunc)
-{
-    ProcessResult result;
-    vector<UInt16> syllableCombine;
-    
-    vector<BufferEntry*> wordTrimmed;
-    //Remove breakcode in the word (keep only A-z)
-    for (int i=0; i < word.size(); i++) {
-        if (IS_BREAKCODE(word[i]->keyCode)) continue;
-        wordTrimmed.push_back(word[i]);
-    }
-    
-    int foundIdx = this->_findSyllableV2(wordTrimmed, syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
-    
-    if (syllableCombine.size() >= 0) {
-        int tonePosition = _useModernTone ? _placeToneModernRuleV2(wordTrimmed, foundIdx, syllableCombine)
-                                        : _placeToneTraditionalRuleV2(wordTrimmed, foundIdx, syllableCombine);
-
-        if (tonePosition >= 0) {
-            LOG_DEBUG("Target tone posision: %d", tonePosition);
-            
-            KeyEvent targetTone = tone;
-            bool isCaseReset = false;
-            
-            // check target tonePosision have tone or not
-            //if (this->_buffer[tonePosition].tone == tone && !fromCorrectFunc) {
-            if (wordTrimmed[tonePosition]->tone == tone && !fromCorrectFunc) {
-                LOG_DEBUG("Found previous tone at target posision: %d", tonePosition);
-                isCaseReset = true;
-            }
-            
-            int previousTonePos = -1;
-            // check whole word to detect previous tone -> this case is move tone
-            for (auto i = 0; i < wordTrimmed.size(); i++) {
-                LOG_DEBUG("Buffer index: %d, tone: %d", i, wordTrimmed[i]->tone);
-                if (wordTrimmed[i]->tone != KeyEvent::Tone0) {
-                    previousTonePos = i;
-                    break;
-                }
-            }
-            
-            if (isCaseReset) {
-                wordTrimmed[tonePosition]->tone = KeyEvent::Tone0;
-                result.processed = false;
-                
-//                if (IS_DOUBLE_CHAR_TYPE(this->currentCodeTable)) {
-//                    // calculate adjust backSpaces need to processed
-//                    auto charCode = _getCharacterCode(*(wordTrimmed[tonePosition]));
-//                    if (charCode > 0) {
-//                        charCode = charCode ^ UNICODE_MASK;  //remove unicode mask
-//
-//                        UInt8 highByte = BYTE_HIGH(charCode);
-//
-//                        if ( highByte == 0) {
-//                            result.adjustDelete += 1;
-//                        }
-//                    }
-//                }
-            }
-            else {
-                // codeTable is 2 bytes. e.g: VNI-Windows
-//                if (IS_DOUBLE_CHAR_TYPE(this->currentCodeTable)) {
-//                    // calculate adjust backSpaces need to processed
-//                    auto charCode = _getCharacterCode(*(wordTrimmed[tonePosition]));
-//                    if (charCode > 0) {
-//                        charCode = charCode ^ UNICODE_MASK;  //remove unicode mask
-//
-//                        UInt8 highByte = BYTE_HIGH(charCode);
-//
-//                        if ( highByte == 0) {
-//                            // Reduce BackSpace by 1, since processOutput will add 2 deletes
-//                            result.adjustDelete -= 1;
-//                        }
-//                    }
-//                }
-                
-                wordTrimmed[tonePosition]->tone = targetTone;
-                result.processed = true;
-            }
-            
-            if (previousTonePos >= 0 && previousTonePos != tonePosition) {
-                wordTrimmed[previousTonePos]->tone = KeyEvent::Tone0;
-                tonePosition = previousTonePos;
-            }
-
-            result.startPosition = tonePosition;
-        }
-    }
-    
-    return result;
-}
 
 // This handle hook O/U, specialize for Telex
 ProcessResult kbengine::_processHookOUV2(const vector<BufferEntry*> word,
@@ -828,52 +736,7 @@ ProcessResult kbengine::_correctUO(const vector<BufferEntry*> &word, const UInt8
     return result;
 }
 
-/*
- * - get the tone of last word.
- * - call _processToneTraditional or _processToneNew to reprocess tone
- * Notes: only call this func if new char is Vowel
- */
-ProcessResult kbengine::_correctToneV2(const vector<BufferEntry*> &word, const UInt8 &keycode)
-{
-    short currentTone = KeyEvent::Tone0;
-    ProcessResult result;
-    int startPos = -1;
-    for (int i = 0; i < word.size(); i++) {
-        BufferEntry *entry = word[i];
 
-        if (entry->tone != KeyEvent::Tone0) {
-            currentTone = entry->tone;
-            startPos = i;
-            break;
-        }
-    }
-    
-    if (currentTone != KeyEvent::Tone0) {
-        UInt8 keyCode = ToneToKeyCodeMapping[currentTone];
-        result = this->_processToneV2(word, keyCode, static_cast<KeyEvent>(currentTone), true);
-
-        // check tone pos again
-        int newTonePos = -1;
-        for (int i = 0; i < word.size(); i++) {
-            BufferEntry *entry = word[i];
-
-            if (entry->tone != KeyEvent::Tone0) {
-                currentTone = entry->tone;
-                newTonePos = i;
-                break;
-            }
-        }
-
-        LOG_DEBUG("Correct Tone, keyCode = %d, curTonePos: %d, newTonePos: %d", keyCode, startPos, newTonePos);
-
-        if (newTonePos < 0 || newTonePos == startPos) {
-            result.processed = false;
-            result.startPosition = -1;
-        }
-    }
-    
-    return result;
-}
 
 void kbengine::_restoreWordIfAny() {
     bool isValidWord = checkWord(getCurrentWord());
@@ -941,11 +804,15 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
         if (!result.ignoreKeyCode) {
             _addKeyCodeV2(keycode, shiftCap, result.processed);
             
+            ProcessResult ret2;
+            
             // correct tone
-            pCurrentWord = getCurrentWord();
-            ProcessResult ret2 = _correctToneV2(pCurrentWord, keycode);
-            if (ret2.startPosition >= 0) {
-                result = ret2;
+            if (!IS_IM_CODE(keycode)) {
+                pCurrentWord = getCurrentWord();
+                ret2 = _correctToneV2(pCurrentWord, keycode);
+                if (ret2.startPosition >= 0) {
+                    result = ret2;
+                }
             }
 
             // correct uo+ -> u+o+
@@ -1242,6 +1109,117 @@ ProcessResult kbengine::_processMarkV2(const vector<BufferEntry*> &word,
         }
         else if (isReverse) {
             result.processed = false;
+        }
+    }
+    
+    return result;
+}
+
+
+ProcessResult kbengine::_processToneV2(const vector<BufferEntry*> &word, const UInt8 &keycode,
+                                       const KeyEvent &tone, const bool &fromCorrectFunc)
+{
+    ProcessResult result;
+    vector<UInt16> syllableCombine;
+    
+    vector<BufferEntry*> wordTrimmed;
+    //Remove breakcode in the word (keep only A-z)
+    for (int i=0; i < word.size(); i++) {
+        if (IS_BREAKCODE(word[i]->keyCode)) continue;
+        wordTrimmed.push_back(word[i]);
+    }
+    
+    int foundIdx = this->_findSyllableV2(wordTrimmed, syllableCombine, MASK_ORIGIN | MASK_ROOF | MASK_HOOK);
+    
+    if (syllableCombine.size() >= 0) {
+        int tonePosition = _useModernTone ? _placeToneModernRuleV2(wordTrimmed, foundIdx, syllableCombine)
+                                        : _placeToneTraditionalRuleV2(wordTrimmed, foundIdx, syllableCombine);
+
+        if (tonePosition >= 0) {
+            LOG_DEBUG("Target tone posision: %d", tonePosition);
+            
+            KeyEvent targetTone = tone;
+            bool isCaseReset = false;
+            
+            // check target tonePosision have tone or not
+            //if (this->_buffer[tonePosition].tone == tone && !fromCorrectFunc) {
+            if (wordTrimmed[tonePosition]->tone == tone && !fromCorrectFunc) {
+                LOG_DEBUG("Found previous tone at target posision: %d", tonePosition);
+                isCaseReset = true;
+            }
+            
+            int previousTonePos = -1;
+            // check whole word to detect previous tone -> this case is move tone
+            for (auto i = 0; i < wordTrimmed.size(); i++) {
+                LOG_DEBUG("Buffer index: %d, tone: %d", i, wordTrimmed[i]->tone);
+                if (wordTrimmed[i]->tone != KeyEvent::Tone0) {
+                    previousTonePos = i;
+                    break;
+                }
+            }
+            
+            if (isCaseReset) {
+                wordTrimmed[tonePosition]->tone = KeyEvent::Tone0;
+                result.processed = false;
+            }
+            else {
+                wordTrimmed[tonePosition]->tone = targetTone;
+                result.processed = true;
+            }
+            
+            if (previousTonePos >= 0 && previousTonePos != tonePosition) {
+                wordTrimmed[previousTonePos]->tone = KeyEvent::Tone0;
+                tonePosition = previousTonePos;
+            }
+
+            result.startPosition = tonePosition;
+        }
+    }
+    
+    return result;
+}
+
+/*
+ * - get the tone of last word.
+ * - call _processToneTraditional or _processToneNew to reprocess tone
+ * Notes: only call this func if new char is Vowel
+ */
+ProcessResult kbengine::_correctToneV2(const vector<BufferEntry*> &word, const UInt8 &keycode)
+{
+    short currentTone = KeyEvent::Tone0;
+    ProcessResult result;
+    int startPos = -1;
+    for (int i = 0; i < word.size(); i++) {
+        BufferEntry *entry = word[i];
+
+        if (entry->tone != KeyEvent::Tone0) {
+            currentTone = entry->tone;
+            startPos = i;
+            break;
+        }
+    }
+    
+    if (currentTone != KeyEvent::Tone0) {
+        UInt8 keyCode = ToneToKeyCodeMapping[currentTone];
+        result = this->_processToneV2(word, keyCode, static_cast<KeyEvent>(currentTone), true);
+
+        // check tone pos again
+        int newTonePos = -1;
+        for (int i = 0; i < word.size(); i++) {
+            BufferEntry *entry = word[i];
+
+            if (entry->tone != KeyEvent::Tone0) {
+                currentTone = entry->tone;
+                newTonePos = i;
+                break;
+            }
+        }
+
+        LOG_DEBUG("Correct Tone, keyCode = %d, curTonePos: %d, newTonePos: %d", keyCode, startPos, newTonePos);
+
+        if (newTonePos < 0 || newTonePos == startPos) {
+            result.processed = false;
+            result.startPosition = -1;
         }
     }
     

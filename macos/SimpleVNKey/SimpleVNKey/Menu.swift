@@ -178,7 +178,9 @@ class MainMenu: NSObject, NSMenuDelegate {
             guard let event = NSEvent.init(cgEvent: cgEvent) else { return }
             guard let chars = event.characters(byApplyingModifiers: .numericPad) else { return }
             
-            enableVNItem!.keyEquivalent = String(Character(chars))
+            if (chars != "") {
+                enableVNItem!.keyEquivalent = String(Character(chars))
+            }
         }
         
         if isCtrl {

@@ -54,18 +54,22 @@ struct GeneralSettingView: View {
                         Toggle("⌥ Alt", isOn: $appSettingVM.hotKeyOption)
                         Toggle("⌘ Cmd", isOn: $appSettingVM.hotKeyCommand)
                         Toggle("⇧ Shift", isOn: $appSettingVM.hotKeyShift)
+                        Text("+")
+                    
                         KeycodeCaptureView(keycode: $appSettingVM.hotKeyCharacter, onKeyDownAction: { event in
                             print ("Pressed: " , event.keyCode)
                             appSettingVM.hotKeyCharacter =  event.keyCode
                         })
                         .frame(width: 90, height: 26)
-                    }.frame(width: .infinity, alignment: .center)
+                    }
                 }
             }.task {
-                let hotkeyChar = Character.init(Unicode.Scalar.init(UInt8(appSettingVM.hotKeyCharacter)))
-                hotKeyCharDisplay = (appSettingVM.hotKeyCharacter == 32) ? String(localized: "Space") : String(hotkeyChar).uppercased()
+                if (appSettingVM.hotKeyCharacter != VKKeyCode.KEY_EMPTY.rawValue) {
+                    let hotkeyChar = Character.init(Unicode.Scalar.init(UInt8(appSettingVM.hotKeyCharacter)))
+                    hotKeyCharDisplay = (appSettingVM.hotKeyCharacter == 32) ? String(localized: "Space") : String(hotkeyChar).uppercased()
+                }
             }
-        }.frame(width: 400)
+        }.frame(width: 450)
             .padding()
     }
 }
