@@ -556,7 +556,14 @@ void kbengine::_processKeyCodeOutputV2(const vector<BufferEntry*> &word, int num
             }
         }
         else {
-            this->_keyCodeOutput.push_back(word[i]->keyCode);
+            if (word[i]->cap) {
+                // if keyCode not in codeTable, it is original keyCode,
+                // we need to check Shift state and add mask for further process by caller
+                this->_keyCodeOutput.push_back(word[i]->keyCode | SHIFT_MASK);
+            }
+            else {
+                this->_keyCodeOutput.push_back(word[i]->keyCode);
+            }
         }
     }
 }

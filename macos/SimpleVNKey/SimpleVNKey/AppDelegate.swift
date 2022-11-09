@@ -306,8 +306,16 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
                             sendKeyStroke(proxy: proxy, keyData: UInt32(VKKeyCode.KEY_SPACE.rawValue), unicodeString: tempChar)
                         }
                         else {
-                            Global.log.debug("send keycode: \(keyData!)")
-                            sendKeyStroke(proxy: proxy, keyData: keyData!)
+                            // Check shift mask
+                            if ((keyData! & 0x00020000) == 0x00020000) {
+                                let actualKeyCode = keyData! ^ 0x00020000
+                                Global.log.debug("send keycode+shift: \(actualKeyCode)")
+                                sendKeyStroke(proxy: proxy, keyData: actualKeyCode, unicodeString: nil, shift: true)
+                            }
+                            else {
+                                Global.log.debug("send keycode: \(keyData!)")
+                                sendKeyStroke(proxy: proxy, keyData: keyData!)
+                            }
                         }
                     }
                     
@@ -320,7 +328,7 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
     return Unmanaged.passUnretained(event);//Unmanaged.passRetained(event)
 }
 
-func sendKeyStroke(proxy: CGEventTapProxy, keyData: UInt32, unicodeString: [UniChar]? = nil) {
+func sendKeyStroke(proxy: CGEventTapProxy, keyData: UInt32, unicodeString: [UniChar]? = nil, shift: Bool = false) {
     autoreleasepool{
         let eUp = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData), keyDown: false)
         let eDown = CGEvent.init(keyboardEventSource: Global.myEventSource, virtualKey: CGKeyCode(keyData), keyDown: true)
@@ -328,6 +336,11 @@ func sendKeyStroke(proxy: CGEventTapProxy, keyData: UInt32, unicodeString: [UniC
         if (unicodeString != nil) {
             eUp?.keyboardSetUnicodeString(stringLength: unicodeString!.count, unicodeString: unicodeString!)
             eDown?.keyboardSetUnicodeString(stringLength: unicodeString!.count, unicodeString: unicodeString!)
+        }
+        
+        if (shift) {
+            eDown?.flags.insert(CGEventFlags.maskShift);
+            eUp?.flags.insert(CGEventFlags.maskShift);
         }
         
         eDown?.tapPostEvent(proxy)

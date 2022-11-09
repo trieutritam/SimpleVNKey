@@ -17,6 +17,7 @@ using namespace std;
 #define MAX_BUFF 64
 
 #define UNICODE_MASK 0x00010000
+#define SHIFT_MASK   0x00020000
 
 struct BufferEntry {
     UInt16 keyCode;
