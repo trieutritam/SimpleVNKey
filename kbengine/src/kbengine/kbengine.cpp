@@ -817,14 +817,14 @@ int kbengine::process(const UInt16 &charCode, const UInt16 &keycode, const UInt8
             if (!IS_IM_CODE(keycode)) {
                 pCurrentWord = getCurrentWord();
                 ret2 = _correctToneV2(pCurrentWord, keycode);
-                if (ret2.startPosition >= 0) {
+                if (ret2.processed && ret2.startPosition >= 0) {
                     result = ret2;
                 }
             }
 
             // correct uo+ -> u+o+
             ret2 = _correctUO(pCurrentWord, keycode);
-            if (ret2.startPosition >= 0) {
+            if (ret2.processed && ret2.startPosition >= 0) {
                 result = ret2;
             }
         }

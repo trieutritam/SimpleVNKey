@@ -16,7 +16,7 @@ struct SimpleVNKeyApp: App {
         Settings {
             PreferenceView()
                 .onAppear(perform: {
-                    print("On Appeare")
+                    print("On Appeared")
                 })
         }
     }

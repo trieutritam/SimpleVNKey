@@ -26,7 +26,7 @@ struct AboutView: View {
                 .padding()
             VStack(alignment: .leading) {
                 Text(Bundle.main.appName).bold()
-                Text(String(localized: "Version: ") + (Bundle.main.appVersionLong))
+                Text(String(localized: "Version: ") + (Bundle.main.appVersionLong) + " (\(Bundle.main.appBuild))")
                 Text(String(localized: "Author: ") + Bundle.main.copyright)
             }.padding()
         }
