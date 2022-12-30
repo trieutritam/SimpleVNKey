@@ -283,8 +283,7 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
                 event.keyboardGetUnicodeString(maxStringLength: 1, actualStringLength: &length, unicodeString: &charCode)
                 
                 let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-                
-                let keystrokes = engine.process(charCode,
+                                let keystrokes = engine.process(charCode,
                                             keycode: UInt16(keyCode),
                                             shiftOrCapPressed: statusShiftCap,
                                             otherControlPressed: otherControl)
@@ -341,6 +340,10 @@ func sendKeyStroke(proxy: CGEventTapProxy, keyData: UInt32, unicodeString: [UniC
         if (shift) {
             eDown?.flags.insert(CGEventFlags.maskShift);
             eUp?.flags.insert(CGEventFlags.maskShift);
+        }
+        else {
+            eDown?.flags.remove(CGEventFlags.maskShift);
+            eUp?.flags.remove(CGEventFlags.maskShift);
         }
         
         eDown?.tapPostEvent(proxy)
