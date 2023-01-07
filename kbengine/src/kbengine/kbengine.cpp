@@ -25,6 +25,8 @@ using namespace std;
 #define IS_IM_CODE(x) (InputMethodMapping[this->_currentInputMethod].find(x) != InputMethodMapping[_currentInputMethod].end())
 #define IS_DOUBLE_CHAR_TYPE(x) (codeTableList[x][CODE_TABLE_CHAR_TYPE][0] > 1)
 
+#define IS_SHIFT_PRESSED(x) ((x & 1) == 1)
+
 enum InputMethodType {
     VNI,
     SimpleTelex,
@@ -975,7 +977,7 @@ ProcessResult kbengine::_processWord(vector<BufferEntry*> word, const UInt16 &ke
         LOG_DEBUG("keycode: %d, action found: %d", keycode, action != InputMethodMapping[_currentInputMethod].end());
         
         KeyEvent result = Normal;
-        if (shiftCap == 0 && !otherControl && action != InputMethodMapping[_currentInputMethod].end())
+        if (!IS_SHIFT_PRESSED(shiftCap) && !otherControl && action != InputMethodMapping[_currentInputMethod].end())
         {
             result = (KeyEvent) action->second;
             LOG_DEBUG("Action: %d", result);
