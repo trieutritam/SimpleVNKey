@@ -302,7 +302,7 @@ func eventTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent,
                             Global.log.debug("send keycode: \(String(format:"%02X", actualCharCode))")
                                   
                             let tempChar = [UniChar(actualCharCode)]
-                            sendKeyStroke(proxy: proxy, keyData: UInt32(VKKeyCode.KEY_SPACE.rawValue), unicodeString: tempChar)
+                            sendKeyStroke(proxy: proxy, keyData: 0, unicodeString: tempChar)
                         }
                         else {
                             // Check shift mask
