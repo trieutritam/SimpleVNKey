@@ -573,7 +573,7 @@
 				CODE_SIGN_ENTITLEMENTS = SimpleVNKey/SimpleVNKey.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"SimpleVNKey/Preview Content\"";
 				DEVELOPMENT_TEAM = 5SAR377BKF;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -584,6 +584,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SimpleVNKey/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Simple VN Input";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Triệu Trí Tâm";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -611,7 +612,7 @@
 				CODE_SIGN_ENTITLEMENTS = SimpleVNKey/SimpleVNKey.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"SimpleVNKey/Preview Content\"";
 				DEVELOPMENT_TEAM = 5SAR377BKF;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -619,6 +620,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "LOG_LEVEL=NO_LOG";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SimpleVNKey/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Simple VN Input";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Triệu Trí Tâm";
 				LD_RUNPATH_SEARCH_PATHS = (

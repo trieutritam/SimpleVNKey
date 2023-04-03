@@ -287,9 +287,14 @@ class MainMenu: NSObject, NSMenuDelegate {
     }
     
     @objc func openPreference(sender: NSMenuItem) {
-        NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
-        //NSApp.mainWindow?.display()
-        //NSApp.sendAction(Selector(("showMainWindows:")), to: nil, from: nil)
+        
+        // Version specific function call, as this changed in macOS 13 (Ventura)
+        if #available(macOS 13, *) {
+            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        } else {
+            NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+        }
+
         NSApp.activate(ignoringOtherApps: true)
     }
     
